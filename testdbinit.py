@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine, Column, ForeignKeyConstraint, VARCHAR, DOUBLE, Integer, MetaData, text, DATE, UniqueConstraint
+from sqlalchemy import create_engine, Column, ForeignKeyConstraint, VARCHAR, DECIMAL, Integer, MetaData, text, DATE, UniqueConstraint
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import OperationalError
 import pandas as pd
 from db_config import DB_USER, DB_PASSWORD, DB_HOST
 
@@ -10,15 +11,23 @@ from db_config import DB_USER, DB_PASSWORD, DB_HOST
 
 # Initialize Connection
 Base = declarative_base()
-connection_str       = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}'
-connection           = create_engine(connection_str, echo = True).connect()
+connection_str  = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/sistonemanagement'
+
+try: 
+    engine          = create_engine(connection_str, echo = True)
+    connection      = engine.connect()
 
 # Create database if it doesn't exist yet 
-connection.execute(text("CREATE DATABASE IF NOT EXISTS sistonemanagement"))
+except OperationalError as e:
+    if "1049" in str(e.orig):
+        engine      = create_engine(connection_str - "sistonemanagement", echo=True)
+        connection  = engine.connect()
+        connection.execute(text("CREATE DATABASE sistonemanagement"))
+        connection.close()
 
-db_connection_str       = 'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/sistonemanagement'
-engine                  = create_engine(db_connection_str, echo = True)
-connection              = engine.connect()
+        # Now reconnect
+        engine = create_engine(connection_str, echo=True)
+        connection = engine.connect()
 
 # Super Table
 class BaseTable(Base):
@@ -53,7 +62,7 @@ class Tenants(BaseTable):
     t_em = Column("Email",              VARCHAR(255),   nullable = False)
     t_sx = Column("Sex",                VARCHAR(6),     nullable = False)
     t_pn = Column("Phone Number",       VARCHAR(100),   nullable = False)
-    t_rm = Column("Room Number",        VARCHAR(3),     nullable = False,   foreign_key = True)
+    t_rm = Column("Room Number",        Integer,        nullable = False,   foreign_key = True)
 
     __table_args__ = (
         ForeignKeyConstraint(
@@ -80,8 +89,8 @@ class Tenants(BaseTable):
 class Rooms(BaseTable):
     __tablename__ = "rooms"
 
-    r_id = Column("Room Number",          VARCHAR(3),       nullable = False,   primary_key = True, unique = True)
-    r_pr = Column("Price",                DOUBLE(5, 2),     nullable = False)
+    r_id = Column("Room Number",          Integer,       nullable = False,   primary_key = True, unique = True)
+    r_pr = Column("Price",                DECIMAL(5, 2),     nullable = False)
     r_tx = Column("Tenant Sex",           VARCHAR(6),       nullable = False)
     r_mx = Column("Maximum Capacity",     Integer,          nullable = False)
     r_no = Column("No. of Occupants",     Integer,          nullable = False)
@@ -129,7 +138,7 @@ class Payments(BaseTable):
     __tablename__ = "payments"
 
     p_id = Column("Payment ID",             Integer,        nullable = False,   primary_key = True, unique = True, autoincrement = True)
-    p_am = Column("Payment Amount",         DOUBLE(5, 2),   nullable = False)
+    p_am = Column("Payment Amount",         DECIMAL(5, 2),   nullable = False)
     p_dt = Column("Payment Date",           DATE,           nullable = False)
     p_pn = Column("Payment Status",         VARCHAR(10),    nullable = False)
     p_tn = Column("Paying Tenant",          VARCHAR(9),     nullable = False,   foreign_key = True)
@@ -208,8 +217,17 @@ session = SessionLocal()
 # RETURN DATAFRAMES
 #==================
 
+def tenantsModel():
+    return pd.read_sql_table("tenants", con = engine)
 
+def roomsModel():
+    return pd.read_sql_table("rooms", con = engine)
 
+def paymentssModel():
+    return pd.read_sql_table("payments", con = engine)
+
+def rentalsModel():
+    return pd.read_sql_table("rentals", con = engine)
 
 #==================
 # RETURN DATAFRAMES

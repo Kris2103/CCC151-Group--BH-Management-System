@@ -13,10 +13,23 @@ class Insert(Function):
         
         query = (
             
-            f"INSERT INTO {table} ("   + 
+            f"INSERT INTO {table} ("    + 
             ", ".join(columns)          + 
-            ") WHERE "
+            ") VALUES ("                +
+            ", ".join(self.params)      +
+            ")"
         )
+        
+        # Example: 
+        """
+
+        INSERT INTO Tenant (
+        TenantID, ..., RoomNumber
+        ) VALUES (
+        TenantID, ..., RoomNumber
+        )
+
+        """
 
         self.cursor.execute(query, self.params)
         return self.cursor.fetchall()

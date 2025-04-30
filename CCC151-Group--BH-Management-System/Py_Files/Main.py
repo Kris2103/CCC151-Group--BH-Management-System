@@ -10,6 +10,9 @@ from MainUI import Ui_MainWindow
 from DATABASE.DB import DatabaseConnector  
 from DATABASE.Functions.Select import Select
 
+# =================
+#   MAIN WINDOW
+# =================
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -25,35 +28,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.table_widget = QTableWidget()
         self.switch_tab(0)
-        # self.load_data_from_db("Tenant", self.table_widget)
 
     def switch_tab(self, index):
         self.stackedWidget.setCurrentIndex(index)
 
         table_mapping = {
-            0: ("Tenant", self.TenantTable),
-            1: ("Room", self.RoomTable),
-            2: ("Rents", self.RentTable),
-            3: ("Pays", self.PaymentTable),
-            4: ("EmergencyContact", self.EmergencyTable)
+            0: ("Tenant", self.TenantTable, 0),
+            1: ("Room", self.RoomTable, 1),
+            2: ("Rents", self.RentTable, 2),
+            3: ("Pays", self.PaymentTable, 3),
+            4: ("EmergencyContact", self.EmergencyTable, 4)
         }
-        table_name, widget = table_mapping.get(index)
-        self.load_data_from_db(table_name, widget)
+        table_name, widget, select_type = table_mapping.get(index)
+        self.Populate_Table(table_name, widget, select_type)
 
-    def load_data_from_db(self, table_name, table_widget):
+    def Populate_Table(self, table_name, table_widget, select_type):
         selector = Select()
-        data = selector.SelectQuery(table_name)
+        data, columns = selector.SelectQuery(table_name, select_type)
         
-        # Fetch column names
-        conn = DatabaseConnector.get_connection()
-        cursor = conn.cursor()
-        cursor.execute(f"DESCRIBE {table_name}")
-        columns = [col[0] for col in cursor.fetchall()]
-        
-        # Load into widget
-        self.load_table_to_widget(table_widget, data, columns)
-
-    def load_table_to_widget(self, table_widget, data, columns):
         table_widget.clear()
         table_widget.setRowCount(len(data))
         table_widget.setColumnCount(len(columns))
@@ -91,6 +83,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if dialog.exec() == QDialog.Accepted:
                 pass
 
+# =================
+#   MAIN WINDOW
+# =================
+
+
+# =================
+#   MAIN WINDOW
+# =================
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

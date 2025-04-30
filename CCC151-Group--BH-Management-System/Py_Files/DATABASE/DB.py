@@ -41,8 +41,6 @@ class DatabaseConnector:
                         database=database
                     )
 
-                    print("Connected to MySQL.")
-
                     if DatabaseConnector._connection.is_connected():
                         print("Connected to MySQL.")
                     else:

@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog
-from AddRoom import Ui_Dialog
+from .AddRoom import Ui_Dialog
 
 class AddRoomDialog(QDialog):
     def __init__(self, parent=None):
@@ -13,7 +13,7 @@ class AddRoomDialog(QDialog):
     def handle_add_room(self):
         room_number = self.ui.RoomNumberLineEdit.text()
         room_price = self.ui.PriceLineEdit.text()
-        RtenantSex = self.ui.TenantSexCombobox.currentText()
+        tenant_sex = self.ui.TenantSexCombobox.currentText()
         room_max = self.ui.MaxNoOccupantsLineEdit.text()
         room_occupants = self.ui.NoOfOccupants.currentText()
 

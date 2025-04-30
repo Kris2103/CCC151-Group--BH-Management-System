@@ -78,9 +78,9 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_3.setObjectName("label_3")
-        self.MibbleNameLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.MibbleNameLineEdit.setGeometry(QtCore.QRect(20, 160, 271, 21))
-        self.MibbleNameLineEdit.setObjectName("MibbleNameLineEdit")
+        self.MiddleNameLineEdit = QtWidgets.QLineEdit(self.frame)
+        self.MiddleNameLineEdit.setGeometry(QtCore.QRect(20, 160, 271, 21))
+        self.MiddleNameLineEdit.setObjectName("MiddleNameLineEdit")
         self.label_4 = QtWidgets.QLabel(self.frame)
         self.label_4.setGeometry(QtCore.QRect(20, 140, 91, 16))
         self.label_4.setStyleSheet("background: none;\n"

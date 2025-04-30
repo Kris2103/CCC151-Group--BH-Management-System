@@ -1,10 +1,10 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
-from AddTenant import Ui_Dialog as AddTenantDialog
-from AddRoom import Ui_Dialog as AddRoomDialog
-from AddRent import Ui_Dialog as AddRentDialog
-from AddPayment import Ui_Dialog as AddPaymentDialog
-from AddEmergencyContact import Ui_Dialog as AddEmergencyContactDialog
+from AddTenantDialog import AddTenantDialog
+from AddRoomDialog import AddRoomDialog
+from AddRentDialog import AddRentDialog
+from AddPaymentDialog import AddPaymentDialog
+from AddEmergencyContactDialog import AddEmergencyContactDialog
 from MainUI import Ui_MainWindow
 
 
@@ -14,6 +14,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.AddpushButton.clicked.connect(self.on_Add_clicked)
+        self.tenantPushButton.clicked.connect(lambda: self.switch_tab(0))
+        self.roomPushButton.clicked.connect(lambda: self.switch_tab(1))
+        self.rentPushButton.clicked.connect(lambda: self.switch_tab(2))
+        self.paymentPushButton.clicked.connect(lambda: self.switch_tab(3))
+        self.emergencyPushButton.clicked.connect(lambda: self.switch_tab(4))
+
+    def switch_tab(self, index):
+        self.stackedWidget.setCurrentIndex(index)
 
     def on_Add_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()

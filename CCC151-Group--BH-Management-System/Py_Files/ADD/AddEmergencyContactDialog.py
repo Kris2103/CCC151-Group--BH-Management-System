@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog
-from AddEmergencyContact import Ui_Dialog
+from .AddEmergencyContact import Ui_Dialog
 
 class AddEmergencyContactDialog(QDialog):
     def __init__(self, parent=None):

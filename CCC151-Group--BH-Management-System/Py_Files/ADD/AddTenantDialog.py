@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog
-from AddTenant import Ui_Dialog
+from .AddTenant import Ui_Dialog
 
 class AddTenantDialog(QDialog):
     def __init__(self, parent=None):

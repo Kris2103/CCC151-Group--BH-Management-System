@@ -10,6 +10,7 @@
 #privateCredentials
 **/privateCredentials/
 Py_Files/DATABASE/privateCredentials/
+/privateCredentials/credentials.properties
 
 #virtualEnvironment
 **/.venv/

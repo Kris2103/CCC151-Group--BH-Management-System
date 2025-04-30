@@ -32,4 +32,4 @@ if __name__ == "__main__":
     whereColumn = "TenantID"
     whereValue = "2025-4321"
     
-    updater.updateTableData(table, setParams, whereColumn, wher)
+    updater.updateTableData(table, setParams, whereColumn, whereValue)

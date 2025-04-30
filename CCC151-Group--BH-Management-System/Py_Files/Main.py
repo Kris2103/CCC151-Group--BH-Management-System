@@ -1,10 +1,10 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
-from AddTenantDialog import AddTenantDialog
-from AddRoomDialog import AddRoomDialog
-from AddRentDialog import AddRentDialog
-from AddPaymentDialog import AddPaymentDialog
-from AddEmergencyContactDialog import AddEmergencyContactDialog
+from ADD.AddTenantDialog import AddTenantDialog
+from ADD.AddRoomDialog import AddRoomDialog
+from ADD.AddRentDialog import AddRentDialog
+from ADD.AddPaymentDialog import AddPaymentDialog
+from ADD.AddEmergencyContactDialog import AddEmergencyContactDialog
 from MainUI import Ui_MainWindow
 
 

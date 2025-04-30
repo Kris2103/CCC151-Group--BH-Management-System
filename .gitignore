@@ -15,3 +15,6 @@ privateCredentials/
 
 #workspace
 .idea/
+
+#__pycache__
+__pycache__/

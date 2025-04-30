@@ -141,7 +141,7 @@ dmypy.json
 cython_debug/
 
 # PyCharm
-# .idea/
+.idea/
 
 # JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm, Rider
 .idea/**/workspace.xml

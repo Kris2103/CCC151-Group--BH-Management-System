@@ -9,3 +9,10 @@
 
 #privateCredentials
 privateCredentials/
+
+#virtualEnvironment
+.venv/
+
+#workspace
+.idea/
+

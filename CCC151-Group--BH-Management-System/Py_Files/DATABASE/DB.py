@@ -41,8 +41,12 @@ class DatabaseConnector:
                         database=database
                     )
 
+                    print("Connected to MySQL.")
+
                     if DatabaseConnector._connection.is_connected():
                         print("Connected to MySQL.")
+                    else:
+                        print("Connection object returned, but not connected.")
 
                 except Error as e:
                     print(f"SQL Error: {e}")
@@ -52,7 +56,7 @@ class DatabaseConnector:
 
         return DatabaseConnector._connection
 
-
 # ✅ Call the connection when running directly
 if __name__ == "__main__":
     conn = DatabaseConnector.get_connection()
+    cursor = conn.cursor()

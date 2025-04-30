@@ -12,7 +12,10 @@ class DatabaseConnector:
     @staticmethod
     def get_connection():
 
-        if DatabaseConnector._connection is None:
+        if (DatabaseConnector._connection is None
+            or not DatabaseConnector._connection.is_connected() #reconnect check
+            ):
+
             config = configparser.ConfigParser()
 
             # Ensure the path is relative to the script file, not the working directory

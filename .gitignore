@@ -9,6 +9,8 @@
 
 #privateCredentials
 **/privateCredentials/
+Py_Files/DATABASE/privateCredentials/
+/privateCredentials/credentials.properties
 
 #virtualEnvironment
 **/.venv/
@@ -31,3 +33,5 @@ venv/
 
 =======
 *.pyc
+Py_Files/DATABASE/privateCredentials/credentials.properties
+CCC151-Group--BH-Management-System/Py_Files/DATABASE/privateCredentials/credentials.properties

@@ -33,3 +33,4 @@ venv/
 =======
 *.pyc
 Py_Files/DATABASE/privateCredentials/credentials.properties
+CCC151-Group--BH-Management-System/Py_Files/DATABASE/privateCredentials/credentials.properties

@@ -6,6 +6,9 @@ import os
 class DatabaseConnector:
     _connection = None
 
+#CREATE privateCredentials FOLDER under DATABASE
+    #CREATE credentials.properties FILE under privateCredentials
+
     @staticmethod
     def get_connection():
 

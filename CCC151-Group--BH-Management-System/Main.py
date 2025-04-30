@@ -1,18 +1,76 @@
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
 import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
+from AddTenantDialog import AddTenantDialog
+from AddRoomDialog import AddRoomDialog
+from AddRentDialog import AddRentDialog
+from AddPaymentDialog import AddPaymentDialog
+from AddEmergencyContactDialog import AddEmergencyContactDialog
+from MainUI import Ui_MainWindow
 
-def window():
+
+class MainWindow(QMainWindow, Ui_MainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+        self.AddpushButton.clicked.connect(self.on_Add_clicked)
+        self.tenantPushButton.clicked.connect(lambda: self.switch_tab(0))
+        self.roomPushButton.clicked.connect(lambda: self.switch_tab(1))
+        self.rentPushButton.clicked.connect(lambda: self.switch_tab(2))
+        self.paymentPushButton.clicked.connect(lambda: self.switch_tab(3))
+        self.emergencyPushButton.clicked.connect(lambda: self.switch_tab(4))
+
+    def switch_tab(self, index):
+        self.stackedWidget.setCurrentIndex(index)
+
+    def on_Add_clicked(self):
+        current_widget_index = self.stackedWidget.currentIndex()
+        print("Current stacked widget index:", current_widget_index)  # Debugging line to check the current index
+
+        if current_widget_index == 0:  # Tenant tab
+            print("Opening Tenant Dialog")
+            dialog = AddTenantDialog(self)
+            if dialog.exec() == QDialog.Accepted:
+                print("Tenant dialog accepted")
+                # collect fields from the dialog
+                # call your insertTenantToDatabase()
+                pass
+
+        elif current_widget_index == 1:  # Room tab
+            print("Opening Room Dialog")
+            dialog = AddRoomDialog(self)
+            if dialog.exec() == QDialog.Accepted:
+                print("Room dialog accepted")
+                # collect fields and insert
+                pass
+
+        elif current_widget_index == 2:  # Rent tab
+            print("Opening Rent Dialog")
+            dialog = AddRentDialog(self)
+            if dialog.exec() == QDialog.Accepted:
+                print("Rent dialog accepted")
+                # collect fields and insert
+                pass
+
+        elif current_widget_index == 3:  # Payment tab
+            print("Opening Payment Dialog")
+            dialog = AddPaymentDialog(self)
+            if dialog.exec() == QDialog.Accepted:
+                print("Payment dialog accepted")
+                # collect fields and insert
+                pass
+
+        elif current_widget_index == 4:  # Emergency tab
+            print("Opening Emergency Dialog")
+            dialog = AddEmergencyContactDialog(self)
+            if dialog.exec() == QDialog.Accepted:
+                print("Emergency dialog accepted")
+                # collect fields and insert
+                pass
+
+
+if __name__ == "__main__":
     app = QApplication(sys.argv)
-    win = QMainWindow()
-    win.setGeometry(200, 200, 300, 300)
-    win.setWindowTitle("Hello")
-
-    label = QtWidgets.QLabel(win)
-    label.setText("my first label")
-    label.move(50, 50)
-
-    win.show()
+    window = MainWindow()
+    window.show()
     sys.exit(app.exec_())
-
-window()

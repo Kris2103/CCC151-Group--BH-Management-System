@@ -13,3 +13,6 @@ privateCredentials/
 #virtualEnvironment
 .venv/
 
+#workspace
+.idea/
+

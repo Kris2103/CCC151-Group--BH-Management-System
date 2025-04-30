@@ -18,3 +18,14 @@
 
 #__pycache__
 **/__pycache__/
+
+# Ignore generated C API files
+*.h
+*.c
+
+# Ignore specific Python library files
+greenlet/
+
+# Ignore virtual environments
+venv/
+

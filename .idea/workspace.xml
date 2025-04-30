@@ -5,7 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="293619d8-c6e3-458b-8808-e966cfff0ec4" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/CCC151-Group--BH-Management-System.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CCC151-Group--BH-Management-System/Py_Files/DATABASE/Functions/Function.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CCC151-Group--BH-Management-System/Py_Files/DATABASE/Functions/Insert.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CCC151-Group--BH-Management-System/Py_Files/DATABASE/Functions/Select.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CCC151-Group--BH-Management-System/SQL_Files/TestData.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,6 +21,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="operator-fallerfare" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectColorInfo">{
@@ -27,26 +40,25 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Python.AddRentDialog.executor": "Run",
     "Python.Main.executor": "Run",
-    "Python.MainUI.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "operator-eury",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "configurable.group.project",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PY-243.26053.29" />
-        <option value="bundled-python-sdk-b1dbf8ef85a6-4df51de95216-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.26053.29" />
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-PY-243.23654.177" />
+        <option value="bundled-python-sdk-91d3a02ef49d-43b77aa2d136-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.23654.177" />
       </set>
     </attachedChunks>
   </component>
@@ -61,6 +73,8 @@
       <workItem from="1745915183628" duration="661000" />
       <workItem from="1745931896752" duration="39000" />
       <workItem from="1745931940775" duration="4470000" />
+      <workItem from="1745990108457" duration="879000" />
+      <workItem from="1745991163885" duration="1133000" />
     </task>
     <servers />
   </component>
@@ -68,8 +82,6 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/CCC151_Group__BH_Management_System$Main.coverage" NAME="Main Coverage Results" MODIFIED="1745984592553" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/CCC151-Group--BH-Management-System" />
-    <SUITE FILE_PATH="coverage/CCC151_Group__BH_Management_System$AddRentDialog.coverage" NAME="AddRentDialog Coverage Results" MODIFIED="1745984561811" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/CCC151-Group--BH-Management-System" />
-    <SUITE FILE_PATH="coverage/CCC151_Group__BH_Management_System$MainUI.coverage" NAME="MainUI Coverage Results" MODIFIED="1745984490105" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/CCC151-Group--BH-Management-System" />
+    <SUITE FILE_PATH="coverage/CCC151_Group__BH_Management_System$Main.coverage" NAME="Main Coverage Results" MODIFIED="1745931941498" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/CCC151-Group--BH-Management-System" />
   </component>
 </project>

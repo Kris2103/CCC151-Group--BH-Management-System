@@ -9,3 +9,7 @@
 
 #privateCredentials
 privateCredentials/
+
+#virtualEnvironment
+.venv/
+

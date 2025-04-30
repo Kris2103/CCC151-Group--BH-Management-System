@@ -9,6 +9,7 @@
 
 #privateCredentials
 **/privateCredentials/
+Py_Files/DATABASE/privateCredentials/
 
 #virtualEnvironment
 **/.venv/
@@ -18,4 +19,17 @@
 
 #__pycache__
 **/__pycache__/
+
+# Ignore generated C API files
+*.h
+*.c
+
+# Ignore specific Python library files
+greenlet/
+
+# Ignore virtual environments
+venv/
+
+=======
 *.pyc
+Py_Files/DATABASE/privateCredentials/credentials.properties

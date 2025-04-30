@@ -16,6 +16,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
+        #Sorting enabled for all tables
+        self.TenantTable.setSortingEnabled(True)
+        self.RoomTable.setSortingEnabled(True)
+        self.RentTable.setSortingEnabled(True)
+        self.PaymentTable.setSortingEnabled(True)
+        self.EmergencyTable.setSortingEnabled(True)
+
         self.button_base_style = """
         background-color: rgb(250, 255, 242); /* Inactive background */
         border: 1px solid #660000;
@@ -89,6 +96,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_table_to_widget(table_widget, data, columns)
 
     def load_table_to_widget(self, table_widget, data, columns):
+        table_widget.setSortingEnabled(False)  # Disable sorting while updating
         table_widget.clear()
         table_widget.setRowCount(len(data))
         table_widget.setColumnCount(len(columns))
@@ -98,33 +106,35 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             for col_idx, cell in enumerate(row_data):
                 table_widget.setItem(row_idx, col_idx, QTableWidgetItem(str(cell)))
 
+        table_widget.setSortingEnabled(True)
+
     def on_Add_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()
 
         if current_widget_index == 0:
             dialog = AddTenantDialog(self)
             if dialog.exec() == QDialog.Accepted:
-                pass  # Insert logic
+                self.load_tenant_data()
 
         elif current_widget_index == 1:
             dialog = AddRoomDialog(self)
             if dialog.exec() == QDialog.Accepted:
-                pass
+                self.load_room_data()
 
         elif current_widget_index == 2:
             dialog = AddRentDialog(self)
             if dialog.exec() == QDialog.Accepted:
-                pass
+                self.load_rent_data()
 
         elif current_widget_index == 3:
             dialog = AddPaymentDialog(self)
             if dialog.exec() == QDialog.Accepted:
-                pass
+                self.load_payment_data()
 
         elif current_widget_index == 4:
             dialog = AddEmergencyContactDialog(self)
             if dialog.exec() == QDialog.Accepted:
-                pass
+                self.load_emergency_data()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

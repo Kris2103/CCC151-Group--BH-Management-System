@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog
-from AddRent import Ui_Dialog
+from .AddRent import Ui_Dialog
 
 class AddRentDialog(QDialog):
     def __init__(self, parent=None):

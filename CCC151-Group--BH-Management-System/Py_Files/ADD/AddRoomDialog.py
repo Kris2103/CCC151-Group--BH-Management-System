@@ -19,7 +19,7 @@ class AddRoomDialog(QDialog):
 
         print(f"Room Number: {room_number}")
         print(f"Room Price: {room_price}")
-        print(f"Tenant Sex:{ RtenantSex}")
+        print(f"Tenant Sex:{tenant_sex}")
         print(f"Max Occupants: {room_max}")
         print(f"Occupants: {room_occupants}")
 

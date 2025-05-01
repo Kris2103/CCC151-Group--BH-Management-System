@@ -6,6 +6,7 @@ class Select(Function):
     def __init__(self):
         super().__init__()
 
+
     def SelectQuery(self, table, select_type, tag = None, key = None):
         
         self.basequery          = f"SELECT {table}.*" 
@@ -13,7 +14,8 @@ class Select(Function):
         self.search_query       = ""
         self.conditions         = ""
 
-        self.columns = self.get_columns(table)
+        self.columns            = self.get_columns(table)
+        self.row_id             = self.columns[0]
 
         # Selecting with a tag(column) and key(search key)
         if tag and key:
@@ -31,14 +33,14 @@ class Select(Function):
         """
 
         SELECT * FROM Tenant 
-        WHERE   TenantID    = %2000-0001%
-        OR      Email       = %2000-0001%
+        WHERE   TenantID    LIKE %2000-0001%
+        OR      Email       LIKE %2000-0001%
         ...
 
         """
         self.Conditions(select_type)
 
-        self.query = self.basequery + self.table + self.search_query + self.conditions
+        self.query = self.basequery + self.table + self.search_query + self.conditions 
 
         print(self.query)
 
@@ -50,7 +52,6 @@ class Select(Function):
     def Conditions(self, select_type):
         match select_type:
             case 0:
-                print("case 0")
                 self.basequery          += ", EmergencyContact.PhoneNumber AS EmergencyContact"
                 self.conditions         += "LEFT JOIN EmergencyContact ON Tenant.TenantID = EmergencyContact.EMTenantID"
                 self.columns.append("EmergencyContact")

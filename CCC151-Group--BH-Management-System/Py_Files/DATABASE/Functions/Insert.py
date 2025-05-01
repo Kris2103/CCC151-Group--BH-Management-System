@@ -1,4 +1,5 @@
 from DATABASE.DB import DatabaseConnector
+import mysql.connector
 from .Function import Function
 
 class Insert(Function):

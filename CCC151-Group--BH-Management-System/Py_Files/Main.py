@@ -21,6 +21,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
+        conn = DatabaseConnector.get_connection()
+        if conn: print("Connection successful")
 
         #Sorting enabled for all tables
         self.TenantTable.setSortingEnabled(True)
@@ -50,6 +52,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.rentPushButton.clicked.connect(lambda: self.switch_tab(2))
         self.paymentPushButton.clicked.connect(lambda: self.switch_tab(3))
         self.emergencyPushButton.clicked.connect(lambda: self.switch_tab(4))
+
+        self.switch_tab(0)
 
     def switch_tab(self, index):
         self.stackedWidget.setCurrentIndex(index)
@@ -171,35 +175,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Define what happens when the button is clicked
     def on_button_click(self):
         print("Button clicked!")
-
-    def on_Add_clicked(self):
-        current_widget_index = self.stackedWidget.currentIndex()
-
-        if current_widget_index == 0:
-            dialog = AddTenantDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_tenant_data()
-
-        elif current_widget_index == 1:
-            dialog = AddRoomDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_room_data()
-
-        elif current_widget_index == 2:
-            dialog = AddRentDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_rent_data()
-
-        elif current_widget_index == 3:
-            dialog = AddPaymentDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_payment_data()
-
-        elif current_widget_index == 4:
-            dialog = AddEmergencyContactDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_emergency_data()
-
 # =================
 #   MAIN WINDOW
 # =================

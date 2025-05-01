@@ -9,14 +9,24 @@ from DATABASE.DB import DatabaseConnector
 
 class update:
     
+    _instance = None
+    
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super (update, cls).__new__(cls)
+            
+            return cls._instance
+    
     def __init__(self):
-        self.connection = DatabaseConnector.get_connection()
-        self.resultSetPointer = self.connection.cursor()
+        if not hasattr(self, 'initialized'):
+            self.connection = DatabaseConnector.get_connection()
+            self.resultSetPointer = self.connection.cursor()
+            self.initialized = True
         
-    def updateTableData(self, table, setParams: dict, whereColumn: str, whereValue):
-        setClause = ", ".join([f"{key} = %s" for key in setParams.keys()])
+    def updateTableData(self, table, setParameters: dict, whereColumn: str, whereValue):
+        setClause = ", ".join([f"{key} = %s" for key in setParameters.keys()])
         QUERY = f"UPDATE {table} SET {setClause} WHERE {whereColumn} = %s"
-        values = list(setParams.values()) + [whereValue]
+        values = list(setParameters.values()) + [whereValue]
         
         try:
             self.resultSetPointer.execute(QUERY, values)
@@ -39,8 +49,8 @@ class update:
 # if __name__ == "__main__":
 #     updater = update()
 #     table = "Tenant"
-#     setParams = {"MiddleName" : "Lee"} #originally Lee
+#     setParameters = {"MiddleName" : "NEW MIDDLE NAME"} #originally Lee
 #     whereColumn = "TenantID"
 #     whereValue = "2025-4321"
     
-#     updater.updateTableData(table, setParams, whereColumn, whereValue)
+#     updater.updateTableData(table, setParameters, whereColumn, whereValue)

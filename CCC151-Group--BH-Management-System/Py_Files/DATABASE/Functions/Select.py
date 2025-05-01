@@ -67,7 +67,9 @@ class Select(Function):
             case _:
                 pass
 
+if __name__ == "__main__":
+    selector = Select()
 
-        
-
+    selector.SelectQuery("Tenant", 0)
+    
 

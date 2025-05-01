@@ -9,7 +9,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import SpecialWidgetsUI
 
 
 class Ui_MainWindow(object):
@@ -93,72 +92,49 @@ class Ui_MainWindow(object):
 "padding: 6px 12px;\n"
 "")
         self.DeletepushButton.setObjectName("DeletepushButton")
-
-# =========================
-#     TABLE PAGES
-# ==========
-
-        # Initialize table pages
         self.stackedWidget = QtWidgets.QStackedWidget(self.frame)
         self.stackedWidget.setGeometry(QtCore.QRect(110, 60, 1381, 661))
         self.stackedWidget.setObjectName("stackedWidget")
-
-        # Tenant Table page
         self.page_1 = QtWidgets.QWidget()
         self.page_1.setObjectName("page_1")
-        self.TenantTable = SpecialWidgetsUI.PaginationTable(self.page_1)
+        self.TenantTable = QtWidgets.QTableWidget(self.page_1)
         self.TenantTable.setGeometry(QtCore.QRect(10, 10, 1361, 641))
         self.TenantTable.setObjectName("TenantTable")
         self.TenantTable.setColumnCount(0)
         self.TenantTable.setRowCount(0)
-        # self.table_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        # self.table_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.stackedWidget.addWidget(self.page_1)
-
-        # Room Table page
         self.page_2 = QtWidgets.QWidget()
         self.page_2.setObjectName("page_2")
-        self.RoomTable = SpecialWidgetsUI.PaginationTable(self.page_2)
+        self.RoomTable = QtWidgets.QTableWidget(self.page_2)
         self.RoomTable.setGeometry(QtCore.QRect(10, 10, 1361, 641))
         self.RoomTable.setObjectName("RoomTable")
         self.RoomTable.setColumnCount(0)
         self.RoomTable.setRowCount(0)
         self.stackedWidget.addWidget(self.page_2)
-
-        # Rent Table page
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setObjectName("page_3")
-        self.RentTable = SpecialWidgetsUI.PaginationTable(self.page_3)
+        self.RentTable = QtWidgets.QTableWidget(self.page_3)
         self.RentTable.setGeometry(QtCore.QRect(10, 10, 1361, 641))
         self.RentTable.setObjectName("RentTable")
         self.RentTable.setColumnCount(0)
         self.RentTable.setRowCount(0)
         self.stackedWidget.addWidget(self.page_3)
-
-        # Payment Table page
         self.page_4 = QtWidgets.QWidget()
         self.page_4.setObjectName("page_4")
-        self.PaymentTable = SpecialWidgetsUI.PaginationTable(self.page_4)
+        self.PaymentTable = QtWidgets.QTableWidget(self.page_4)
         self.PaymentTable.setGeometry(QtCore.QRect(10, 10, 1361, 641))
         self.PaymentTable.setObjectName("PaymentTable")
         self.PaymentTable.setColumnCount(0)
         self.PaymentTable.setRowCount(0)
         self.stackedWidget.addWidget(self.page_4)
-
-        # Emergency Contact Table page
         self.page_5 = QtWidgets.QWidget()
         self.page_5.setObjectName("page_5")
-        self.EmergencyTable = SpecialWidgetsUI.PaginationTable(self.page_5)
+        self.EmergencyTable = QtWidgets.QTableWidget(self.page_5)
         self.EmergencyTable.setGeometry(QtCore.QRect(10, 10, 1361, 641))
         self.EmergencyTable.setObjectName("EmergencyTable")
         self.EmergencyTable.setColumnCount(0)
         self.EmergencyTable.setRowCount(0)
         self.stackedWidget.addWidget(self.page_5)
-
-# ===========
-#     TABLE PAGES
-# =========================
-
         self.tenantPushButton = QtWidgets.QPushButton(self.frame)
         self.tenantPushButton.setGeometry(QtCore.QRect(10, 60, 91, 41))
         self.tenantPushButton.setStyleSheet("background-color: rgb(250, 255, 242); /* Soft light green background */\n"

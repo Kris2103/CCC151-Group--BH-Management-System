@@ -1,4 +1,7 @@
 import mysql.connector
+<<<<<<< HEAD
+
+=======
 from mysql.connector import Error
 import configparser
 import os
@@ -89,3 +92,4 @@ class DatabaseConnector:
 if __name__ == "__main__":
     conn = DatabaseConnector.get_connection()
     cursor = conn.cursor()
+>>>>>>> dd22bb28b60a82b20a30c79905d568268d294b52

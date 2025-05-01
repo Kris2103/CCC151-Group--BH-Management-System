@@ -1,7 +1,12 @@
+<<<<<<< HEAD
+from PyQt5.QtWidgets import QDialog
+from .AddTenant import Ui_Dialog
+=======
 from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
 from .AddTenant import Ui_Dialog
 import mysql.connector
 import re
+>>>>>>> dd22bb28b60a82b20a30c79905d568268d294b52
 
 class AddTenantDialog(QDialog):
     def __init__(self, parent=None):
@@ -12,6 +17,8 @@ class AddTenantDialog(QDialog):
         self.ui.CancelpushButton.clicked.connect(self.reject)
         self.ui.AddpushButton.clicked.connect(self.handle_add_tenant)
 
+<<<<<<< HEAD
+=======
         self.populate_sex_combobox()
         self.populate_room_combobox()
 
@@ -49,6 +56,7 @@ class AddTenantDialog(QDialog):
         except mysql.connector.Error as err:
             QMessageBox.critical(self, "Database Error", f"Failed to load rooms:\n{err}")
         
+>>>>>>> dd22bb28b60a82b20a30c79905d568268d294b52
     def handle_add_tenant(self):
         tenant_fname = self.ui.FirstNameLineEdit.text()
         tenant_mname = self.ui.MiddleNameLineEdit.text()
@@ -56,6 +64,21 @@ class AddTenantDialog(QDialog):
         tenant_email = self.ui.EmailLineEdit.text()
         tenant_phone = self.ui.PhoneNumberLineEdit.text()
         tenant_ID = self.ui.TenantIDLineEdit.text()
+<<<<<<< HEAD
+        tenant_room = self.ui.RoomNoComboBox.currenttext()
+        tenant_sex = self.ui.SexComboBox.currentText()
+
+        print(f"First Name: {tenant_fname}")
+        print(f"Middle Name: {tenant_mname}")
+        print(f"Last Name: {tenant_lname}")
+        print(f"Email: {tenant_email}")
+        print(f"Phone: {tenant_phone}")
+        print(f"Tenant ID:{tenant_fname}")
+        print(f"Room No.:{tenant_room}")
+        print(f"Sex: {tenant_sex}")
+
+        self.accept()
+=======
         tenant_room = self.ui.RoomNoComboBox.currentText()
         tenant_sex = self.ui.SexComboBox.currentText()
 
@@ -108,3 +131,4 @@ class AddTenantDialog(QDialog):
 
         except mysql.connector.Error as err:
             QMessageBox.critical(self, "Database Error", f"Failed to add tenant:\n{err}")
+>>>>>>> dd22bb28b60a82b20a30c79905d568268d294b52

@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QDialog
 from ..EditTenant import Ui_Dialog
 from PyQt5.QtCore import Qt
+from DATABASE.Functions.update import update
 
 class editTenantDialog(QDialog):
     def __init__(self, parent=None, flags=Qt.WindowFlags()):
@@ -24,6 +25,17 @@ class editTenantDialog(QDialog):
             tenantId = self.ui.TenantIDLineEdit.text()
 
             print(f"Updating tenant with ID: {tenantId}, Name: {firstName} {middleName} {lastName}")
-
             
-
+            updater = update()
+            
+            setParameters = {
+                "FirstName" : firstName,
+                "MiddleName" : middleName,
+                "LastName" : lastName,
+                "Email" : email,
+                "PhoneNumber" : phoneNumber,
+                "RoomNumber" : roomNo,
+                "Sex" : sex
+            }
+            
+            updater.updateTableData("Tenants", setParameters, "TenantID", tenantId)

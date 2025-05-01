@@ -99,7 +99,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # collect fields and insert
                 pass
 
-        self.table_widget = QTableWidget()
         self.switch_tab(0)
 
     def switch_tab(self, index):
@@ -199,14 +198,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif current_widget_index == 4:
             dialog = AddEmergencyContactDialog(self)
             if dialog.exec() == QDialog.Accepted:
-                pass
+                self.load_emergency_data()
 
 # =================
 #   MAIN WINDOW
 # =================
 
-=======
-                self.load_emergency_data()
+# CHANGE CHANGE TEST 
 
 # =================
 #   MAIN WINDOW

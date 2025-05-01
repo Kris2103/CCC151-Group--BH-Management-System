@@ -49,9 +49,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.EditpushButton.clicked.connect(self.onEditClicked)
 
-        self.table_widget = QTableWidget()
         self.switch_tab(0)
-        # self.load_data_from_db("Tenant", self.table_widget)
+
 
     def switch_tab(self, index):
         self.stackedWidget.setCurrentIndex(index)
@@ -92,7 +91,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Fetch ALL data with query, store for faster loading in page change...
         selector = Select()
         if not hasattr(self, "full_data"):
-            self.full_data, self.columns = selector.SelectQuery(table_name, select_type)
+            self.full_data, self.columns = selector.SelectQuery(table_name, select_type, spec_col=["PhoneNumber"])
         # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
 
             # Configure pages information according to taste

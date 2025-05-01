@@ -2,15 +2,17 @@ from DATABASE.DB import DatabaseConnector
 import mysql.connector
 from .Function import Function
 
+
 class Select(Function):
     
     def __init__(self):
         super().__init__()
 
 
-    def SelectQuery(self, table, select_type, tag = None, key = None):
+    def SelectQuery(self, table, select_type, spec_col = [], tag = None, key = None):
         
-        self.basequery          = f"SELECT {table}.*" 
+        self.basequery          = f"SELECT {table}."
+        self.columnquery        = f"*" if not spec_col else (f", {table}.".join(spec_col))
         self.table              = f" FROM {table} "
         self.search_query       = ""
         self.conditions         = ""
@@ -41,7 +43,7 @@ class Select(Function):
         """
         self.Conditions(select_type)
 
-        self.query = self.basequery + self.table + self.search_query + self.conditions 
+        self.query = self.basequery + self.columnquery + self.table + self.search_query + self.conditions 
 
         print(self.query)
 
@@ -53,7 +55,7 @@ class Select(Function):
     def Conditions(self, select_type):
         match select_type:
             case 0:
-                self.basequery          += ", EmergencyContact.PhoneNumber AS EmergencyContact"
+                self.columnquery        += ", EmergencyContact.PhoneNumber AS EmergencyContact"
                 self.conditions         += "LEFT JOIN EmergencyContact ON Tenant.TenantID = EmergencyContact.EMTenantID"
                 self.columns.append("EmergencyContact")
             case 1:
@@ -66,10 +68,3 @@ class Select(Function):
                 pass
             case _:
                 pass
-
-if __name__ == "__main__":
-    selector = Select()
-
-    selector.SelectQuery("Tenant", 0)
-    
-

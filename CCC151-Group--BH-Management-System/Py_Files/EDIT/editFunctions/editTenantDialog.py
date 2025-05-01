@@ -4,7 +4,7 @@ from ..EditTenant import Ui_Dialog
 from PyQt5.QtCore import Qt
 from DATABASE.Functions.update import update
 from DATABASE.Functions.Select import Select
-from editEmergencyContactDialog import *
+from .editEmergencyContactDialog import editEmergencyContactDialog
 
 class editTenantDialog(QDialog):
     
@@ -22,6 +22,7 @@ class editTenantDialog(QDialog):
 
         self.ui.UpdatepushButton.clicked.connect(self.updateTenant)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
+        self.ui.EditECpushButton.clicked.connect(self.openEditEmergencyContact)
 
     def updateTenant(self):
 
@@ -83,7 +84,7 @@ class editTenantDialog(QDialog):
         updater.updateTableData("Tenants", setParameters, "TenantID", tenantId)
         
     def closeWindow(self):
-        print("Closing the Dialog")
+        print("Closing the Edit Tenant Dialog")
         self.reject() 
         
     def fillSexComboBox(self):
@@ -92,6 +93,12 @@ class editTenantDialog(QDialog):
         for data, label, in self.sexOptions.items():
             self.ui.SexComboBox.addItem(label, data)
             
+    def openEditEmergencyContact(self):
+        emergencyContactDialog = editEmergencyContactDialog(self)
+        result = emergencyContactDialog.exec_()
+        if result == QDialog.accepted:
+            print("Now editing tenant's emergency contact")
+                    
     # def fillRoomNoComboBox(self):
     #     selecter = Select()
         

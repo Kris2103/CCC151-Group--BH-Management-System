@@ -12,6 +12,9 @@ class editEmergencyContactDialog(QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         
+        self.ui.UpdatepushButton.clicked.connect(self.updateEmergencyContact)
+        self.ui.CancelpushButton.clicked.connect(self.closeWindow)
+        
     def updateEmergencyContact(self):
         firstName = self.ui.FirstNameLineEdit.text()
         middleName = self.ui.MibbleNameLineEdit.text()
@@ -45,4 +48,21 @@ class editEmergencyContactDialog(QDialog):
             QMessageBox.critical(self, "Validation Error", errorMessage, QMessageBox.Ok)
             
             return
-            
+        print(f"Updating emergency contact with ID: {tenantEmId}, Name {firstName} {middleName} {lastName}")
+        
+        updater = update()
+        
+        setParameters = {
+            "FirstName" : firstName,
+            "MiddleName" : middleName,
+            "LastName" : lastName,
+            "Relationship" : relationship,
+            "PhoneNumber" : phoneNumber,
+            "EMTenantID" : contactId
+        }
+        
+        updater.updateTableData("EmergencyContact", setParameters, contactId)
+        
+    def closeWindow(self):
+        print("Closing the Edit Emergency Contact Dialog")
+        self.reject()            

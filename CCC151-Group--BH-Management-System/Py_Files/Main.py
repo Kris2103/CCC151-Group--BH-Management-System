@@ -17,8 +17,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
-<<<<<<< HEAD
-=======
         #Sorting enabled for all tables
         self.TenantTable.setSortingEnabled(True)
         self.RoomTable.setSortingEnabled(True)
@@ -98,7 +96,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # collect fields and insert
                 pass
 
-<<<<<<< HEAD
     def switch_tab(self, index):
         self.stackedWidget.setCurrentIndex(index)
 
@@ -147,7 +144,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # collect fields and insert
                 pass
 
-=======
         self.table_widget = QTableWidget()
         self.switch_tab(0)
         # self.load_data_from_db("Tenant", self.table_widget)

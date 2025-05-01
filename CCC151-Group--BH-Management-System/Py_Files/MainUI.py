@@ -111,8 +111,6 @@ class Ui_MainWindow(object):
         self.TenantTable.setObjectName("TenantTable")
         self.TenantTable.setColumnCount(0)
         self.TenantTable.setRowCount(0)
-        # self.table_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        # self.table_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.stackedWidget.addWidget(self.page_1)
 
         # Room Table page

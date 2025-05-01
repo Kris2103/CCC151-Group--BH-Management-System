@@ -91,7 +91,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Fetch ALL data with query, store for faster loading in page change...
         selector = Select()
         if not hasattr(self, "full_data"):
-            self.full_data, self.columns = selector.SelectQuery(table_name, select_type, spec_col=["PhoneNumber"])
+            self.full_data, self.columns = selector.SelectQuery(table_name, select_type)
         # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
 
             # Configure pages information according to taste

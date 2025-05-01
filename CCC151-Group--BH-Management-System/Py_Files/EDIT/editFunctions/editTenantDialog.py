@@ -4,7 +4,7 @@ from ..EditTenant import Ui_Dialog
 from PyQt5.QtCore import Qt
 from DATABASE.Functions.update import update
 from DATABASE.Functions.Select import Select
-from DATABASE.DB import DatabaseConnector
+from editEmergencyContactDialog import *
 
 class editTenantDialog(QDialog):
     

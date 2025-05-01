@@ -44,4 +44,4 @@ class editTenantDialog(QDialog):
         
     def closeWindow(self):
         print("Closing the Dialog")
-        self.reject()
+        self.reject() 

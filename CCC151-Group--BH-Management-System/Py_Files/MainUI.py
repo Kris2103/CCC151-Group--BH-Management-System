@@ -95,6 +95,29 @@ class Ui_MainWindow(object):
         self.DeletepushButton.setObjectName("DeletepushButton")
 
 # =========================
+#    PAGINATION BUTTONS
+# ==========
+
+        # Initialize and  a frame to hold the pagination buttons
+        self.paginationFrame = QtWidgets.QFrame(self.frame)
+        self.paginationFrame.setGeometry(QtCore.QRect(360, 727, 800, 31)) # in between delete and add
+        self.paginationFrame.setStyleSheet("background-color: rgb(250, 255, 242);")
+        self.paginationFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.paginationFrame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.paginationFrame.setObjectName("paginationFrame")
+
+        # Grid to even space and hold buttons
+        self.paginationButtonsGrid = QtWidgets.QGridLayout(self.paginationFrame)
+        self.paginationButtonsGrid.setContentsMargins(100, 0, 100, 0)  
+        self.paginationButtonsGrid.setHorizontalSpacing(2) 
+        self.paginationButtonsGrid.setAlignment(QtCore.Qt.AlignCenter)
+        self.paginationFrame.setLayout(self.paginationButtonsGrid)
+
+# ===========
+#    PAGINATION BUTTONS
+# =========================
+
+# =========================
 #     TABLE PAGES
 # ==========
 

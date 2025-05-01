@@ -9,6 +9,7 @@ from ADD.AddEmergencyContactDialog import AddEmergencyContactDialog
 from MainUI import Ui_MainWindow
 from DATABASE.DB import DatabaseConnector  
 from DATABASE.Functions.Select import Select
+from EDIT.editFunctions.editTenantDialog import editTenantDialog
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -44,6 +45,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.rentPushButton.clicked.connect(lambda: self.switch_tab(2))
         self.paymentPushButton.clicked.connect(lambda: self.switch_tab(3))
         self.emergencyPushButton.clicked.connect(lambda: self.switch_tab(4))
+        
+        self.EditpushButton.clicked.connect(self.onEditClicked)
 
         self.table_widget = QTableWidget()
         self.switch_tab(0)
@@ -136,6 +139,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if dialog.exec() == QDialog.Accepted:
                 self.load_emergency_data()
 
+    def onEditClicked(self):
+        dialog = editTenantDialog(self)
+        if dialog.exec() == QDialog.Accepted:
+            self.load_emergency_data()
+        
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

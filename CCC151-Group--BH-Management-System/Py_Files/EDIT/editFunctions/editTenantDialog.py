@@ -1,15 +1,24 @@
 from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QMessageBox
 from ..EditTenant import Ui_Dialog
 from PyQt5.QtCore import Qt
 from DATABASE.Functions.update import update
+from DATABASE.Functions.Select import Select
+from DATABASE.DB import DatabaseConnector
 
 class editTenantDialog(QDialog):
     
+    sexOptions = {
+    "Male" : "Male",
+    "Female" : "Female"
+    }
+            
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+        self.fillSexComboBox()
 
         self.ui.UpdatepushButton.clicked.connect(self.updateTenant)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
@@ -17,14 +26,45 @@ class editTenantDialog(QDialog):
     def updateTenant(self):
 
         firstName = self.ui.FirstNameLineEdit.text()
-        middleName = self.ui.MiddleNameLineEdit.text()
+        middleName = self.ui.MibbleNameLineEdit.text()
         lastName = self.ui.LastNameLineEdit.text()
         email = self.ui.EmailLineEdit.text()
         phoneNumber = self.ui.PhoneNumberLineEdit.text()
-        roomNo = self.ui.RoomNoComboBox.text()
-        sex = self.ui.SexComboBox.text()
+        roomNo = self.ui.RoomNoComboBox.currentData()
+        if not roomNo:  
+            roomNo = None 
+        sex = self.ui.SexComboBox.currentData()
+        if not sex:
+            sex = None
 
         tenantId = self.ui.TenantIDLineEdit.text()
+        
+        errors = []
+
+        if not firstName:
+            errors.append("First name is required.")
+        if not middleName:
+            errors.append("Middle name is required.")
+        if not lastName:
+            errors.append("Last name is required.")
+        if not email:
+            errors.append("Email is required.")
+        if not phoneNumber:
+            errors.append("Phone number is required.")
+        if not roomNo:
+            errors.append("Room number is required.")
+        if not sex:
+            errors.append("Sex is required.")
+        if not tenantId:
+            errors.append("Tenant ID is required.")
+
+        if errors:
+            errorMessage = "\n".join(errors)
+            print("Validation Errors:\n" + errorMessage)
+            QMessageBox.critical(self, "Validation Error", errorMessage, QMessageBox.Ok)
+        
+            return  # Skip further execution
+
 
         print(f"Updating tenant with ID: {tenantId}, Name: {firstName} {middleName} {lastName}")
         
@@ -45,3 +85,14 @@ class editTenantDialog(QDialog):
     def closeWindow(self):
         print("Closing the Dialog")
         self.reject() 
+        
+    def fillSexComboBox(self):
+        self.ui.SexComboBox.clear()
+        
+        for data, label, in self.sexOptions.items():
+            self.ui.SexComboBox.addItem(label, data)
+            
+    # def fillRoomNoComboBox(self):
+    #     selecter = Select()
+        
+    #     selecter.SelectQuery("Room", tag="Room Number")

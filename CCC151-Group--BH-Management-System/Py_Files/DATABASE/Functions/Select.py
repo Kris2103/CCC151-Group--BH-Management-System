@@ -29,9 +29,3 @@ class Select(Function):
 
         self.cursor.execute(query, self.params)
         return self.cursor.fetchall()
-
-
-
-        
-
-

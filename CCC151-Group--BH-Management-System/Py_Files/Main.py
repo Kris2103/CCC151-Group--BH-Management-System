@@ -1,6 +1,8 @@
 import sys
 import mysql.connector
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTableWidgetItem, QTableWidget, QPushButton, QWidget, QGridLayout, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTableWidgetItem, QWidget, QGridLayout, QVBoxLayout, QFrame
+from PyQt5.QtCore import QRect
+import SpecialWidgetsUI
 from ADD.AddTenantDialog import AddTenantDialog
 from ADD.AddRoomDialog import AddRoomDialog
 from ADD.AddRentDialog import AddRentDialog
@@ -46,32 +48,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.rentPushButton.clicked.connect(lambda: self.switch_tab(2))
         self.paymentPushButton.clicked.connect(lambda: self.switch_tab(3))
         self.emergencyPushButton.clicked.connect(lambda: self.switch_tab(4))
-        
         self.EditpushButton.clicked.connect(self.onEditClicked)
-
-        # Pagination Frame
-        # self.pages_widget = QWidget(self)
-        # self.pages_widget_layout = QGridLayout(self.pages_widget)
-        # self.pages_widget.setLayout(self.pages_widget_layout)
-
-        # self.prev_button = QPushButton("Previous", self)
-        # self.next_button = QPushButton("Next", self)
-        # self.prev_button.setStyleSheet(self.button_base_style)
-        # self.next_button.setStyleSheet(self.button_base_style)
-
-        # self.pages_widget_layout.addWidget(self.prev_button, 0, 0)
-        # self.pages_widget_layout.addWidget(self.next_button, 0, 1)
-
-        # self.prev_button.clicked.connect(lambda: print("Previous page"))
-        # self.next_button.clicked.connect(lambda: print("Next page"))
-
-        # self.central_layout = QVBoxLayout(self.centralwidget)
-        # self.central_layout.addWidget(self.stackedWidget)
-        # self.central_layout.addWidget(self.bottom_widget)
-
-        # self.setLayout(self.central_layout)
-
-        # Pagination Frame
 
         self.switch_tab(0)
 
@@ -107,11 +84,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             3: ("Pays", self.PaymentTable, 3),
             4: ("EmergencyContact", self.EmergencyTable, 4)
         }
-        table_name, widget, select_type = table_mapping.get(index)
-        self.Populate_Table(table_name, widget, select_type)
+        self.table_name, self.widget, self.select_type = table_mapping.get(index)
+        self.Populate_Table(self.table_name, self.widget, self.select_type)
+
+
+# =========================
+#    PAGINATION TABLE
+# ==========
 
     def Populate_Table(self, table_name, table_widget, select_type, current_page = 1):
-        
+
         # Fetch ALL data with query, store for faster loading in page change...
         selector = Select()
         if not hasattr(self, "full_data"):
@@ -121,6 +103,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # Configure pages information according to taste
             self.rows_per_page  = 12
             self.total_pages    = math.ceil(len(self.full_data)/self.rows_per_page)
+        
+        self.current_page = current_page
 
         start_index             = (current_page-1) * self.rows_per_page
         end_index               = start_index + self.rows_per_page
@@ -137,17 +121,81 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             for col_idx, cell in enumerate(row_data):
                 table_widget.setItem(row_idx, col_idx, QTableWidgetItem(str(cell)))
 
+        # array of pointers to the created buttons. I say buttons but they're actually modified labels my dudes
+        while self.paginationButtonsGrid.count():
+            item = self.paginationButtonsGrid.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
 
-        self.button = QPushButton('Click Me', self)
+        self.PaginationButts = []
+        buttCol = 0
 
-        # Connect the button to an action (slot)
-        self.button.clicked.connect(self.on_button_click)
+        self.prevTenButt    = SpecialWidgetsUI.ClickablePageLabel("<<", self.paginationFrame)
+        self.prevTenButt.clicked.connect(lambda: self.PrevTenPage())
+        self.paginationButtonsGrid.addWidget(self.prevTenButt, 0, buttCol)
+        buttCol += 1
+        self.PaginationButts.append(self.prevTenButt)
 
-    # Define what happens when the button is clicked
-    def on_button_click(self):
-        print("Button clicked!")
+        self.prevButt       = SpecialWidgetsUI.ClickablePageLabel("<", self.paginationFrame)
+        self.prevButt.clicked.connect(lambda: self.PrevPage())
+        self.paginationButtonsGrid.addWidget(self.prevButt, 0, buttCol)
+        buttCol += 1
+        self.PaginationButts.append(self.prevButt)
 
+        for i in range(1, self.total_pages + 1):
+            if (i <= 11 and self.current_page < 6) or i == self.current_page or ((i >= self.current_page - 5) and (i <= self.current_page + 5)) or (i >= self.total_pages - 10 and self.current_page > self.total_pages - 5):
+                # print(f"Creating button for page {i}")
+                numButt     = SpecialWidgetsUI.ClickablePageLabel(f"{i}", self.paginationFrame)
+                numButt.clicked.connect(lambda x=i: self.GotoPage(x))
+                self.paginationButtonsGrid.addWidget(numButt, 0, buttCol)
+                buttCol += 1
+                self.PaginationButts.append(numButt)
+
+        self.nextButt       = SpecialWidgetsUI.ClickablePageLabel(">", self.paginationFrame)
+        self.nextButt.clicked.connect(lambda: self.NextPage())
+        self.paginationButtonsGrid.addWidget(self.nextButt, 0, buttCol)
+        buttCol += 1
+        self.PaginationButts.append(self.nextButt)
+
+        self.nextTenButt    = SpecialWidgetsUI.ClickablePageLabel(">>", self.paginationFrame)
+        self.nextTenButt.clicked.connect(lambda: self.NextTenPage())
+        self.paginationButtonsGrid.addWidget(self.nextTenButt, 0, buttCol)
+        buttCol += 1
+        self.PaginationButts.append(self.nextTenButt)
+        
+        self.prevButt.setEnabled(self.current_page > 1)
+        self.nextButt.setEnabled(self.current_page < self.total_pages)
+        self.prevTenButt.setEnabled(self.current_page > 10)
+        self.nextTenButt.setEnabled(self.current_page + 10 < self.total_pages)
     
+    def NextPage(self):
+        self.current_page += 1
+        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+
+    def NextTenPage(self):
+        if self.current_page + 10 < self.total_pages:
+            self.current_page += 10
+        else: 
+            self.current_page = self.total_pages
+        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+
+    def PrevPage(self):
+        self.current_page -= 1
+        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+
+    def PrevTenPage(self):
+        if self.current_page - 10 >= 1:
+            self.current_page -= 10
+        else:
+            self.current_page = 1
+        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+
+    def GotoPage(self, page):
+        self.Populate_Table(self.table_name, self.widget, self.select_type, page)
+
+# ===========
+#    PAGINATION TABLE
+# =========================
 
     def on_Add_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()

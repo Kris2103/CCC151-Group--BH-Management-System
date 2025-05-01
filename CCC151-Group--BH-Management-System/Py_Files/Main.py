@@ -15,6 +15,8 @@ import math
 # =================
 #   MAIN WINDOW
 # =================
+from EDIT.editFunctions.editTenantDialog import editTenantDialog
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -184,6 +186,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 # =================
 #   MAIN WINDOW
 # =================
+    def onEditClicked(self):
+        dialog = editTenantDialog(self)
+        if dialog.exec() == QDialog.Accepted:
+            self.load_emergency_data()
+        
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

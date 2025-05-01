@@ -1,30 +1,27 @@
 import sys
-<<<<<<< HEAD
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
-=======
 import mysql.connector
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTableWidgetItem, QTableWidget, QFrame, QPushButton, QLayout, QVBoxLayout
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTableWidgetItem, QTableWidget
->>>>>>> dd22bb28b60a82b20a30c79905d568268d294b52
 from ADD.AddTenantDialog import AddTenantDialog
 from ADD.AddRoomDialog import AddRoomDialog
 from ADD.AddRentDialog import AddRentDialog
 from ADD.AddPaymentDialog import AddPaymentDialog
 from ADD.AddEmergencyContactDialog import AddEmergencyContactDialog
 from MainUI import Ui_MainWindow
-<<<<<<< HEAD
-=======
 from DATABASE.DB import DatabaseConnector  
 from DATABASE.Functions.Select import Select
->>>>>>> dd22bb28b60a82b20a30c79905d568268d294b52
-
+import math
+# =================
+#   MAIN WINDOW
+# =================
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
 
-<<<<<<< HEAD
-=======
+
         #Sorting enabled for all tables
         self.TenantTable.setSortingEnabled(True)
         self.RoomTable.setSortingEnabled(True)
@@ -47,7 +44,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.active_style = self.button_base_style.replace("rgb(250, 255, 242)", "rgb(210, 235, 200)")  # Light green when active
         self.inactive_style = self.button_base_style
 
->>>>>>> dd22bb28b60a82b20a30c79905d568268d294b52
         self.AddpushButton.clicked.connect(self.on_Add_clicked)
         self.tenantPushButton.clicked.connect(lambda: self.switch_tab(0))
         self.roomPushButton.clicked.connect(lambda: self.switch_tab(1))
@@ -55,7 +51,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.paymentPushButton.clicked.connect(lambda: self.switch_tab(3))
         self.emergencyPushButton.clicked.connect(lambda: self.switch_tab(4))
 
-<<<<<<< HEAD
     def switch_tab(self, index):
         self.stackedWidget.setCurrentIndex(index)
 
@@ -104,13 +99,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # collect fields and insert
                 pass
 
-=======
         self.table_widget = QTableWidget()
         self.switch_tab(0)
-        # self.load_data_from_db("Tenant", self.table_widget)
 
     def switch_tab(self, index):
         self.stackedWidget.setCurrentIndex(index)
+        
+        if hasattr(self, "full_data"): del self.full_data
 
         # Reset all to inactive
         self.tenantPushButton.setStyleSheet(self.inactive_style)
@@ -131,42 +126,52 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif index == 4:
             self.emergencyPushButton.setStyleSheet(self.active_style)
 
-
         table_mapping = {
-            0: ("Tenant", self.TenantTable),
-            1: ("Room", self.RoomTable),
-            2: ("Rents", self.RentTable),
-            3: ("Pays", self.PaymentTable),
-            4: ("EmergencyContact", self.EmergencyTable)
+            0: ("Tenant", self.TenantTable, 0),
+            1: ("Room", self.RoomTable, 1),
+            2: ("Rents", self.RentTable, 2),
+            3: ("Pays", self.PaymentTable, 3),
+            4: ("EmergencyContact", self.EmergencyTable, 4)
         }
-        table_name, widget = table_mapping.get(index)
-        self.load_data_from_db(table_name, widget)
+        table_name, widget, select_type = table_mapping.get(index)
+        self.Populate_Table(table_name, widget, select_type)
 
-    def load_data_from_db(self, table_name, table_widget):
+    def Populate_Table(self, table_name, table_widget, select_type, current_page = 1):
+        
+        # Fetch ALL data with query, store for faster loading in page change...
         selector = Select()
-        data = selector.SelectQuery(table_name)
-        
-        # Fetch column names
-        conn = DatabaseConnector.get_connection()
-        cursor = conn.cursor()
-        cursor.execute(f"DESCRIBE {table_name}")
-        columns = [col[0] for col in cursor.fetchall()]
-        
-        # Load into widget
-        self.load_table_to_widget(table_widget, data, columns)
+        if not hasattr(self, "full_data"):
+            self.full_data, self.columns = selector.SelectQuery(table_name, select_type)
+        # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
 
-    def load_table_to_widget(self, table_widget, data, columns):
-        table_widget.setSortingEnabled(False)  # Disable sorting while updating
+            # Configure pages information according to taste
+            self.rows_per_page  = 12
+            self.total_pages    = math.ceil(len(self.full_data)/self.rows_per_page)
+
+        start_index             = (current_page-1) * self.rows_per_page
+        end_index               = start_index + self.rows_per_page
+        self.page_data          = self.full_data[start_index:end_index]
+        
+        # refresh table widget(data is not refreshed)
         table_widget.clear()
-        table_widget.setRowCount(len(data))
-        table_widget.setColumnCount(len(columns))
-        table_widget.setHorizontalHeaderLabels(columns)
+        table_widget.setRowCount(len(self.page_data))
+        table_widget.setColumnCount(len(self.columns))
+        table_widget.setHorizontalHeaderLabels(self.columns)
 
-        for row_idx, row_data in enumerate(data):
+        # load the data in TO EDIT: ignore first column(built-in id of widget)
+        for row_idx, row_data in enumerate(self.page_data):
             for col_idx, cell in enumerate(row_data):
                 table_widget.setItem(row_idx, col_idx, QTableWidgetItem(str(cell)))
 
-        table_widget.setSortingEnabled(True)
+
+        self.button = QPushButton('Click Me', self)
+
+        # Connect the button to an action (slot)
+        self.button.clicked.connect(self.on_button_click)
+
+    # Define what happens when the button is clicked
+    def on_button_click(self):
+        print("Button clicked!")
 
     def on_Add_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()
@@ -194,9 +199,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif current_widget_index == 4:
             dialog = AddEmergencyContactDialog(self)
             if dialog.exec() == QDialog.Accepted:
-                self.load_emergency_data()
->>>>>>> dd22bb28b60a82b20a30c79905d568268d294b52
+                pass
 
+# =================
+#   MAIN WINDOW
+# =================
+
+=======
+                self.load_emergency_data()
+
+# =================
+#   MAIN WINDOW
+# =================
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

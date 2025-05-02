@@ -48,6 +48,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.emergencyPushButton.clicked.connect(lambda: self.switch_tab(4))
         self.EditpushButton.clicked.connect(self.onEditClicked)
 
+        self.jumpBox.activated.connect(lambda: self.jump())
+
         self.switch_tab(0)
 
 
@@ -103,8 +105,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.total_pages    = math.ceil(len(self.full_data)/self.rows_per_page)
         
         self.current_page = current_page
-
-        self.jumpbox = QComboBox()
+        self.jumpLabel_totalpages.setText(str(self.total_pages))
 
         start_index             = (current_page-1) * self.rows_per_page
         end_index               = start_index + self.rows_per_page
@@ -115,6 +116,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         table_widget.setRowCount(len(self.page_data))
         table_widget.setColumnCount(len(self.columns))
         table_widget.setHorizontalHeaderLabels(self.columns)
+        table_widget.verticalHeader().setVisible(False)
 
         # load the data in TO EDIT: ignore first column(built-in id of widget)
         for row_idx, row_data in enumerate(self.page_data):
@@ -126,6 +128,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             item = self.paginationButtonsGrid.takeAt(0)
             if item.widget():
                 item.widget().deleteLater()
+        
+        self.jumpBox.clear()
 
         self.PaginationButts = []
         buttCol = 0
@@ -143,6 +147,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.PaginationButts.append(self.prevButt)
 
         for i in range(1, self.total_pages + 1):
+            self.jumpBox.addItem(str(i), i)
+
             if (i <= 11 and self.current_page < 6) or i == self.current_page or ((i >= self.current_page - 5) and (i <= self.current_page + 5)) or (i >= self.total_pages - 10 and self.current_page > self.total_pages - 5):
                 # print(f"Creating button for page {i}")
                 numButt     = SpecialWidgetsUI.ClickablePageLabel(f"{i}", self.paginationFrame)
@@ -167,7 +173,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.nextButt.setEnabled(self.current_page < self.total_pages)
         self.prevTenButt.setEnabled(self.current_page > 1)
         self.nextTenButt.setEnabled(self.current_page < self.total_pages)
-    
+
+        index = self.jumpBox.findData(self.current_page)
+        if index != -1:
+            self.jumpBox.setCurrentIndex(index)
+
+
+    def jump(self):
+        page = self.jumpBox.currentData()
+        if page is not None: self.GotoPage(page) 
+
     def NextPage(self):
         self.current_page += 1
         self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)

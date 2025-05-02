@@ -100,8 +100,8 @@ class Ui_MainWindow(object):
 
         # Initialize and  a frame to hold the pagination buttons
         self.paginationFrame = QtWidgets.QFrame(self.frame)
-        self.paginationFrame.setGeometry(QtCore.QRect(360, 727, 750, 31)) # in between delete and add
-        self.paginationFrame.setStyleSheet("background-color: rgb(250, 255, 242);")
+        self.paginationFrame.setGeometry(QtCore.QRect(460, 727, 550, 31)) # in between delete and add
+        self.paginationFrame.setStyleSheet("border: none; background-color: transparent;")
         self.paginationFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.paginationFrame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.paginationFrame.setObjectName("paginationFrame")
@@ -112,6 +112,35 @@ class Ui_MainWindow(object):
         self.paginationButtonsGrid.setHorizontalSpacing(2) 
         self.paginationButtonsGrid.setAlignment(QtCore.Qt.AlignCenter)
         self.paginationFrame.setLayout(self.paginationButtonsGrid)
+
+        # Jump combobox
+        self.jumpFrame = QtWidgets.QFrame(self.frame)
+        self.jumpFrame.setGeometry(QtCore.QRect(1050, 727, 200, 31))
+        self.jumpFrame.setStyleSheet("border: none; background-color: transparent;")
+        self.jumpFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.jumpFrame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.jumpFrame.setObjectName("jumpFrame")
+
+        self.jumpFrameGrid = QtWidgets.QGridLayout(self.jumpFrame)
+        self.jumpFrameGrid.setContentsMargins(10, 0, 10, 0)  
+        self.jumpFrameGrid.setHorizontalSpacing(2) 
+        self.jumpFrameGrid.setAlignment(QtCore.Qt.AlignCenter)
+        self.jumpFrame.setLayout(self.jumpFrameGrid)
+
+        self.jumpLabel_Page = QtWidgets.QLabel("Page", self.jumpFrame)
+        self.jumpFrameGrid.addWidget(self.jumpLabel_Page, 0, 0)
+
+        self.jumpBox = QtWidgets.QComboBox(self.jumpFrame)
+        self.jumpBox.setStyleSheet("background-color: rgb(250, 255, 242); border: 3px")
+        self.jumpBox.setFixedWidth(50)
+        self.jumpFrameGrid.addWidget(self.jumpBox, 0, 1)
+
+        self.jumpLabel_of = QtWidgets.QLabel(" of ", self.jumpFrame)
+        self.jumpFrameGrid.addWidget(self.jumpLabel_of, 0, 2)
+
+        self.jumpLabel_totalpages = QtWidgets.QLabel(self.jumpFrame)
+        self.jumpFrameGrid.addWidget(self.jumpLabel_totalpages, 0, 3)
+
 
 # ===========
 #    PAGINATION BUTTONS

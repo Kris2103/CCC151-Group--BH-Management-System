@@ -100,10 +100,15 @@ class Select(Function):
 
         print(self.query)
 
-        self.cursor.execute(self.query, self.params)
-        self.rows = self.cursor.fetchall()
-        
-        return self
+        try:
+            self.cursor.execute(self.query, self.params)
+            self.rows = self.cursor.fetchall()
+            
+            return self
+        except Exception as exception:
+            print(f"Error selecting table '{table}' : {exception}")
+            self.conn.rollback()
+
     
     def retData(self):
         return self.rows

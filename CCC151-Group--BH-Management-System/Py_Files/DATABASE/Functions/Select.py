@@ -1,24 +1,77 @@
+import sys
+import os
+
+# Add the root directory (where DATABASE is located) to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))  # 1. comment this line if it errors, only uncomment if you run it directly (testing, like running 2.)
+
 from DATABASE.DB import DatabaseConnector
-import mysql.connector
 from .Function import Function
 
+"""
+
+READ ME FOR THE FUNCTION
+SelectQuery has 5 Arguments
+
+A. table
+- String
+- Accepts valid table name from schema
+  - Tenant, Room, Rents, Pays, EmergencyContact
+- DONT FORGET TO ENCLOSE IN "table"
+
+B. select_type
+- String
+- corresponds to additional conditions according to type 
+- "Tenant" = additional left join for emergency contact phone number
+- None = loads data normallly with no additional changes to sleect query
+- "Rents/Pays" = additional left join for tenant phone number
+
+C. spec_col
+- List
+- accepts valid specific columns from a table
+- could be multiple, could just be one
+- used for filling combobox and other functionalities
+- "EmergencyContact.PhoneNumber"
+
+D. tag
+- String
+- accepts a valid column name of the passed table
+- used for searching along specified column
+- if none are passed, key will be used on ALL columns of the passed table
+
+E. key
+- String
+- used as "%key%"
+- used for searching, this is the search key
+
+"""
 
 class Select(Function):
     
+    _instance = None
+    
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super (Select, cls).__new__(cls)
+            
+        return cls._instance
+
     def __init__(self):
         super().__init__()
 
-
     def SelectQuery(self, table, select_type, spec_col = [], tag = None, key = None):
         
-        self.basequery          = f"SELECT {table}."
-        self.columnquery        = f"*" if not spec_col else (f", {table}.".join(spec_col))
+        self.basequery          = f"SELECT "
         self.table              = f" FROM {table} "
         self.search_query       = ""
         self.conditions         = ""
 
         self.columns            = self.get_columns(table)
-        self.row_id             = self.columns[0]
+        
+        if not spec_col:
+            self.columnquery    = ", ".join([f"{table}.{col}" for col in self.columns])
+        
+        else:
+            self.columnquery    = ", ".join([f"{col}" for col in spec_col])
 
         # Selecting with a tag(column) and key(search key)
         if tag and key:
@@ -50,21 +103,29 @@ class Select(Function):
         self.cursor.execute(self.query, self.params)
         self.rows = self.cursor.fetchall()
         
+        return self
+    
+    def retData(self):
+        return self.rows
+    
+    def retCols(self):
+        return self.columns
+    
+    def retAll(self):
+        # for row in self.rows: print(row)
+        # for col in self.columns: print(col)
         return self.rows, self.columns
     
-    def Conditions(self, select_type):
+    def retDict(self):
+        return [dict(zip(self.columns, row)) for row in self.rows]
+    
+    def Conditions(self, select_type = None):
         match select_type:
-            case 0:
+            case "Tenant":
                 self.columnquery        += ", EmergencyContact.PhoneNumber AS EmergencyContact"
                 self.conditions         += "LEFT JOIN EmergencyContact ON Tenant.TenantID = EmergencyContact.EMTenantID"
                 self.columns.append("EmergencyContact")
-            case 1:
+            case "Rents/Pays":
                 pass
-            case 2:
-                pass
-            case 3:
-                pass
-            case 4:
-                pass
-            case _:
+            case None:
                 pass

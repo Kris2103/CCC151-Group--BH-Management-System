@@ -67,6 +67,9 @@ class editTenantDialog(QDialog):
             return  # Skip further execution
 
 
+
+        firstName
+
         print(f"Updating tenant with ID: {tenantId}, Name: {firstName} {middleName} {lastName}")
         
         updater = update()

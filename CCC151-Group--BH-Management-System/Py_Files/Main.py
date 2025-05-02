@@ -34,7 +34,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         font-family: 'Roboto', sans-serif;
         font-weight: 500;
         font-style: normal;
-        font-size: 13px;
+        font-size: 13px;2
         color: #800000; 
         """
 

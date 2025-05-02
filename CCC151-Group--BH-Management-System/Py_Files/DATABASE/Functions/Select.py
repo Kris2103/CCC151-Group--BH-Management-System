@@ -7,6 +7,43 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from DATABASE.DB import DatabaseConnector
 from .Function import Function
 
+"""
+
+READ ME FOR THE FUNCTION
+SelectQuery has 5 Arguments
+
+A. table
+- String
+- Accepts valid table name from schema
+  - Tenant, Room, Rents, Pays, EmergencyContact
+- DONT FORGET TO ENCLOSE IN "table"
+
+B. select_type
+- String
+- corresponds to additional conditions according to type 
+- "Tenant" = additional left join for emergency contact phone number
+- None = loads data normallly with no additional changes to sleect query
+- "Rents/Pays" = additional left join for tenant phone number
+
+C. spec_col
+- List
+- accepts valid specific columns from a table
+- could be multiple, could just be one
+- used for filling combobox and other functionalities
+- "EmergencyContact.PhoneNumber"
+
+D. tag
+- String
+- accepts a valid column name of the passed table
+- used for searching along specified column
+- if none are passed, key will be used on ALL columns of the passed table
+
+E. key
+- String
+- used as "%key%"
+- used for searching, this is the search key
+
+"""
 
 """
 

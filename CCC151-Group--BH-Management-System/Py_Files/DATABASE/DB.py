@@ -12,7 +12,10 @@ class DatabaseConnector:
     @staticmethod
     def get_connection():
 
-        if DatabaseConnector._connection is None:
+        if (DatabaseConnector._connection is None
+            or not DatabaseConnector._connection.is_connected() #reconnect check
+            ):
+
             config = configparser.ConfigParser()
 
             # Ensure the path is relative to the script file, not the working directory
@@ -30,7 +33,7 @@ class DatabaseConnector:
                     password = config.get("DEFAULT", "db.password")
                     database = config.get("DEFAULT", "db.database")
 
-                    print(f"Connecting to {host}:{port} with user {user} and database {database}")
+                    print(f"Connecting to primary DB: {host}:{port} with user {user} and database {database}")
 
                     # Connect
                     DatabaseConnector._connection = mysql.connector.connect(
@@ -42,12 +45,40 @@ class DatabaseConnector:
                     )
 
                     if DatabaseConnector._connection.is_connected():
-                        print("Connected to MySQL.")
+                        print("Connected to primary MySQL.")
                     else:
-                        print("Connection object returned, but not connected.")
+                        print("Primary connection returned, but not connected.")
 
                 except Error as e:
-                    print(f"SQL Error: {e}")
+                    print(f"Primary SQL Error: {e}")
+                    
+                    try:
+                        # Secondary (fallback - individual localhost version) DB credentials
+                        fallback_host = config.get("FALLBACK", "db.host")
+                        fallback_port = config.getint("FALLBACK", "db.port")
+                        fallback_user = config.get("FALLBACK", "db.user")
+                        fallback_password = config.get("FALLBACK", "db.password")
+                        fallback_database = config.get("FALLBACK", "db.database")
+
+                        print(f"Connecting to fallback DB: {fallback_host}:{fallback_port} with user {fallback_user} and database {fallback_database}")
+
+                        # Try connecting to the fallback database
+                        DatabaseConnector._connection = mysql.connector.connect(
+                            host=fallback_host,
+                            port=fallback_port,
+                            user=fallback_user,
+                            password=fallback_password,
+                            database=fallback_database
+                        )
+
+                        if DatabaseConnector._connection.is_connected():
+                            print("Connected to fallback MySQL.")
+                        else:
+                            print("Fallback connection returned, but not connected.")
+
+                    except Error as fallback_error:
+                        print(f"Fallback SQL Error: {fallback_error}")
+                        print("Could not connect to any database.")
 
             else:
                 print(f"Properties file not found at: {properties_path}")

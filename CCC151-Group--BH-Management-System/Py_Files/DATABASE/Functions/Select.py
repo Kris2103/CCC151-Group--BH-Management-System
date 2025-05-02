@@ -1,6 +1,8 @@
 from DATABASE.DB import DatabaseConnector
 import mysql.connector
+import mysql.connector
 from .Function import Function
+
 
 
 class Select(Function):
@@ -10,7 +12,17 @@ class Select(Function):
 
 
     def SelectQuery(self, table, select_type, spec_col = [], tag = None, key = None):
+
+    def SelectQuery(self, table, select_type, spec_col = [], tag = None, key = None):
         
+        self.basequery          = f"SELECT {table}."
+        self.columnquery        = f"*" if not spec_col else (f", {table}.".join(spec_col))
+        self.table              = f" FROM {table} "
+        self.search_query       = ""
+        self.conditions         = ""
+
+        self.columns            = self.get_columns(table)
+        self.row_id             = self.columns[0]
         self.basequery          = f"SELECT {table}."
         self.columnquery        = f"*" if not spec_col else (f", {table}.".join(spec_col))
         self.table              = f" FROM {table} "
@@ -26,6 +38,9 @@ class Select(Function):
             self.params.append(f"%{key}%")
 
         # Selecting all columns with key(search key)
+        elif key:            
+            searchAll = [(f"`{col}` LIKE %s") for col in self.columns]
+            self.params.extend([f"%{key}%"] * len(self.columns))
         elif key:            
             searchAll = [(f"`{col}` LIKE %s") for col in self.columns]
             self.params.extend([f"%{key}%"] * len(self.columns))

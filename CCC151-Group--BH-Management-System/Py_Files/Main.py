@@ -10,6 +10,7 @@ from ADD.AddEmergencyContactDialog import AddEmergencyContactDialog
 from MainUI import Ui_MainWindow
 from DATABASE.Functions.Select import Select
 from EDIT.editFunctions.editTenantDialog import editTenantDialog
+from EDIT.editFunctions.editRentDialog import editRentDialog
 import math
 
 
@@ -33,7 +34,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         font-family: 'Roboto', sans-serif;
         font-weight: 500;
         font-style: normal;
-        font-size: 13px;
+        font-size: 13px;2
         color: #800000; 
         """
 
@@ -226,9 +227,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.load_emergency_data()
 
     def onEditClicked(self):
-        dialog = editTenantDialog(self)
-        if dialog.exec() == QDialog.Accepted:
-            self.load_emergency_data()
+        currentWidgetIndex = self.stackedWidget.currentIndex()
+        
+        if currentWidgetIndex == 0:
+            dialog = editTenantDialog(self)
+            if dialog.exec() == QDialog.Accepted:
+                self.load_tenant_data()
+        
+        elif currentWidgetIndex == 1:
+            print("Now in Edit Rooms Dialog")
+            
+        elif currentWidgetIndex == 2:
+            dialog = editRentDialog(self)
+            if dialog.exec() == QDialog.accepted:
+                self.load_rent_data()
         
 if __name__ == "__main__":
     app = QApplication(sys.argv)

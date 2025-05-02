@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\AddRoom.ui'
+# Form implementation generated from reading ui file 'C:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\AddRent.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -14,9 +14,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(310, 249)
+        Dialog.resize(304, 254)
         self.frame = QtWidgets.QFrame(Dialog)
-        self.frame.setGeometry(QtCore.QRect(10, 10, 291, 231))
+        self.frame.setGeometry(QtCore.QRect(10, 10, 281, 231))
         self.frame.setStyleSheet("background-color: rgb(240, 240, 240);\n"
 "border: 2px solid #800000;\n"
 "border-radius: 6px;\n"
@@ -52,11 +52,8 @@ class Ui_Dialog(object):
 "\n"
 "")
         self.label_2.setObjectName("label_2")
-        self.RoomNumberLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.RoomNumberLineEdit.setGeometry(QtCore.QRect(20, 110, 111, 21))
-        self.RoomNumberLineEdit.setObjectName("RoomNumberLineEdit")
         self.label_3 = QtWidgets.QLabel(self.frame)
-        self.label_3.setGeometry(QtCore.QRect(20, 90, 111, 16))
+        self.label_3.setGeometry(QtCore.QRect(160, 90, 101, 16))
         self.label_3.setStyleSheet("background: none;\n"
 "    border: none;\n"
 "    color: #800000;\n"
@@ -65,31 +62,8 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_3.setObjectName("label_3")
-        self.PriceLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.PriceLineEdit.setGeometry(QtCore.QRect(170, 110, 101, 21))
-        self.PriceLineEdit.setObjectName("PriceLineEdit")
-        self.label_4 = QtWidgets.QLabel(self.frame)
-        self.label_4.setGeometry(QtCore.QRect(200, 90, 61, 16))
-        self.label_4.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_4.setObjectName("label_4")
-        self.label_10 = QtWidgets.QLabel(self.frame)
-        self.label_10.setGeometry(QtCore.QRect(180, 140, 81, 16))
-        self.label_10.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_10.setObjectName("label_10")
         self.AddpushButton = QtWidgets.QPushButton(self.frame)
-        self.AddpushButton.setGeometry(QtCore.QRect(160, 190, 93, 28))
+        self.AddpushButton.setGeometry(QtCore.QRect(170, 190, 93, 28))
         self.AddpushButton.setStyleSheet("background-color: #388E3C; /* Darker green */\n"
 "color: white;\n"
 "font-family: \"Cal Sans\", sans-serif;\n"
@@ -101,7 +75,7 @@ class Ui_Dialog(object):
 "")
         self.AddpushButton.setObjectName("AddpushButton")
         self.CancelpushButton = QtWidgets.QPushButton(self.frame)
-        self.CancelpushButton.setGeometry(QtCore.QRect(60, 190, 93, 28))
+        self.CancelpushButton.setGeometry(QtCore.QRect(70, 190, 93, 28))
         self.CancelpushButton.setStyleSheet("background: rgb(157, 157, 157);\n"
 "color: white;\n"
 "font-family: \'Cal Sans\', sans-serif;\n"
@@ -111,22 +85,48 @@ class Ui_Dialog(object):
 "border: 1px solid rgb(169, 169, 169);\n"
 "")
         self.CancelpushButton.setObjectName("CancelpushButton")
-        self.TenantSexComboBox = QtWidgets.QComboBox(self.frame)
-        self.TenantSexComboBox.setGeometry(QtCore.QRect(170, 160, 101, 22))
-        self.TenantSexComboBox.setObjectName("TenantSexComboBox")
-        self.label_13 = QtWidgets.QLabel(self.frame)
-        self.label_13.setGeometry(QtCore.QRect(20, 140, 161, 16))
-        self.label_13.setStyleSheet("background: none;\n"
+        self.label_4 = QtWidgets.QLabel(self.frame)
+        self.label_4.setGeometry(QtCore.QRect(140, 140, 131, 16))
+        self.label_4.setStyleSheet("background: none;\n"
 "    border: none;\n"
 "    color: #800000;\n"
 "    font-family: \'Cal Sans\', sans-serif;\n"
 "    font-weight: 700;\n"
 "    font-style: normal;\n"
-"    font-size: 13px;")
-        self.label_13.setObjectName("label_13")
-        self.MaxNoOccupantsLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.MaxNoOccupantsLineEdit.setGeometry(QtCore.QRect(20, 160, 111, 21))
-        self.MaxNoOccupantsLineEdit.setObjectName("MaxNoOccupantsLineEdit")
+"    font-size: 14px;")
+        self.label_4.setObjectName("label_4")
+        self.label_5 = QtWidgets.QLabel(self.frame)
+        self.label_5.setGeometry(QtCore.QRect(20, 90, 111, 16))
+        self.label_5.setStyleSheet("background: none;\n"
+"    border: none;\n"
+"    color: #800000;\n"
+"    font-family: \'Cal Sans\', sans-serif;\n"
+"    font-weight: 700;\n"
+"    font-style: normal;\n"
+"    font-size: 14px;")
+        self.label_5.setObjectName("label_5")
+        self.MoveInDateLineEdit = QtWidgets.QLineEdit(self.frame)
+        self.MoveInDateLineEdit.setGeometry(QtCore.QRect(20, 110, 111, 21))
+        self.MoveInDateLineEdit.setObjectName("MoveInDateLineEdit")
+        self.label_10 = QtWidgets.QLabel(self.frame)
+        self.label_10.setGeometry(QtCore.QRect(20, 140, 111, 16))
+        self.label_10.setStyleSheet("background: none;\n"
+"    border: none;\n"
+"    color: #800000;\n"
+"    font-family: \'Cal Sans\', sans-serif;\n"
+"    font-weight: 700;\n"
+"    font-style: normal;\n"
+"    font-size: 14px;")
+        self.label_10.setObjectName("label_10")
+        self.MoveStatuscomboBox = QtWidgets.QComboBox(self.frame)
+        self.MoveStatuscomboBox.setGeometry(QtCore.QRect(20, 160, 111, 22))
+        self.MoveStatuscomboBox.setObjectName("MoveStatuscomboBox")
+        self.RentingTenantIDComboBox = QtWidgets.QComboBox(self.frame)
+        self.RentingTenantIDComboBox.setGeometry(QtCore.QRect(150, 160, 111, 22))
+        self.RentingTenantIDComboBox.setObjectName("RentingTenantIDComboBox")
+        self.RoomNumberComboBox = QtWidgets.QComboBox(self.frame)
+        self.RoomNumberComboBox.setGeometry(QtCore.QRect(150, 110, 111, 22))
+        self.RoomNumberComboBox.setObjectName("RoomNumberComboBox")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -134,10 +134,10 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.label_2.setText(_translate("Dialog", "Room"))
+        self.label_2.setText(_translate("Dialog", "Rent"))
         self.label_3.setText(_translate("Dialog", "Room Number"))
-        self.label_4.setText(_translate("Dialog", "Price"))
-        self.label_10.setText(_translate("Dialog", "Tenant Sex"))
         self.AddpushButton.setText(_translate("Dialog", "Add"))
         self.CancelpushButton.setText(_translate("Dialog", "Cancel"))
-        self.label_13.setText(_translate("Dialog", "Max No. of Occupants"))
+        self.label_4.setText(_translate("Dialog", "Renting Tenant ID"))
+        self.label_5.setText(_translate("Dialog", "Move-in Date"))
+        self.label_10.setText(_translate("Dialog", "Status"))

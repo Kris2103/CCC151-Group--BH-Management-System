@@ -1,6 +1,5 @@
 from DATABASE.DB import DatabaseConnector
 import mysql.connector
-import mysql.connector
 from .Function import Function
 
 
@@ -10,8 +9,6 @@ class Select(Function):
     def __init__(self):
         super().__init__()
 
-
-    def SelectQuery(self, table, select_type, spec_col = [], tag = None, key = None):
 
     def SelectQuery(self, table, select_type, spec_col = [], tag = None, key = None):
         

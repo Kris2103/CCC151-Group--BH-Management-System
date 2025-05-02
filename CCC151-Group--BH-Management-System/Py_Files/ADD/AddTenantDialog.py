@@ -81,6 +81,18 @@ class AddTenantDialog(QDialog):
             # Create an instance of the Select class
             select = Select()
 
+            capacity_query = """
+                SELECT MaximumCapacity, NoOfOccupants FROM Room WHERE RoomNumber = %s
+            """
+            select.cursor.execute(capacity_query, (tenant_room,))
+            result = select.cursor.fetchone()
+
+            if result:
+                maximum_capacity, current_occupants = result
+                if current_occupants >= maximum_capacity:
+                    QMessageBox.warning(self, "Room Full", "The room has reached its maximum capacity.")
+                    return
+
             insert_query = """
                 INSERT INTO Tenant (TenantID, Email, FirstName, MiddleName, LastName, Sex, PhoneNumber, RoomNumber)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -95,6 +107,13 @@ class AddTenantDialog(QDialog):
                 tenant_phone,
                 int(tenant_room)
             ))
+
+            update_occupants_query = """
+                UPDATE Room
+                SET NoOfOccupants = NoOfOccupants + 1
+                WHERE RoomNumber = %s
+            """
+            select.cursor.execute(update_occupants_query, (tenant_room,))
 
             select.conn.commit()
             select.cursor.close()

@@ -21,11 +21,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         #Sorting enabled for all tables
-        self.TenantTable.setSortingEnabled(True)
-        self.RoomTable.setSortingEnabled(True)
-        self.RentTable.setSortingEnabled(True)
-        self.PaymentTable.setSortingEnabled(True)
-        self.EmergencyTable.setSortingEnabled(True)
+        # self.TenantTable.setSortingEnabled(True)
+        # self.RoomTable.setSortingEnabled(True)
+        # self.RentTable.setSortingEnabled(True)
+        # self.PaymentTable.setSortingEnabled(True)
+        # self.EmergencyTable.setSortingEnabled(True)
 
         self.button_base_style = """
         background-color: rgb(250, 255, 242); /* Inactive background */
@@ -101,7 +101,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
 
             # Configure pages information according to taste
-            self.rows_per_page  = 12
+            self.rows_per_page  = 15
             self.total_pages    = math.ceil(len(self.full_data)/self.rows_per_page)
         
         self.current_page = current_page
@@ -196,6 +196,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 # ===========
 #    PAGINATION TABLE
 # =========================
+
+    def load_tenant_data(self):
+        selector = Select()
+        tenant_data, columns = selector.SelectQuery("Tenant", 0)
+        self.Populate_Table("Tenant", self.TenantTable, 0)
+
+    def load_room_data(self):
+        selector = Select()
+        room_data, columns = selector.SelectQuery("Room", 1)
+        self.Populate_Table("Room", self.RoomTable, 1)
+
+    def load_rent_data(self):
+        selector = Select()
+        rent_data, columns = selector.SelectQuery("Rents", 2)
+        self.Populate_Table("Rents", self.RentTable, 2)
+
+    def load_payment_data(self):
+        selector = Select()
+        payment_data, columns = selector.SelectQuery("Pays", 3)
+        self.Populate_Table("Pays", self.PaymentTable, 3)
+
+    def load_emergency_data(self):
+        selector = Select()
+        emergency_data, columns = selector.SelectQuery("EmergencyContact", 4)
+        self.Populate_Table("EmergencyContact", self.EmergencyTable, 4)
 
     def on_Add_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()

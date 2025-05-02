@@ -31,6 +31,11 @@ class AddRoomDialog(QDialog):
         try:
             select = Select()
 
+            select.cursor.execute("SELECT RoomNumber FROM Room WHERE RoomNumber = %s", (room_number,))
+            if select.cursor.fetchone():
+                QMessageBox.warning(self, "Room Exists", f"Room {room_number} already exists.")
+                return
+
             # Check if room has existing tenants and determine their sex
             query = """
                 SELECT COUNT(*), Sex
@@ -73,3 +78,8 @@ class AddRoomDialog(QDialog):
 
         except Exception as e:
             QMessageBox.critical(self, "Database Error", str(e))
+
+    def refresh_room_combobox(self):
+        # This method is responsible for refreshing the room combobox in the AddRentDialog
+        # Here you would add logic to update the ComboBox in the Rent Dialog.
+        pass

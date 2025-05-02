@@ -100,7 +100,7 @@ class Ui_MainWindow(object):
 
         # Initialize and  a frame to hold the pagination buttons
         self.paginationFrame = QtWidgets.QFrame(self.frame)
-        self.paginationFrame.setGeometry(QtCore.QRect(360, 727, 800, 31)) # in between delete and add
+        self.paginationFrame.setGeometry(QtCore.QRect(360, 727, 750, 31)) # in between delete and add
         self.paginationFrame.setStyleSheet("background-color: rgb(250, 255, 242);")
         self.paginationFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.paginationFrame.setFrameShadow(QtWidgets.QFrame.Raised)

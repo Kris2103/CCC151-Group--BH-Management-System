@@ -1,7 +1,6 @@
 import sys
 import mysql.connector
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTableWidgetItem, QWidget, QGridLayout, QVBoxLayout, QFrame
-from PyQt5.QtCore import QRect
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTableWidgetItem, QComboBox
 import SpecialWidgetsUI
 from ADD.AddTenantDialog import AddTenantDialog
 from ADD.AddRoomDialog import AddRoomDialog
@@ -9,7 +8,6 @@ from ADD.AddRentDialog import AddRentDialog
 from ADD.AddPaymentDialog import AddPaymentDialog
 from ADD.AddEmergencyContactDialog import AddEmergencyContactDialog
 from MainUI import Ui_MainWindow
-from DATABASE.DB import DatabaseConnector  
 from DATABASE.Functions.Select import Select
 from EDIT.editFunctions.editTenantDialog import editTenantDialog
 import math
@@ -78,11 +76,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.emergencyPushButton.setStyleSheet(self.active_style)
 
         table_mapping = {
-            0: ("Tenant", self.TenantTable, 0),
-            1: ("Room", self.RoomTable, 1),
-            2: ("Rents", self.RentTable, 2),
-            3: ("Pays", self.PaymentTable, 3),
-            4: ("EmergencyContact", self.EmergencyTable, 4)
+            0: ("Tenant", self.TenantTable, "Tenant"),
+            1: ("Room", self.RoomTable, None),
+            2: ("Rents", self.RentTable, "Rents/Pays"),
+            3: ("Pays", self.PaymentTable, "Rents/Pays"),
+            4: ("EmergencyContact", self.EmergencyTable, None)
         }
         self.table_name, self.widget, self.select_type = table_mapping.get(index)
         self.Populate_Table(self.table_name, self.widget, self.select_type)
@@ -97,7 +95,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Fetch ALL data with query, store for faster loading in page change...
         selector = Select()
         if not hasattr(self, "full_data"):
-            self.full_data, self.columns = selector.SelectQuery(table_name, select_type)
+            self.full_data, self.columns = selector.SelectQuery(table_name, select_type).retAll()
         # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
 
             # Configure pages information according to taste
@@ -105,6 +103,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.total_pages    = math.ceil(len(self.full_data)/self.rows_per_page)
         
         self.current_page = current_page
+
+        self.jumpbox = QComboBox()
 
         start_index             = (current_page-1) * self.rows_per_page
         end_index               = start_index + self.rows_per_page
@@ -165,8 +165,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.prevButt.setEnabled(self.current_page > 1)
         self.nextButt.setEnabled(self.current_page < self.total_pages)
-        self.prevTenButt.setEnabled(self.current_page > 10)
-        self.nextTenButt.setEnabled(self.current_page + 10 < self.total_pages)
+        self.prevTenButt.setEnabled(self.current_page > 1)
+        self.nextTenButt.setEnabled(self.current_page < self.total_pages)
     
     def NextPage(self):
         self.current_page += 1

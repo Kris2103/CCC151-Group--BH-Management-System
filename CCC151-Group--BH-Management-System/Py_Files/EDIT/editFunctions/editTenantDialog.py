@@ -26,6 +26,9 @@ class editTenantDialog(QDialog):
 
         tenantId = self.ui.TenantIDLineEdit.text()
 
+
+        firstName
+
         print(f"Updating tenant with ID: {tenantId}, Name: {firstName} {middleName} {lastName}")
         
         updater = update()

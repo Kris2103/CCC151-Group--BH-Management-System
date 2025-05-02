@@ -1,13 +1,25 @@
+import sys
+import os
+
+# Add the root directory (where DATABASE is located) to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))  # 1. comment this line if it errors, only uncomment if you run it directly (testing, like running 2.)
+
 from DATABASE.DB import DatabaseConnector
-import mysql.connector
 from .Function import Function
 
 
 class Select(Function):
     
+    _instance = None
+    
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super (Select, cls).__new__(cls)
+            
+            return cls._instance
+
     def __init__(self):
         super().__init__()
-
 
     def SelectQuery(self, table, select_type, spec_col = [], tag = None, key = None):
         
@@ -50,7 +62,19 @@ class Select(Function):
         self.cursor.execute(self.query, self.params)
         self.rows = self.cursor.fetchall()
         
+        return self
+    
+    def retData(self):
+        return self.rows
+    
+    def retCols(self):
+        return self.columns
+    
+    def retAll(self):
         return self.rows, self.columns
+    
+    def retDict(self):
+        return [dict(zip(self.columns, row)) for row in self.rows]
     
     def Conditions(self, select_type):
         match select_type:

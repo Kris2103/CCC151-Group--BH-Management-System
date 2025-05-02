@@ -44,7 +44,7 @@ class editEmergencyContactDialog(QDialog):
             
         if errors:
             errorMessage = "\n".join(errors)
-            print("Validation Erros:\n" + errorMessage)
+            print("Validation Errors:\n" + errorMessage)
             QMessageBox.critical(self, "Validation Error", errorMessage, QMessageBox.Ok)
             
             return

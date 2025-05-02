@@ -76,11 +76,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.emergencyPushButton.setStyleSheet(self.active_style)
 
         table_mapping = {
-            0: ("Tenant", self.TenantTable, 0),
-            1: ("Room", self.RoomTable, 1),
-            2: ("Rents", self.RentTable, 2),
-            3: ("Pays", self.PaymentTable, 3),
-            4: ("EmergencyContact", self.EmergencyTable, 4)
+            0: ("Tenant", self.TenantTable, "Tenant"),
+            1: ("Room", self.RoomTable, None),
+            2: ("Rents", self.RentTable, "Rents/Pays"),
+            3: ("Pays", self.PaymentTable, "Rents/Pays"),
+            4: ("EmergencyContact", self.EmergencyTable, None)
         }
         self.table_name, self.widget, self.select_type = table_mapping.get(index)
         self.Populate_Table(self.table_name, self.widget, self.select_type)

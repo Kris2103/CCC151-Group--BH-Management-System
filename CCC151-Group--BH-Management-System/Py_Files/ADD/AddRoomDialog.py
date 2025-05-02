@@ -81,5 +81,5 @@ class AddRoomDialog(QDialog):
 
     def refresh_room_combobox(self):
         # This method is responsible for refreshing the room combobox in the AddRentDialog
-        # Here you would add logic to update the ComboBox in the Rent Dialog.
+        # Here you would add logic to update the ComboBox in the Rent Dialog if needed.
         pass

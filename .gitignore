@@ -29,3 +29,5 @@ greenlet/
 # Ignore virtual environments
 venv/
 
+=======
+*.pyc

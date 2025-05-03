@@ -19,6 +19,8 @@ class editRoomDialog(QDialog):
         self.ui.setupUi(self)
         self.fillSexComboBox()
         self.ui.RoomNumberLineEdit.textEdited.connect(self.assignCurrentNumberOfOccupants)
+        self.ui.CancelpushButton.clicked.connect(self.closeWindow)
+        self.ui.UpdatepushButton.clicked.connect(self.updateRoom)
 
         
     def updateRoom(self):
@@ -74,13 +76,13 @@ class editRoomDialog(QDialog):
         
         if roomNumber:
             print(roomNumber)
-            selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.MaximumCapacity"], tag="RoomNumber", key="201")
-            resultBuilder = selector.retData()
+            selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.MaximumCapacity"], tag="RoomNumber", key=roomNumber)
+            resultBuilder = selector.retDict()
             print(f"Query Result: {resultBuilder}")
-            # self.ui.NoOfOccupantsComboBox.clear()
+            self.ui.NoOfOccupantsComboBox.clear()
             
-            # if resultBuilder:
-            #     maximumOccupants = resultBuilder[0][0]
-            #     for i in range(0, maximumOccupants + 1):
-            #         self.ui.NoOfOccupantsComboBox.addItem(str(i))
+            if resultBuilder:
+                value = list(resultBuilder[0].values())[0]
+                for i in range(0, value + 1):
+                    self.ui.NoOfOccupantsComboBox.addItem(str(i))
         

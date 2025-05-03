@@ -28,6 +28,9 @@ class update:
         QUERY = f"UPDATE {table} SET {setClause} WHERE {whereColumn} = %s"
         values = list(setParameters.values()) + [whereValue]
         
+        print("SQL Query:", QUERY)
+        print("Values:", values)
+        
         try:
             self.resultSetPointer.execute(QUERY, values)
             self.connection.commit()
@@ -48,9 +51,22 @@ class update:
 
 # if __name__ == "__main__":
 #     updater = update()
+    
 #     table = "Tenant"
 #     setParameters = {"MiddleName" : "NEW MIDDLE NAME"} #originally Lee
 #     whereColumn = "TenantID"
 #     whereValue = "2025-4321"
     
 #     updater.updateTableData(table, setParameters, whereColumn, whereValue)
+
+    # table = "Rents"
+    # setParameters = {
+    #     "MoveInDate": "2025-01-15",
+    #     "MoveOutDate": "2026-01-15",
+    #     "RentedRoom": "301",
+    #     "MoveStatus": "Moved Out"
+    # }
+    # whereColumn = "RentingTenant"
+    # whereValue = "2025-4322"
+    
+    # updater.updateTableData(table, setParameters, whereColumn, whereValue)

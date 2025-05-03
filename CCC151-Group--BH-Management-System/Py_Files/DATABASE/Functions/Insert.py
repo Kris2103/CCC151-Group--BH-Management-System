@@ -4,6 +4,14 @@ from .Function import Function
 
 class Insert(Function):
     
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super (Insert, cls).__new__(cls)
+            
+        return cls._instance
+
     def __init__(self):
         super.__init__(self)
 

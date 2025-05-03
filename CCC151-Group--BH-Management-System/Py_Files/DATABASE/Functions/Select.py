@@ -60,6 +60,8 @@ class Select(Function):
 
     def SelectQuery(self, table, select_type, spec_col = [], tag = None, key = None):
         
+        self.params.clear()
+
         self.basequery          = f"SELECT "
         self.table              = f" FROM {table} "
         self.search_query       = ""
@@ -73,9 +75,11 @@ class Select(Function):
         else:
             self.columnquery    = ", ".join([f"{col}" for col in spec_col])
 
+        self.Conditions(select_type)
+
         # Selecting with a tag(column) and key(search key)
         if tag and key:
-            self.search_query = f"WHERE {tag} = %s"
+            self.search_query = f"WHERE {tag} LIKE %s "
             self.params.append(f"%{key}%")
 
         # Selecting all columns with key(search key)
@@ -94,16 +98,21 @@ class Select(Function):
         ...
 
         """
-        self.Conditions(select_type)
 
-        self.query = self.basequery + self.columnquery + self.table + self.search_query + self.conditions 
+        self.query = self.basequery + self.columnquery + self.table + self.conditions + self.search_query 
 
         print(self.query)
+   
 
-        self.cursor.execute(self.query, self.params)
-        self.rows = self.cursor.fetchall()
-        
-        return self
+        try:
+            self.cursor.execute(self.query, self.params)
+            self.rows = self.cursor.fetchall()
+            
+            return self
+        except Exception as exception:
+            print(f"Error selecting table '{table}' : {exception}")
+            self.conn.rollback()
+
     
     def retData(self):
         return self.rows
@@ -123,7 +132,7 @@ class Select(Function):
         match select_type:
             case "Tenant":
                 self.columnquery        += ", EmergencyContact.PhoneNumber AS EmergencyContact"
-                self.conditions         += "LEFT JOIN EmergencyContact ON Tenant.TenantID = EmergencyContact.EMTenantID"
+                self.conditions         += "LEFT JOIN EmergencyContact ON Tenant.TenantID = EmergencyContact.EMTenantID "
                 self.columns.append("EmergencyContact")
             case "Rents/Pays":
                 pass

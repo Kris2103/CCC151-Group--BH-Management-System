@@ -100,8 +100,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         search_key = str(self.SearchLineEdit.text())
         search_column = self.SearchField.currentData()
 
-        print(search_column)
-        print(search_key)
+        # print(search_column)
+        # print(search_key)
         self.Populate_Table(self.table_name, self.widget, self.select_type, 1, search_column, search_key)
 
 # ===========

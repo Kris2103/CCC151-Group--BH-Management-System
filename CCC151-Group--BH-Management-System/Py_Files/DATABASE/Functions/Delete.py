@@ -20,15 +20,21 @@ class Delete(Function):
     def __init__(self):
         super().__init__()
 
-    def DeleteQuery(self, table):
-
+    def DeleteQuery(self, table, column, key):
         
+        query = f"DELETE FROM {table} WHERE {column} = %s"
+        self.params.append(key)
+        
+        # Example: 
+        """
+        f"DELETE FROM students WHERE `ID Number` = %s"
+
+        """
 
         try:
-            self.cursor.execute(self.query, self.params)
-            self.rows = self.cursor.fetchall()
-            
-            return self
+            self.cursor.execute(query, self.params)
+            return self.cursor.fetchall()
+        
         except Exception as exception:
             print(f"Error selecting table '{table}' : {exception}")
             self.conn.rollback()

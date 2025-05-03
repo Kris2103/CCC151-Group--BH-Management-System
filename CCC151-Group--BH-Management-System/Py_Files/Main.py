@@ -12,6 +12,8 @@ from MainUI import Ui_MainWindow
 from DATABASE.Functions.Select import Select
 from EDIT.editFunctions.editTenantDialog import editTenantDialog
 from EDIT.editFunctions.editRentDialog import editRentDialog
+from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDialog
+from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from DATABASE.DB import DatabaseConnector
 import math
 
@@ -237,12 +239,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.load_tenant_data()
         
         elif currentWidgetIndex == 1:
-            print("Now in Edit Rooms Dialog")
+            dialog = editRoomDialog(self)
+            if dialog.exec() == QDialog.accepted:
+                self.load_room_data()
             
         elif currentWidgetIndex == 2:
             dialog = editRentDialog(self)
             if dialog.exec() == QDialog.accepted:
                 self.load_rent_data()
+                
+        elif currentWidgetIndex == 3:
+            dialog = editRoomDialog(self)
+            if dialog.exec() == QDialog.accepted:
+                self.load_payment_data()
+        
+        elif currentWidgetIndex == 4:
+            dialog = editEmergencyContactDialog(self)
+            if dialog.exec() == QDialog.accepted:
+                self.load_emergency_data()
         
 if __name__ == "__main__":
     connection = DatabaseConnector.get_connection()

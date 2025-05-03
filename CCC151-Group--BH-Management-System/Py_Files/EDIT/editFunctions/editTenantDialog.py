@@ -90,7 +90,7 @@ class editTenantDialog(QDialog):
     def fillSexComboBox(self):
         self.ui.SexComboBox.clear()
         
-        for data, label, in self.sexOptions.items():
+        for label, data, in self.sexOptions.items():
             self.ui.SexComboBox.addItem(label, data)
             
     def openEditEmergencyContact(self):

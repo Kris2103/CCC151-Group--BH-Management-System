@@ -56,8 +56,6 @@ class update:
 #     setParameters = {"MiddleName" : "NEW MIDDLE NAME"} #originally Lee
 #     whereColumn = "TenantID"
 #     whereValue = "2025-4321"
-    
-#     updater.updateTableData(table, setParameters, whereColumn, whereValue)
 
     # table = "Rents"
     # setParameters = {

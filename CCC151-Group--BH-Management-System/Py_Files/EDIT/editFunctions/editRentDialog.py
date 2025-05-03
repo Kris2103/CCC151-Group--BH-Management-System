@@ -85,5 +85,4 @@ class editRentDialog(QDialog):
         self.ui.MoveStatuscomboBox.clear()
         
         for label, data in self.statusOptions.items():
-            print(f"Label: {label}, Data: {data}")
             self.ui.MoveStatuscomboBox.addItem(label, data)

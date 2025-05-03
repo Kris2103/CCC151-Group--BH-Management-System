@@ -34,12 +34,11 @@ class editRentDialog(QDialog):
             
         roomNumber = self.ui.RoomNumberLineEdit.text()
         
-        if moveOutDateData:
-            try:
-                moveOutDate = datetime.strptime(moveOutDateData, "%Y-%m-%d").strftime("%Y-%m-%d")
-            except ValueError:
-                QMessageBox.critical(self, "Validation Error", "Move-out date is not in a valid format.", QMessageBox.Ok)
-                return
+        try:
+            moveOutDate = datetime.strptime(moveOutDateData, "%Y-%m-%d").strftime("%Y-%m-%d")
+        except ValueError:
+            QMessageBox.critical(self, "Validation Error", "Move-out date is not in a valid format.", QMessageBox.Ok)
+            return
         else:
             moveOutDate = None
         

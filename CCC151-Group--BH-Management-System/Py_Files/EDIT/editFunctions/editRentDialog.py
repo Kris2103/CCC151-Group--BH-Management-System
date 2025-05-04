@@ -39,8 +39,6 @@ class editRentDialog(QDialog):
         except ValueError:
             QMessageBox.critical(self, "Validation Error", "Move-out date is not in a valid format.", QMessageBox.Ok)
             return
-        else:
-            moveOutDate = None
         
         rentingTenant = self.ui.RentingTenantIDLineEdit.text()
         status = str(self.ui.MoveStatuscomboBox.currentData())

@@ -151,7 +151,7 @@ vertical-align: middle;
      <string>First Name</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="MibbleNameLineEdit">
+   <widget class="QLineEdit" name="MiddleNameLineEdit">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -348,7 +348,7 @@ border: 1px solid rgb(169, 169, 169);
      <string>Cancel</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="TenantEMIDLineEdit_2">
+   <widget class="QComboBox" name="TenantEMIDComboBox">
     <property name="geometry">
      <rect>
       <x>310</x>

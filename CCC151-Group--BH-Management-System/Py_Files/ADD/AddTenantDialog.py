@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
 from .AddTenant import Ui_Dialog
-import mysql.connector
 import re
+from DATABASE.Functions.Select import Select
+from DATABASE.DB import DatabaseConnector
 
 class AddTenantDialog(QDialog):
     def __init__(self, parent=None):
@@ -21,19 +22,23 @@ class AddTenantDialog(QDialog):
 
     def populate_room_combobox(self):
         try:
-            con = mysql.connector.connect(
-                host="web-bedford.gl.at.ply.gg",
-                user="sistoreOwner",
-                password="aVerySecurePassword",
-                database="SISTORE",
-                port=6340
-            )
-            cursor = con.cursor()
-            cursor.execute("SELECT RoomNumber FROM Room")
-            rooms = cursor.fetchall()
+            # Create an instance of the Select class
+            select = Select()
 
-            room_list = [str(room[0]) for room in rooms] # Fixed variable name
+            # Querying for room numbers
+            rows, columns = select.SelectQuery("Room", select_type=0, spec_col=["RoomNumber"])
 
+            # Debugging: Print the query result
+            print(f"Rows: {rows}, Columns: {columns}")
+
+            if not rows:
+                QMessageBox.warning(self, "No Data", "No room numbers found.")
+                return
+
+            # Extract room numbers from the query result
+            room_list = [str(row[0]) for row in rows]  # Assuming row[0] contains RoomNumber
+
+            # Populate the combo box with room numbers
             self.ui.RoomNoComboBox.clear()
             self.ui.RoomNoComboBox.addItems(room_list)
 
@@ -43,10 +48,8 @@ class AddTenantDialog(QDialog):
             completer.setCaseSensitivity(False)
             self.ui.RoomNoComboBox.setCompleter(completer)
 
-            cursor.close()
-            con.close()
-
-        except mysql.connector.Error as err:
+        except Exception as err:
+            print(f"Database Error: {err}")
             QMessageBox.critical(self, "Database Error", f"Failed to load rooms:\n{err}")
         
     def handle_add_tenant(self):
@@ -75,20 +78,26 @@ class AddTenantDialog(QDialog):
             return
 
         try:
-            con = mysql.connector.connect(
-                host="web-bedford.gl.at.ply.gg",
-                user="sistoreOwner",
-                password="aVerySecurePassword",
-                database="SISTORE",
-                port=6340
-            )
-            cursor = con.cursor()
+            # Create an instance of the Select class
+            select = Select()
+
+            capacity_query = """
+                SELECT MaximumCapacity, NoOfOccupants FROM Room WHERE RoomNumber = %s
+            """
+            select.cursor.execute(capacity_query, (tenant_room,))
+            result = select.cursor.fetchone()
+
+            if result:
+                maximum_capacity, current_occupants = result
+                if current_occupants >= maximum_capacity:
+                    QMessageBox.warning(self, "Room Full", "The room has reached its maximum capacity.")
+                    return
 
             insert_query = """
                 INSERT INTO Tenant (TenantID, Email, FirstName, MiddleName, LastName, Sex, PhoneNumber, RoomNumber)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
-            cursor.execute(insert_query, (
+            select.cursor.execute(insert_query, (
                 tenant_ID,
                 tenant_email,
                 tenant_fname,
@@ -99,12 +108,19 @@ class AddTenantDialog(QDialog):
                 int(tenant_room)
             ))
 
-            con.commit()
-            cursor.close()
-            con.close()
+            update_occupants_query = """
+                UPDATE Room
+                SET NoOfOccupants = NoOfOccupants + 1
+                WHERE RoomNumber = %s
+            """
+            select.cursor.execute(update_occupants_query, (tenant_room,))
+
+            select.conn.commit()
+            select.cursor.close()
 
             QMessageBox.information(self, "Success", "Tenant added successfully!")
             self.accept()
 
-        except mysql.connector.Error as err:
+        except Exception as err:
+            print(f"Error occurred while adding tenant: {err}")
             QMessageBox.critical(self, "Database Error", f"Failed to add tenant:\n{err}")

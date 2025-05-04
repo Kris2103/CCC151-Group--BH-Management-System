@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 from ..EditRent import Ui_Dialog
-from PyQt5.QtCore import Qt
 from datetime import datetime
 from DATABASE.Functions.update import update
 

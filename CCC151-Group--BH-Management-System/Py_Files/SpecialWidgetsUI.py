@@ -8,7 +8,7 @@ class ClickablePageLabel(QtWidgets.QLabel):
         super().__init__(text, parent)
         self.setText(text)
         self.setAlignment(QtCore.Qt.AlignCenter)
-        self.setStyleSheet("color: #630014;")
+        self.setStyleSheet("color: #630014; border: none; background-color: transparent;")
         self.setFixedWidth(25)
         self.setFixedHeight(25)
 

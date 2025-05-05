@@ -10,7 +10,9 @@ from ADD.AddEmergencyContactDialog import AddEmergencyContactDialog
 from MainUI import Ui_MainWindow
 from DATABASE.Functions.Select import Select
 from EDIT.editFunctions.editTenantDialog import editTenantDialog
+from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from EDIT.editFunctions.editRentDialog import editRentDialog
+from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDialog
 import math
 
 
@@ -62,6 +64,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stackedWidget.setCurrentIndex(index)
         
         if hasattr(self, "full_data"): del self.full_data
+        self.SearchField.clear()
 
         # Reset all to inactive
         self.tenantPushButton.setStyleSheet(self.inactive_style)
@@ -82,15 +85,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif index == 4:
             self.emergencyPushButton.setStyleSheet(self.active_style)
 
-        table_mapping = {
-            0: ("Tenant", self.TenantTable, "Tenant"),
-            1: ("Room", self.RoomTable, None),
-            2: ("Rents", self.RentTable, "Rents/Pays"),
-            3: ("Pays", self.PaymentTable, "Rents/Pays"),
-            4: ("EmergencyContact", self.EmergencyTable, None)
-        }
-        self.table_name, self.widget, self.select_type = table_mapping.get(index)
-        self.Populate_Table(self.table_name, self.widget, self.select_type)
+        self.load_data(index)
 
 # =========================
 #    SEARCH N SORT FUNCS
@@ -122,7 +117,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
 
             # Configure pages information according to taste
-            self.rows_per_page  = 15
+            self.rows_per_page  = 20
             self.total_pages    = math.ceil(len(self.full_data)/self.rows_per_page)
         
         for col in self.columns: self.SearchField.addItem(str(col), col)
@@ -235,30 +230,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 #    PAGINATION TABLE
 # =========================
 
-    def load_tenant_data(self):
-        selector = Select()
-        tenant_data, columns = selector.SelectQuery("Tenant", 0)
-        self.Populate_Table("Tenant", self.TenantTable, 0)
-
-    def load_room_data(self):
-        selector = Select()
-        room_data, columns = selector.SelectQuery("Room", 1)
-        self.Populate_Table("Room", self.RoomTable, 1)
-
-    def load_rent_data(self):
-        selector = Select()
-        rent_data, columns = selector.SelectQuery("Rents", 2)
-        self.Populate_Table("Rents", self.RentTable, 2)
-
-    def load_payment_data(self):
-        selector = Select()
-        payment_data, columns = selector.SelectQuery("Pays", 3)
-        self.Populate_Table("Pays", self.PaymentTable, 3)
-
-    def load_emergency_data(self):
-        selector = Select()
-        emergency_data, columns = selector.SelectQuery("EmergencyContact", 4)
-        self.Populate_Table("EmergencyContact", self.EmergencyTable, 4)
+    def load_data(self, index):
+        table_mapping = {
+                    0: ("Tenant", self.TenantTable, "Tenant"),
+                    1: ("Room", self.RoomTable, None),
+                    2: ("Rents", self.RentTable, "Rents/Pays"),
+                    3: ("Pays", self.PaymentTable, "Rents/Pays"),
+                    4: ("EmergencyContact", self.EmergencyTable, None)
+                }
+        self.table_name, self.widget, self.select_type = table_mapping.get(index)
+        self.Populate_Table(self.table_name, self.widget, self.select_type)
 
     def on_Add_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()
@@ -266,43 +247,56 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if current_widget_index == 0:
             dialog = AddTenantDialog(self)
             if dialog.exec() == QDialog.Accepted:
-                self.load_tenant_data()
+                self.load_data(0)
 
         elif current_widget_index == 1:
             dialog = AddRoomDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_room_data()
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(1)
 
         elif current_widget_index == 2:
             dialog = AddRentDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_rent_data()
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(2)
 
         elif current_widget_index == 3:
             dialog = AddPaymentDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_payment_data()
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(3)
 
         elif current_widget_index == 4:
             dialog = AddEmergencyContactDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_emergency_data()
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(4)
 
     def onEditClicked(self):
-        currentWidgetIndex = self.stackedWidget.currentIndex()
-        
-        if currentWidgetIndex == 0:
+        current_widget_index = self.stackedWidget.currentIndex()
+
+        if current_widget_index == 0:
             dialog = editTenantDialog(self)
             if dialog.exec() == QDialog.Accepted:
-                self.load_tenant_data()
-        
-        elif currentWidgetIndex == 1:
-            print("Now in Edit Rooms Dialog")
-            
-        elif currentWidgetIndex == 2:
+                self.load_data(0)
+
+        elif current_widget_index == 1:
+            dialog = editRoomDialog(self)
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(1)
+
+        elif current_widget_index == 2:
             dialog = editRentDialog(self)
             if dialog.exec() == QDialog.accepted:
-                self.load_rent_data()
+                self.load_data(2)
+
+        # elif current_widget_index == 3:
+        #     dialog = editPaymentDialog(self)
+        #     if dialog.exec() == QDialog.accepted:
+        #         self.load_data(3)
+
+        elif current_widget_index == 4:
+            dialog = editEmergencyContactDialog(self)
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(4)
+        
         
 if __name__ == "__main__":
     app = QApplication(sys.argv)

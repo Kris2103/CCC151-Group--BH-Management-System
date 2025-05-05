@@ -6,44 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 from DATABASE.DB import DatabaseConnector
 from .Function import Function
-
-"""
-
-READ ME FOR THE FUNCTION
-SelectQuery has 5 Arguments
-
-A. table
-- String
-- Accepts valid table name from schema
-  - Tenant, Room, Rents, Pays, EmergencyContact
-- DONT FORGET TO ENCLOSE IN "table"
-
-B. select_type
-- String
-- corresponds to additional conditions according to type 
-- "Tenant" = additional left join for emergency contact phone number
-- None = loads data normallly with no additional changes to sleect query
-- "Rents/Pays" = additional left join for tenant phone number
-
-C. spec_col
-- List
-- accepts valid specific columns from a table
-- could be multiple, could just be one
-- used for filling combobox and other functionalities
-- "EmergencyContact.PhoneNumber"
-
-D. tag
-- String
-- accepts a valid column name of the passed table
-- used for searching along specified column
-- if none are passed, key will be used on ALL columns of the passed table
-
-E. key
-- String
-- used as "%key%"
-- used for searching, this is the search key
-
-"""
+#from Function import Function
 
 """
 
@@ -96,7 +59,7 @@ class Select(Function):
     def __init__(self):
         super().__init__()
 
-    def SelectQuery(self, table, select_type, spec_col = [], tag = None, key = None):
+    def SelectQuery(self, table, select_type=None, spec_col = [], tag = None, key = None):
         
         self.params.clear()
 
@@ -105,20 +68,25 @@ class Select(Function):
         self.search_query       = ""
         self.conditions         = ""
 
+        self.columns            = []
         self.columns            = self.get_columns(table)
+        self.aliascolumn        = {}
         
         if not spec_col:
             self.columnquery    = ", ".join([f"{table}.{col}" for col in self.columns])
         
         else:
             self.columnquery    = ", ".join([f"{col}" for col in spec_col])
+            self.columns = [col.split(" AS ")[-1].split(".")[-1] for col in spec_col]
 
         self.Conditions(select_type)
 
         # Selecting with a tag(column) and key(search key)
         if tag and key:
-            self.search_query = f"WHERE {table}.{tag} LIKE %s "
+            search_tag = self.aliascolumn.get(tag, f"{table}.{tag}")
+            self.search_query = f"WHERE {search_tag} LIKE %s "
             self.params.append(f"%{key}%")
+
 
         # Selecting all columns with key(search key)
         elif key:            
@@ -164,6 +132,8 @@ class Select(Function):
         return self.rows, self.columns
     
     def retDict(self):
+        print(list(zip(self.columns, self.rows[0])))
+
         return [dict(zip(self.columns, row)) for row in self.rows]
     
     def Conditions(self, select_type = None):
@@ -171,8 +141,16 @@ class Select(Function):
             case "Tenant":
                 self.columnquery        += ", EmergencyContact.PhoneNumber AS EmergencyContact"
                 self.conditions         += "LEFT JOIN EmergencyContact ON Tenant.TenantID = EmergencyContact.EMTenantID "
+                self.aliascolumn["EmergencyContact"] = "EmergencyContact.PhoneNumber"
                 self.columns.append("EmergencyContact")
             case "Rents/Pays":
                 pass
             case None:
                 pass
+
+if __name__ == "__main__":
+    selector = Select()
+        
+    selector.SelectQuery(table="Rents")
+    resultBuilder = selector.retDict()
+    print(f"Query Result: {resultBuilder}")

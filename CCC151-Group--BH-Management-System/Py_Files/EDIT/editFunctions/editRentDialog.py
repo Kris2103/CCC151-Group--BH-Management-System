@@ -4,6 +4,9 @@ from ..EditRent import Ui_Dialog
 from datetime import datetime
 from DATABASE.Functions.update import update
 from DATABASE.Functions.Select import Select
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 
 class editRentDialog(QDialog):
     
@@ -26,11 +29,13 @@ class editRentDialog(QDialog):
         self.fillRentingTenantID()
         self.fillRoomNumber()
         
-        self.ui.RentingTenantIDComboBox.currentTextChanged.connect(self.matchTenantIDToRoomNumber)
+        self.ui.RentingTenantIDComboBox.currentTextChanged.connect(self.matchTenantIDToDetails)
+        
+        self.matchTenantIDToDetails()
         
     def updateRent(self):
-        moveInDateData = self.ui.MoveInDateLineEdit.date().toString("yyyy-MM-dd")
-        moveOutDateData = self.ui.MoveInDateLineEdit_2.date().toString("yyyy-MM-dd")
+        moveInDateData = self.ui.MoveInDateEdit.date().toString("yyyy-MM-dd")
+        moveOutDateData = self.ui.MoveOutDateEdit.date().toString("yyyy-MM-dd")
         
         try:
             moveInDate = datetime.strptime(moveInDateData, "%Y-%m-%d").strftime("%Y-%m-%d")
@@ -79,6 +84,8 @@ class editRentDialog(QDialog):
         }
         
         updater.updateTableData("Rents", setParameters, "RentingTenant", rentingTenant)
+        QMessageBox.information(self, "Update Successful", "Rent information updated successfully.", QMessageBox.Ok)
+        self.accept()
         
     def closeWindow(self):
         print("Closing the Edit Rent Dialog")
@@ -108,7 +115,7 @@ class editRentDialog(QDialog):
         
         selector = Select()
         
-        selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom"])
+        selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom", "Rents.MoveOutDate"])
         resultBuilder = selector.retDict()
         print(f"Query Result: {resultBuilder}")
         
@@ -116,19 +123,29 @@ class editRentDialog(QDialog):
             roomNumber = next(iter(row.values()))
             self.ui.RoomNumberComboBox.addItem(str(roomNumber))
             
-    def matchTenantIDToRoomNumber(self):
+    def matchTenantIDToDetails(self):
         tenantID = self.ui.RentingTenantIDComboBox.currentText()
         
         if tenantID:
             selector = Select()
             
-            selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom", "Rents.MovedInDate"], tag="RentingTenant", key=tenantID)
+            selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom", "Rents.MoveInDate", "Rents.MoveOutDate", "Rents.MoveStatus"], tag="RentingTenant", key=tenantID)
             resultBuilder = selector.retData()
-            print(f"Query Result: {resultBuilder}")
+            print(f"\n\nMatch Query Result: {resultBuilder}")
             
             if resultBuilder:
-                roomNumber = resultBuilder[0][0]
-                self.ui.RoomNumberComboBox.setCurrentText(str(roomNumber))
+                roomNumber, moveInDate, moveOutDate, status = resultBuilder[0]
                 
-    #def matchTenantIDToMoveInDate(self):
+                self.ui.RoomNumberComboBox.setCurrentText(str(roomNumber))
+                self.ui.MoveInDateEdit.setDate(moveInDate)
+                
+                if not moveOutDate:
+                    nextYear = datetime.now() + relativedelta(years=1)
+                    self.ui.MoveOutDateEdit.setDate(nextYear)
+                else:
+                    self.ui.MoveOutDateEdit.setDate(moveOutDate)
+                
+                index = self.ui.MoveStatuscomboBox.findData(status)
+                if index != -1:
+                    self.ui.MoveStatuscomboBox.setCurrentIndex(index)
         

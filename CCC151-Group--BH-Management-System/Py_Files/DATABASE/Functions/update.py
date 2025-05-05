@@ -23,7 +23,7 @@ class update:
     
     def __init__(self):
         if not hasattr(self._threadLocal, 'initialized'):
-            self._threadLocal.connection = DatabaseConnector.get_connection()
+            self._threadLocal.connection = DatabaseConnector.getConnection()
             self._threadLocal.initialized = True
         
     def updateTableData(self, table, setParameters: dict, whereColumn: str, whereValue):

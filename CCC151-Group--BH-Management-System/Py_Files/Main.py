@@ -302,7 +302,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         
 if __name__ == "__main__":
-    connection = DatabaseConnector.get_connection()
+    connection = DatabaseConnector.getConnection()
     if connection is not None:
         app = QApplication(sys.argv)
         window = MainWindow()

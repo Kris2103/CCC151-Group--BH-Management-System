@@ -10,7 +10,7 @@ from DATABASE.DB import DatabaseConnector
 class Function:
     
     def __init__(self):
-        self.conn = DatabaseConnector.get_connection()
+        self.conn = DatabaseConnector.getConnection()
         self.cursor = self.conn.cursor()
         self.params = []
 

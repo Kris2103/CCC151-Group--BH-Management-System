@@ -28,33 +28,40 @@ class update:
         
     def updateTableData(self, table, setParameters: dict, whereColumn: str, whereValue):
         setClause = ", ".join([f"{key} = %s" for key in setParameters.keys()])
-        QUERY = f"UPDATE {table} SET {setClause} WHERE {whereColumn} = %s"
-        values = list(setParameters.values()) + [whereValue]
         
+        values = list(setParameters.values())
+        
+        if isinstance(whereValue, (list, tuple, set)):  # multiple values
+            placeholders = ", ".join(["%s"] * len(whereValue))
+            QUERY = f"UPDATE {table} SET {setClause} WHERE {whereColumn} IN ({placeholders})"
+            values += list(whereValue)
+        else:  # single value
+            QUERY = f"UPDATE {table} SET {setClause} WHERE {whereColumn} = %s"
+            values.append(whereValue)
+
         print("SQL Query:", QUERY)
         print("Values:", values)
-        
+
         try:
             resultSetPointer = self._threadLocal.connection.cursor()
-            
             resultSetPointer.execute(QUERY, values)
             self._threadLocal.connection.commit()
             affectedRows = resultSetPointer.rowcount
-            
+
             if affectedRows > 0:
-                print(f"Table '{table}' updated successfully.")
+                print(f"{affectedRows} row(s) updated successfully in table '{table}'.")
             else:
                 print(f"No rows were updated for table '{table}'.")
                 self._threadLocal.connection.rollback()
-            
+
         except Exception as exception:
             print(f"Error updating table '{table}' : {exception}")
             self._threadLocal.connection.rollback()
-            
+
         finally:
             resultSetPointer.close()
 
-
+                        
 # 2. comment everything below (only uncomment if testing, also uncomment 1.)
 
 # if __name__ == "__main__":
@@ -76,3 +83,10 @@ class update:
     # whereValue = "2025-4322"
     
     # updater.updateTableData(table, setParameters, whereColumn, whereValue)
+    
+#     updater.updateTableData(
+#     table="Tenant",
+#     setParameters={"MiddleName": "UPDATED NAME"},
+#     whereColumn="TenantID",
+#     whereValue=["2025-4321", "2025-1234", "2025-5678"]
+# )

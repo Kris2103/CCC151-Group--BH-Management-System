@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
 from .AddRoom import Ui_Dialog
-from DATABASE.Functions.Select import Select
+from DATABASE.Functions import Select, Insert, update
 from DATABASE.DB import DatabaseConnector
 
 class AddRoomDialog(QDialog):
@@ -8,6 +8,10 @@ class AddRoomDialog(QDialog):
         super().__init__(parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+
+        self.select = Select.Select()
+        self.insert = Insert.Insert()
+        self.update = update.update()
 
         self.ui.CancelpushButton.clicked.connect(self.reject)
         self.ui.AddpushButton.clicked.connect(self.handle_add_room)
@@ -29,26 +33,18 @@ class AddRoomDialog(QDialog):
             return
 
         try:
-            select = Select()
-
-            select.cursor.execute("SELECT RoomNumber FROM Room WHERE RoomNumber = %s", (room_number,))
-            if select.cursor.fetchone():
+            
+            existing_room =  self.select.SelectQuery("Room", spec_col = ["RoomNumber"], tag = "Room.RoomNumber", key = room_number, limit = 1)
+            if existing_room:
                 QMessageBox.warning(self, "Room Exists", f"Room {room_number} already exists.")
                 return
 
             # Check if room has existing tenants and determine their sex
-            query = """
-                SELECT COUNT(*), Sex
-                FROM Tenant
-                WHERE RoomNumber = %s
-                GROUP BY Sex
-            """
-            select.cursor.execute(query, (room_number,))
-            result = select.cursor.fetchone()
+            result = self.select.SelectQuery("Tenant", spec_col=["COUNT(*) AS OccupantCount", "Tenant.Sex"], tag="Room.RoomNumber", key=room_number, group="Sex", limit=1)
 
             if result:
-                occupant_count, existing_sex = result
-                if tenant_sex != existing_sex:
+                occupant_count, existing_sex = result[0]
+                if tenant_sex != existing_sex and existing_sex != None:
                     QMessageBox.critical(self, "Sex Mismatch",
                         f"Room {room_number} already has {occupant_count} {existing_sex} tenant(s).\n"
                         f"You selected: {tenant_sex}")
@@ -58,20 +54,15 @@ class AddRoomDialog(QDialog):
                 current_occupants = 0
 
             # Insert new room
-            insert_query = """
-                INSERT INTO Room (RoomNumber, Price, TenantSex, MaximumCapacity, NoOfOccupants)
-                VALUES (%s, %s, %s, %s, %s)
-            """
-            select.cursor.execute(insert_query, (
+            newRoom = [
                 room_number,
                 room_price,
                 tenant_sex,
                 room_max,
                 current_occupants
-            ))
-
-            select.conn.commit()
-            select.cursor.close()
+            ]
+            
+            self.insert.InsertQuery("Room", newRoom)
 
             QMessageBox.information(self, "Success", f"Room {room_number} added successfully.")
             self.accept()

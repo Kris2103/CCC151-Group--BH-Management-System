@@ -5,8 +5,8 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))  # 1. comment this line if it errors, only uncomment if you run it directly (testing, like running 2.)
 
 from DATABASE.DB import DatabaseConnector
-from .Function import Function
-#from Function import Function
+from .Function import Function 
+# from Function import Function # uncomment for debugging
 
 """
 
@@ -59,7 +59,7 @@ class Select(Function):
     def __init__(self):
         super().__init__()
 
-    def SelectQuery(self, table, select_type=None, spec_col = [], tag = None, key = None):
+    def SelectQuery(self, table, select_type=None, spec_col = [], tag = None, key = None, group = None, limit = None):
         
         self.params.clear()
 
@@ -67,8 +67,9 @@ class Select(Function):
         self.table              = f" FROM {table} "
         self.search_query       = ""
         self.conditions         = ""
+        self.limitquery         = (f" LIMIT {limit}") if limit else ("")
+        self.groupquery         = (f" GROUP BY {group}") if group else ("")
 
-        self.columns            = []
         self.columns            = self.get_columns(table)
         self.aliascolumn        = {}
         
@@ -105,7 +106,7 @@ class Select(Function):
 
         """
 
-        self.query = self.basequery + self.columnquery + self.table + self.conditions + self.search_query 
+        self.query = self.basequery + self.columnquery + self.table + self.conditions + self.search_query + self.groupquery + self.limitquery
 
         print(self.query)
    
@@ -148,9 +149,11 @@ class Select(Function):
             case None:
                 pass
 
-if __name__ == "__main__":
-    selector = Select()
+# if __name__ == "__main__":
+#     selector = Select()
         
-    selector.SelectQuery(table="Rents")
-    resultBuilder = selector.retDict()
-    print(f"Query Result: {resultBuilder}")
+#     selector.SelectQuery(table="Rents")
+#     resultBuilder = selector.retDict()
+#     print(f"Query Result: {resultBuilder}")
+
+# uncomment for debugging

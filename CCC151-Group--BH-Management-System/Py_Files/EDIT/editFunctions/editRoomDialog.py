@@ -61,6 +61,8 @@ class editRoomDialog(QDialog):
         }
         
         updater.updateTableData("Room", setParameters, "RoomNumber", roomNumber)
+        QMessageBox.information(self, "Update Successful", "Room information updated successfully.", QMessageBox.Ok)
+        self.accept()
         
     def closeWindow(self):
         print("Closing the Edit Room Dialog")
@@ -79,12 +81,34 @@ class editRoomDialog(QDialog):
         if roomNumber:
             print(roomNumber)
             selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.MaximumCapacity"], tag="RoomNumber", key=roomNumber)
-            resultBuilder = selector.retDict()
+            resultBuilder = selector.retData()
+            
+            selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.NoOfOccupants", "Room.MaximumCapacity", "Room.TenantSex", "Room.Price"], tag="RoomNumber", key=roomNumber)
+            currentOccupants = selector.retData()
+            
+            print(f"Current Occupants: {currentOccupants}")
+            
+            if len(resultBuilder) != 1:
+                resultBuilder = 0
+                self.ui.PriceLineEdit.setText("")
+                self.ui.MaxNoOccupantsLineEdit.setText("")
+            else:
+                resultBuilder = resultBuilder[0][0]
+                numberOfOccupants = currentOccupants[0][0]
+                maximumCapacity = currentOccupants[0][1]
+                tenantSex = currentOccupants[0][2]
+                price = currentOccupants[0][3]
+        
             print(f"Query Result: {resultBuilder}")
             self.ui.NoOfOccupantsComboBox.clear()
+
             
-            if resultBuilder:
-                value = list(resultBuilder[0].values())[0]
-                for i in range(0, value + 1):
+            if resultBuilder is not 0:
+                for i in range(resultBuilder + 1):
                     self.ui.NoOfOccupantsComboBox.addItem(str(i))
+
+                self.ui.PriceLineEdit.setText(str(price))
+                self.ui.TenantSexComboBox.setCurrentText(tenantSex)
+                self.ui.MaxNoOccupantsLineEdit.setText(str(maximumCapacity))
+                self.ui.NoOfOccupantsComboBox.setCurrentText(str(numberOfOccupants))
         

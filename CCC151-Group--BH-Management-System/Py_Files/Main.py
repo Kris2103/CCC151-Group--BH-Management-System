@@ -1,6 +1,7 @@
 import sys
 import mysql.connector
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTableWidgetItem, QComboBox
+from PyQt5.QtWidgets import QMessageBox
 import SpecialWidgetsUI
 from ADD.AddTenantDialog import AddTenantDialog
 from ADD.AddRoomDialog import AddRoomDialog
@@ -13,6 +14,8 @@ from EDIT.editFunctions.editTenantDialog import editTenantDialog
 from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from EDIT.editFunctions.editRentDialog import editRentDialog
 from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDialog
+from EDIT.editFunctions.editRoomDialog import editRoomDialog
+from DATABASE.DB import DatabaseConnector
 import math
 
 
@@ -38,7 +41,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         font-family: 'Roboto', sans-serif;
         font-weight: 500;
         font-style: normal;
-        font-size: 13px;2
+        font-size: 13px;
         color: #800000; 
         """
 
@@ -299,7 +302,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+    connection = DatabaseConnector.get_connection()
+    if connection is not None:
+        app = QApplication(sys.argv)
+        window = MainWindow()
+        window.show()
+        sys.exit(app.exec_())
+        
+    else:
+        app = QApplication(sys.argv) 
+        QMessageBox.critical(None, "Connection Error", "Could not establish connection with the Database.", QMessageBox.Ok)
+        sys.exit(1)

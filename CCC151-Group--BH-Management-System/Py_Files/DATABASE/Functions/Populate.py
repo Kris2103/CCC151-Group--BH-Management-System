@@ -1,0 +1,219 @@
+import math
+from MainUI import Ui_MainWindow
+import SpecialWidgetsUI
+from PyQt5.QtWidgets import QTableWidgetItem, QMainWindow, QMessageBox, QCompleter
+from . import Select, Insert
+
+# =========================
+#    PAGINATION TABLE
+# ==========
+
+class Populate(QMainWindow, Ui_MainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+        self.selector = Select.Select()
+        self.inserter = Insert.Insert()
+    
+    def Populate_Table(self, table_name, table_widget, select_type, current_page = 1, search_column = None, search_key = None):
+
+        # Fetch ALL data with query, store for faster loading in page change...
+        self.columns = self.selector.SelectQuery(table_name, select_type).retCols()
+        if not hasattr(self, "full_data"):
+            self.full_data  = self.selector.SelectQuery(table_name, select_type, tag = search_column, key = search_key).retData()
+
+        # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
+
+            # Configure pages information according to taste
+            self.rows_per_page  = 20
+            self.total_pages    = math.ceil(len(self.full_data)/self.rows_per_page)
+
+        self.current_page = current_page
+        self.jumpLabel_totalpages.setText(str(self.total_pages))
+
+        start_index             = (current_page-1) * self.rows_per_page
+        end_index               = start_index + self.rows_per_page
+        self.page_data          = self.full_data[start_index:end_index]
+        
+        # refresh table widget(data is not refreshed)
+        table_widget.clear()
+        table_widget.setRowCount(len(self.page_data))
+        table_widget.setColumnCount(len(self.columns))
+        table_widget.setHorizontalHeaderLabels(self.columns)
+        table_widget.verticalHeader().setVisible(False)
+
+        # load the data in TO EDIT: ignore first column(built-in id of widget)
+        for row_idx, row_data in enumerate(self.page_data):
+            for col_idx, cell in enumerate(row_data):
+                table_widget.setItem(row_idx, col_idx, QTableWidgetItem(str(cell)))
+
+        # array of pointers to the created buttons. I say buttons but they're actually modified labels my dudes
+        while self.paginationButtonsGrid.count():
+            item = self.paginationButtonsGrid.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+        
+        self.jumpBox.clear()
+
+        self.PaginationButts = []
+        buttCol = 0
+
+        self.prevTenButt    = SpecialWidgetsUI.ClickablePageLabel("<<", self.paginationFrame)
+        self.prevTenButt.clicked.connect(lambda: self.PrevTenPage())
+        self.paginationButtonsGrid.addWidget(self.prevTenButt, 0, buttCol)
+        buttCol += 1
+        self.PaginationButts.append(self.prevTenButt)
+
+        self.prevButt       = SpecialWidgetsUI.ClickablePageLabel("<", self.paginationFrame)
+        self.prevButt.clicked.connect(lambda: self.PrevPage())
+        self.paginationButtonsGrid.addWidget(self.prevButt, 0, buttCol)
+        buttCol += 1
+        self.PaginationButts.append(self.prevButt)
+
+        for i in range(1, self.total_pages + 1):
+            self.jumpBox.addItem(str(i), i)
+
+            if (i <= 11 and self.current_page < 6) or i == self.current_page or ((i >= self.current_page - 5) and (i <= self.current_page + 5)) or (i >= self.total_pages - 10 and self.current_page > self.total_pages - 5):
+                # print(f"Creating button for page {i}")
+                numButt     = SpecialWidgetsUI.ClickablePageLabel(f"{i}", self.paginationFrame)
+                numButt.clicked.connect(lambda x=i: self.GotoPage(x))
+                self.paginationButtonsGrid.addWidget(numButt, 0, buttCol)
+                buttCol += 1
+                self.PaginationButts.append(numButt)
+
+        self.nextButt       = SpecialWidgetsUI.ClickablePageLabel(">", self.paginationFrame)
+        self.nextButt.clicked.connect(lambda: self.NextPage())
+        self.paginationButtonsGrid.addWidget(self.nextButt, 0, buttCol)
+        buttCol += 1
+        self.PaginationButts.append(self.nextButt)
+
+        self.nextTenButt    = SpecialWidgetsUI.ClickablePageLabel(">>", self.paginationFrame)
+        self.nextTenButt.clicked.connect(lambda: self.NextTenPage())
+        self.paginationButtonsGrid.addWidget(self.nextTenButt, 0, buttCol)
+        buttCol += 1
+        self.PaginationButts.append(self.nextTenButt)
+        
+        self.prevButt.setEnabled(self.current_page > 1)
+        self.nextButt.setEnabled(self.current_page < self.total_pages)
+        self.prevTenButt.setEnabled(self.current_page > 1)
+        self.nextTenButt.setEnabled(self.current_page < self.total_pages)
+
+        index = self.jumpBox.findData(self.current_page)
+        if index != -1:
+            self.jumpBox.setCurrentIndex(index)
+
+
+    def jump(self):
+        page = self.jumpBox.currentData()
+        if page is not None: self.GotoPage(page) 
+
+    def NextPage(self):
+        self.current_page += 1
+        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+
+    def NextTenPage(self):
+        if self.current_page + 10 < self.total_pages:
+            self.current_page += 10
+        else: 
+            self.current_page = self.total_pages
+        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+
+    def PrevPage(self):
+        self.current_page -= 1
+        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+
+    def PrevTenPage(self):
+        if self.current_page - 10 >= 1:
+            self.current_page -= 10
+        else:
+            self.current_page = 1
+        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+
+    def GotoPage(self, page):
+        self.Populate_Table(self.table_name, self.widget, self.select_type, page)
+
+# ===========
+#    PAGINATION TABLE
+# =========================
+
+# =========================
+#    COMBOBOXES POPULATE
+# ==========
+
+    def populate_room_combobox(self, room_combobox):
+        
+        self.room_combobox = room_combobox
+        
+        try:
+            # Querying for room numbers
+            rows = self.selector.SelectQuery("Room", spec_col=["RoomNumber"]).retData()
+
+            if not rows:
+                QMessageBox.warning(self, "No Data", "No room numbers found.")
+                return
+
+            # Extract room numbers from the query result
+            room_list = [str(row[0]) for row in rows]  
+
+            # Populate the combo box with room numbers
+            self.room_combobox.clear()
+            self.room_combobox.addItems(room_list)
+
+            # Make combo box searchable
+            self.room_combobox.setEditable(True)
+            completer = QCompleter(room_list, self.room_combobox)
+            completer.setCaseSensitivity(False)
+            self.room_combobox.setCompleter(completer)
+
+        except Exception as err:
+            print(f"Database Error: {err}")
+            QMessageBox.critical(self, "Database Error", f"Failed to load rooms:\n{err}") 
+
+    def populate_sex_combobox(self, sex_combobox):
+        self.sex_combobox = sex_combobox
+        self.sex_combobox.clear()
+
+        self.sex_combobox.addItems(["Male", "Female"])
+
+    def populate_movestatus_combobox(self, move_combobox):
+        self.move_combobow = move_combobox
+        self.move_combobow.clear()
+
+        self.move_combobow.addItems(["Active", "Moved Out"])
+
+    def populate_tenant_id_combobox(self, tenant_combobox):
+        self.tenant_combobox = tenant_combobox
+        self.tenant_combobox.clear()
+
+        tenant_ids = [str(row[0]) for row in self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"]).retData()]
+        self.tenant_combobox.addItems(tenant_ids)
+
+    def sync_tenant_id_from_room(self, roomnum_combobox):
+        self.roomnum_combobox = roomnum_combobox
+        room = self.roomnum_combobox.currentText()
+        if not room:
+            return
+        
+        result = self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"], tag = "RoomNumber", key = room, limit = 1).retData()
+        if result:
+            tenant_id = str(result[0])
+            self.roomnum_combobox.setCurrentText(tenant_id)
+        else:
+            self.roomnum_combobox.setCurrentText("")
+
+    def sync_room_from_tenant_id(self, renttent_combobox):
+        self.renttent_combobox = renttent_combobox
+        tenant_id = self.renttent_combobox.currentText()
+        if not tenant_id:
+            return
+        
+        result = self.selector.SelectQuery("Tenant", None, ["Tenant.RoomNumber"], tag = "TenantID", key = tenant_id, limit = 1).retData()
+        if result:
+            room_number = str(result[0])
+            index = self.renttent_combobox.findText(room_number)
+            if index != -1:
+                self.renttent_combobox.setCurrentIndex(index)
+# ===========
+#    COMBOBOXES POPULATE   
+# =========================

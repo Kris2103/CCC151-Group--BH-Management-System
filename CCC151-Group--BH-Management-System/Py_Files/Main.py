@@ -17,6 +17,7 @@ from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDi
 from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from DATABASE.DB import DatabaseConnector
 import math
+from DATABASE.Functions.Populate import Populate
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -25,13 +26,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.selector = Select()
-
-        #Sorting enabled for all tables
-        # self.TenantTable.setSortingEnabled(True)
-        # self.RoomTable.setSortingEnabled(True)
-        # self.RentTable.setSortingEnabled(True)
-        # self.PaymentTable.setSortingEnabled(True)
-        # self.EmergencyTable.setSortingEnabled(True)
+        self.populator = Populate()
 
         self.button_base_style = """
         background-color: rgb(250, 255, 242); /* Inactive background */
@@ -67,7 +62,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stackedWidget.setCurrentIndex(index)
         
         if hasattr(self, "full_data"): del self.full_data
-        self.SearchField.clear()
 
         # Reset all to inactive
         self.tenantPushButton.setStyleSheet(self.inactive_style)
@@ -90,147 +84,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.load_data(index)
 
+        self.columns = self.populator.columns
+        self.SearchField.clear()
+        for col in self.columns: self.SearchField.addItem(str(col), col)
+
 # =========================
 #    SEARCH N SORT FUNCS
 # ==========
 
     def perform_search(self):
-        if hasattr(self, "full_data"): del self.full_data
+        if hasattr(self.populator, "full_data"): del self.populator.full_data
         search_key = str(self.SearchLineEdit.text())
         search_column = self.SearchField.currentData()
-
-        print(search_column)
-        print(search_key)
-        self.Populate_Table(self.table_name, self.widget, self.select_type, 1, search_column, search_key)
+        self.populator.Populate_Table(self.table_name, self.widget, self.select_type, 1, search_column, search_key)
 
 # ===========
 #    SEARCH N SORT FUNCS
-# =========================
-
-# =========================
-#    PAGINATION TABLE
-# ==========
-
-    def Populate_Table(self, table_name, table_widget, select_type, current_page = 1, search_column = None, search_key = None):
-
-        # Fetch ALL data with query, store for faster loading in page change...
-        if not hasattr(self, "full_data"):
-            self.full_data  = self.selector.SelectQuery(table_name, select_type, tag = search_column, key = search_key).retData()
-            self.columns = self.selector.SelectQuery(table_name, select_type).retCols()
-        # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
-
-            # Configure pages information according to taste
-            self.rows_per_page  = 20
-            self.total_pages    = math.ceil(len(self.full_data)/self.rows_per_page)
-        
-        for col in self.columns: self.SearchField.addItem(str(col), col)
-
-        self.current_page = current_page
-        self.jumpLabel_totalpages.setText(str(self.total_pages))
-
-        start_index             = (current_page-1) * self.rows_per_page
-        end_index               = start_index + self.rows_per_page
-        self.page_data          = self.full_data[start_index:end_index]
-        
-        # refresh table widget(data is not refreshed)
-        table_widget.clear()
-        table_widget.setRowCount(len(self.page_data))
-        table_widget.setColumnCount(len(self.columns))
-        table_widget.setHorizontalHeaderLabels(self.columns)
-        table_widget.verticalHeader().setVisible(False)
-
-        # load the data in TO EDIT: ignore first column(built-in id of widget)
-        for row_idx, row_data in enumerate(self.page_data):
-            for col_idx, cell in enumerate(row_data):
-                table_widget.setItem(row_idx, col_idx, QTableWidgetItem(str(cell)))
-
-        # array of pointers to the created buttons. I say buttons but they're actually modified labels my dudes
-        while self.paginationButtonsGrid.count():
-            item = self.paginationButtonsGrid.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
-        
-        self.jumpBox.clear()
-
-        self.PaginationButts = []
-        buttCol = 0
-
-        self.prevTenButt    = SpecialWidgetsUI.ClickablePageLabel("<<", self.paginationFrame)
-        self.prevTenButt.clicked.connect(lambda: self.PrevTenPage())
-        self.paginationButtonsGrid.addWidget(self.prevTenButt, 0, buttCol)
-        buttCol += 1
-        self.PaginationButts.append(self.prevTenButt)
-
-        self.prevButt       = SpecialWidgetsUI.ClickablePageLabel("<", self.paginationFrame)
-        self.prevButt.clicked.connect(lambda: self.PrevPage())
-        self.paginationButtonsGrid.addWidget(self.prevButt, 0, buttCol)
-        buttCol += 1
-        self.PaginationButts.append(self.prevButt)
-
-        for i in range(1, self.total_pages + 1):
-            self.jumpBox.addItem(str(i), i)
-
-            if (i <= 11 and self.current_page < 6) or i == self.current_page or ((i >= self.current_page - 5) and (i <= self.current_page + 5)) or (i >= self.total_pages - 10 and self.current_page > self.total_pages - 5):
-                # print(f"Creating button for page {i}")
-                numButt     = SpecialWidgetsUI.ClickablePageLabel(f"{i}", self.paginationFrame)
-                numButt.clicked.connect(lambda x=i: self.GotoPage(x))
-                self.paginationButtonsGrid.addWidget(numButt, 0, buttCol)
-                buttCol += 1
-                self.PaginationButts.append(numButt)
-
-        self.nextButt       = SpecialWidgetsUI.ClickablePageLabel(">", self.paginationFrame)
-        self.nextButt.clicked.connect(lambda: self.NextPage())
-        self.paginationButtonsGrid.addWidget(self.nextButt, 0, buttCol)
-        buttCol += 1
-        self.PaginationButts.append(self.nextButt)
-
-        self.nextTenButt    = SpecialWidgetsUI.ClickablePageLabel(">>", self.paginationFrame)
-        self.nextTenButt.clicked.connect(lambda: self.NextTenPage())
-        self.paginationButtonsGrid.addWidget(self.nextTenButt, 0, buttCol)
-        buttCol += 1
-        self.PaginationButts.append(self.nextTenButt)
-        
-        self.prevButt.setEnabled(self.current_page > 1)
-        self.nextButt.setEnabled(self.current_page < self.total_pages)
-        self.prevTenButt.setEnabled(self.current_page > 1)
-        self.nextTenButt.setEnabled(self.current_page < self.total_pages)
-
-        index = self.jumpBox.findData(self.current_page)
-        if index != -1:
-            self.jumpBox.setCurrentIndex(index)
-
-
-    def jump(self):
-        page = self.jumpBox.currentData()
-        if page is not None: self.GotoPage(page) 
-
-    def NextPage(self):
-        self.current_page += 1
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
-
-    def NextTenPage(self):
-        if self.current_page + 10 < self.total_pages:
-            self.current_page += 10
-        else: 
-            self.current_page = self.total_pages
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
-
-    def PrevPage(self):
-        self.current_page -= 1
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
-
-    def PrevTenPage(self):
-        if self.current_page - 10 >= 1:
-            self.current_page -= 10
-        else:
-            self.current_page = 1
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
-
-    def GotoPage(self, page):
-        self.Populate_Table(self.table_name, self.widget, self.select_type, page)
-
-# ===========
-#    PAGINATION TABLE
 # =========================
 
     def load_data(self, index):
@@ -242,7 +111,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     4: ("EmergencyContact", self.EmergencyTable, None)
                 }
         self.table_name, self.widget, self.select_type = table_mapping.get(index)
-        self.Populate_Table(self.table_name, self.widget, self.select_type)
+        self.populator.Populate_Table(self.table_name, self.widget, self.select_type)
 
     def on_Add_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()

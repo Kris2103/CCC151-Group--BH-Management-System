@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMessageBox
 from ..EditRent import Ui_Dialog
 from datetime import datetime
 from DATABASE.Functions.update import update
+from DATABASE.Functions.Select import Select
 
 class editRentDialog(QDialog):
     
@@ -20,10 +21,16 @@ class editRentDialog(QDialog):
         
         self.ui.UpdatepushButton.clicked.connect(self.updateRent)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
+
+        
+        self.fillRentingTenantID()
+        self.fillRoomNumber()
+        
+        self.ui.RentingTenantIDComboBox.currentTextChanged.connect(self.matchTenantIDToRoomNumber)
         
     def updateRent(self):
-        moveInDateData = self.ui.MoveInDateLineEdit.text()
-        moveOutDateData = self.ui.MoveInDateLineEdit_2.text()
+        moveInDateData = self.ui.MoveInDateLineEdit.date().toString("yyyy-MM-dd")
+        moveOutDateData = self.ui.MoveInDateLineEdit_2.date().toString("yyyy-MM-dd")
         
         try:
             moveInDate = datetime.strptime(moveInDateData, "%Y-%m-%d").strftime("%Y-%m-%d")
@@ -31,7 +38,7 @@ class editRentDialog(QDialog):
             QMessageBox.critical(self, "Validation Error", "Move-in date is not in a valid format.", QMessageBox.Ok)
             return
             
-        roomNumber = self.ui.RoomNumberLineEdit.text()
+        roomNumber = self.ui.RoomNumberComboBox.currentText()
         
         try:
             moveOutDate = datetime.strptime(moveOutDateData, "%Y-%m-%d").strftime("%Y-%m-%d")
@@ -39,7 +46,7 @@ class editRentDialog(QDialog):
             QMessageBox.critical(self, "Validation Error", "Move-out date is not in a valid format.", QMessageBox.Ok)
             return
         
-        rentingTenant = self.ui.RentingTenantIDLineEdit.text()
+        rentingTenant = self.ui.RentingTenantIDComboBox.currentText()
         status = str(self.ui.MoveStatuscomboBox.currentData())
         
         errors = []
@@ -82,3 +89,46 @@ class editRentDialog(QDialog):
         
         for label, data in self.statusOptions.items():
             self.ui.MoveStatuscomboBox.addItem(label, data)
+        
+    def fillRentingTenantID(self):
+        self.ui.RentingTenantIDComboBox.clear()
+        
+        selector = Select()
+        
+        selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentingTenant"])
+        resultBuilder = selector.retDict()
+        print(f"Query Result: {resultBuilder}")
+        
+        for row in resultBuilder:
+            tenantID = next(iter(row.values()))
+            self.ui.RentingTenantIDComboBox.addItem(str(tenantID))
+            
+    def fillRoomNumber(self):
+        self.ui.RoomNumberComboBox.clear()
+        
+        selector = Select()
+        
+        selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom"])
+        resultBuilder = selector.retDict()
+        print(f"Query Result: {resultBuilder}")
+        
+        for row in resultBuilder:
+            roomNumber = next(iter(row.values()))
+            self.ui.RoomNumberComboBox.addItem(str(roomNumber))
+            
+    def matchTenantIDToRoomNumber(self):
+        tenantID = self.ui.RentingTenantIDComboBox.currentText()
+        
+        if tenantID:
+            selector = Select()
+            
+            selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom", "Rents.MovedInDate"], tag="RentingTenant", key=tenantID)
+            resultBuilder = selector.retData()
+            print(f"Query Result: {resultBuilder}")
+            
+            if resultBuilder:
+                roomNumber = resultBuilder[0][0]
+                self.ui.RoomNumberComboBox.setCurrentText(str(roomNumber))
+                
+    #def matchTenantIDToMoveInDate(self):
+        

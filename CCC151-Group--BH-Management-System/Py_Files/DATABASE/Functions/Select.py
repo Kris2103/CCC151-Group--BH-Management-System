@@ -117,7 +117,7 @@ class Select(Function):
 
         # Selecting with a tag(column) and key(search key)
         if tag and key:
-            self.search_query = f"WHERE {tag} LIKE %s "
+            self.search_query = f"WHERE {table}.{tag} LIKE %s "
             self.params.append(f"%{key}%")
 
         # Selecting all columns with key(search key)

@@ -29,7 +29,7 @@ class editRoomDialog(QDialog):
         price = self.ui.PriceLineEdit.text()
         tenantSex = self.ui.TenantSexComboBox.currentData()
         maximumAcceptedOccupants = self.ui.MaxNoOccupantsLineEdit.text()
-        numberOfOccupants = self.ui.NoOfOccupantsComboBox.currentData()
+        numberOfOccupants = self.ui.NoOfOccupantsComboBox.currentText()
         
         errors = []
         
@@ -39,6 +39,8 @@ class editRoomDialog(QDialog):
             errors.append("Please set room price.")
         if not maximumAcceptedOccupants:
             errors.append("Please assign the maximum number of occupants")
+        if not numberOfOccupants:
+            errors.append("Please assign the number of occupants")
         
         if errors:
             errorMessage = "\n".join(errors)

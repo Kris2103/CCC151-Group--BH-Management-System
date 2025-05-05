@@ -27,6 +27,13 @@ class Ui_MainWindow(object):
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
+
+
+# =========================
+#    SEARCHNSORT BUTTONS
+# ==========
+
+        # search
         self.SearchLineEdit = QtWidgets.QLineEdit(self.frame)
         self.SearchLineEdit.setGeometry(QtCore.QRect(720, 20, 561, 31))
         self.SearchLineEdit.setObjectName("SearchLineEdit")
@@ -45,6 +52,20 @@ class Ui_MainWindow(object):
         self.SearchField = QtWidgets.QComboBox(self.frame)
         self.SearchField.setGeometry(QtCore.QRect(570, 20, 151, 31))
         self.SearchField.setObjectName("SearchField")
+
+        # sort
+        self.SortWith = QtWidgets.QComboBox(self.frame)
+        self.SortWith.setGeometry(QtCore.QRect(570, 20, 151, 31))
+        self.SortWith.setObjectName("SortWith")
+
+        self.SortBy = QtWidgets.QComboBox(self.frame)
+        self.SortBy.setGeometry(QtCore.QRect(570, 20, 151, 31))
+        self.SortBy.setObjectName("SortBy")
+
+# ===========
+#    SEARCHNSORT BUTTONS
+# =========================
+
         self.RefreshpushButton = QtWidgets.QPushButton(self.frame)
         self.RefreshpushButton.setGeometry(QtCore.QRect(1390, 20, 91, 31))
         self.RefreshpushButton.setStyleSheet("background-color: rgb(255, 255, 253);\n"

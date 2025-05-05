@@ -43,6 +43,15 @@ E. key
 - used as "%key%"
 - used for searching, this is the search key
 
+
+Return functions:
+
+A. retData = rows
+B. retCol = columns
+C. retAll = rows, columns
+D. retDict = {columns : rows}
+
+
 """
 
 class Select(Function):

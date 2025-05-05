@@ -85,7 +85,6 @@ class DatabaseConnector:
 
         return DatabaseConnector._connection
 
-# ✅ Call the connection when running directly
 if __name__ == "__main__":
     conn = DatabaseConnector.get_connection()
     cursor = conn.cursor()

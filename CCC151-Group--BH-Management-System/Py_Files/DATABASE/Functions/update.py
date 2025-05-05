@@ -46,11 +46,12 @@ class update:
 
 # 2. comment everything below (only uncomment if testing, also uncomment 1.)
 
-# if __name__ == "__main__":
-#     updater = update()
-#     table = "Tenant"
-#     setParameters = {"MiddleName" : "NEW MIDDLE NAME"} #originally Lee
-#     whereColumn = "TenantID"
-#     whereValue = "2025-4321"
+if __name__ == "__main__":
+    updater = update()
+    table = "Tenant"
+    setParameters = {"MiddleName" : "NEW MIDDLE NAME",
+                     "FirstName" : "NEW FIRST NAME"} #originally Lee
+    whereColumn = "TenantID"
+    whereValue = "2025-4321"
     
-#     updater.updateTableData(table, setParameters, whereColumn, whereValue)
+    updater.updateTableData(table, setParameters, whereColumn, whereValue)

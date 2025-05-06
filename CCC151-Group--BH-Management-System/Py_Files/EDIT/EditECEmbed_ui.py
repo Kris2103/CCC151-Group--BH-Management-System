@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\AddTenant.ui'
+# Form implementation generated from reading ui file 'c:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\EditECEmbed.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -11,12 +11,14 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(448, 411)
-        self.frame = QtWidgets.QFrame(Dialog)
-        self.frame.setGeometry(QtCore.QRect(10, 10, 431, 391))
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(449, 384)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.frame = QtWidgets.QFrame(self.centralwidget)
+        self.frame.setGeometry(QtCore.QRect(10, 0, 431, 331))
         self.frame.setStyleSheet("background-color: rgb(240, 240, 240);\n"
 "border: 2px solid #800000;\n"
 "border-radius: 6px;\n"
@@ -37,7 +39,7 @@ class Ui_Dialog(object):
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_3.setObjectName("frame_3")
         self.label_2 = QtWidgets.QLabel(self.frame_3)
-        self.label_2.setGeometry(QtCore.QRect(120, 10, 161, 41))
+        self.label_2.setGeometry(QtCore.QRect(80, 10, 221, 41))
         self.label_2.setStyleSheet("background-color: rgb(250, 255, 242);\n"
 "border: 1px solid #660000;\n"
 "border-radius: 4px;\n"
@@ -52,9 +54,9 @@ class Ui_Dialog(object):
 "\n"
 "")
         self.label_2.setObjectName("label_2")
-        self.TenantIDLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.TenantIDLineEdit.setGeometry(QtCore.QRect(310, 110, 101, 22))
-        self.TenantIDLineEdit.setObjectName("TenantIDLineEdit")
+        self.ContactIDLineEdit = QtWidgets.QLineEdit(self.frame)
+        self.ContactIDLineEdit.setGeometry(QtCore.QRect(310, 110, 101, 22))
+        self.ContactIDLineEdit.setObjectName("ContactIDLineEdit")
         self.label = QtWidgets.QLabel(self.frame)
         self.label.setGeometry(QtCore.QRect(310, 90, 81, 16))
         self.label.setStyleSheet("background: none;\n"
@@ -104,31 +106,11 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_9.setObjectName("label_9")
-        self.label_10 = QtWidgets.QLabel(self.frame)
-        self.label_10.setGeometry(QtCore.QRect(310, 140, 81, 16))
-        self.label_10.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_10.setObjectName("label_10")
-        self.label_11 = QtWidgets.QLabel(self.frame)
-        self.label_11.setGeometry(QtCore.QRect(310, 190, 41, 16))
-        self.label_11.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_11.setObjectName("label_11")
         self.PhoneNumberLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.PhoneNumberLineEdit.setGeometry(QtCore.QRect(20, 310, 181, 31))
+        self.PhoneNumberLineEdit.setGeometry(QtCore.QRect(220, 260, 191, 21))
         self.PhoneNumberLineEdit.setObjectName("PhoneNumberLineEdit")
         self.label_12 = QtWidgets.QLabel(self.frame)
-        self.label_12.setGeometry(QtCore.QRect(20, 290, 111, 16))
+        self.label_12.setGeometry(QtCore.QRect(220, 240, 111, 16))
         self.label_12.setStyleSheet("background: none;\n"
 "    border: none;\n"
 "    color: #800000;\n"
@@ -147,39 +129,12 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_21.setObjectName("label_21")
-        self.EmailLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.EmailLineEdit.setGeometry(QtCore.QRect(20, 260, 271, 21))
-        self.EmailLineEdit.setObjectName("EmailLineEdit")
-        self.RoomNoComboBox = QtWidgets.QComboBox(self.frame)
-        self.RoomNoComboBox.setGeometry(QtCore.QRect(310, 160, 101, 22))
-        self.RoomNoComboBox.setObjectName("RoomNoComboBox")
-        self.SexComboBox = QtWidgets.QComboBox(self.frame)
-        self.SexComboBox.setGeometry(QtCore.QRect(310, 210, 101, 22))
-        self.SexComboBox.setObjectName("SexComboBox")
-        self.AddECpushButton = QtWidgets.QPushButton(self.frame)
-        self.AddECpushButton.setGeometry(QtCore.QRect(210, 310, 171, 31))
-        self.AddECpushButton.setStyleSheet("background: rgb(0, 85, 0);\n"
-"    color: white;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 500;\n"
-"    font-style: normal;\n"
-"    font-size: 12px;\n"
-"    border: 1px solid rgb(0, 85, 0);\n"
-"")
-        self.AddECpushButton.setObjectName("AddECpushButton")
-        self.label_31 = QtWidgets.QLabel(self.frame)
-        self.label_31.setGeometry(QtCore.QRect(210, 290, 141, 16))
-        self.label_31.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_31.setObjectName("label_31")
-        self.AddpushButton = QtWidgets.QPushButton(self.frame)
-        self.AddpushButton.setGeometry(QtCore.QRect(320, 350, 93, 28))
-        self.AddpushButton.setStyleSheet("background-color: #388E3C; /* Darker green */\n"
+        self.RelationshipLineEdit = QtWidgets.QLineEdit(self.frame)
+        self.RelationshipLineEdit.setGeometry(QtCore.QRect(20, 260, 191, 21))
+        self.RelationshipLineEdit.setObjectName("RelationshipLineEdit")
+        self.UpdatepushButton = QtWidgets.QPushButton(self.frame)
+        self.UpdatepushButton.setGeometry(QtCore.QRect(320, 290, 93, 28))
+        self.UpdatepushButton.setStyleSheet("background-color: #388E3C; /* Darker green */\n"
 "color: white;\n"
 "font-family: \"Cal Sans\", sans-serif;\n"
 "font-weight: 700; /* Bold */\n"
@@ -188,9 +143,9 @@ class Ui_Dialog(object):
 "border-radius: 4px;\n"
 "padding: 6px 12px;\n"
 "")
-        self.AddpushButton.setObjectName("AddpushButton")
+        self.UpdatepushButton.setObjectName("UpdatepushButton")
         self.CancelpushButton = QtWidgets.QPushButton(self.frame)
-        self.CancelpushButton.setGeometry(QtCore.QRect(220, 350, 93, 28))
+        self.CancelpushButton.setGeometry(QtCore.QRect(220, 290, 93, 28))
         self.CancelpushButton.setStyleSheet("background: rgb(157, 157, 157);\n"
 "color: white;\n"
 "font-family: \'Cal Sans\', sans-serif;\n"
@@ -200,23 +155,27 @@ class Ui_Dialog(object):
 "border: 1px solid rgb(169, 169, 169);\n"
 "")
         self.CancelpushButton.setObjectName("CancelpushButton")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 449, 26))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def retranslateUi(self, Dialog):
+    def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.label_2.setText(_translate("Dialog", "Tenant Profile"))
-        self.label.setText(_translate("Dialog", "Tenant ID"))
-        self.label_3.setText(_translate("Dialog", "First Name"))
-        self.label_4.setText(_translate("Dialog", "Middle Name"))
-        self.label_9.setText(_translate("Dialog", "Last Name"))
-        self.label_10.setText(_translate("Dialog", "Room No."))
-        self.label_11.setText(_translate("Dialog", "Sex"))
-        self.label_12.setText(_translate("Dialog", "Phone Number"))
-        self.label_21.setText(_translate("Dialog", "Email"))
-        self.AddECpushButton.setText(_translate("Dialog", "Add Emergency Contact"))
-        self.label_31.setText(_translate("Dialog", "Emergency Contact"))
-        self.AddpushButton.setText(_translate("Dialog", "Add"))
-        self.CancelpushButton.setText(_translate("Dialog", "Cancel"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label_2.setText(_translate("MainWindow", "Emergency Contact"))
+        self.label.setText(_translate("MainWindow", "Contact ID"))
+        self.label_3.setText(_translate("MainWindow", "First Name"))
+        self.label_4.setText(_translate("MainWindow", "Middle Name"))
+        self.label_9.setText(_translate("MainWindow", "Last Name"))
+        self.label_12.setText(_translate("MainWindow", "Phone Number"))
+        self.label_21.setText(_translate("MainWindow", "Relationship"))
+        self.UpdatepushButton.setText(_translate("MainWindow", "Update"))
+        self.CancelpushButton.setText(_translate("MainWindow", "Cancel"))

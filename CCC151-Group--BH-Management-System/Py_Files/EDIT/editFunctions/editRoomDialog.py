@@ -92,6 +92,7 @@ class editRoomDialog(QDialog):
                 resultBuilder = 0
                 self.ui.PriceLineEdit.setText("")
                 self.ui.MaxNoOccupantsLineEdit.setText("")
+                self.ui.TenantSexComboBox.setCurrentIndex(-1)
             else:
                 resultBuilder = resultBuilder[0][0]
                 numberOfOccupants = currentOccupants[0][0]

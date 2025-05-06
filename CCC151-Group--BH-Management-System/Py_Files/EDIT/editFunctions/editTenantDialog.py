@@ -24,6 +24,9 @@ class editTenantDialog(QDialog):
         self.ui.UpdatepushButton.clicked.connect(self.updateTenant)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
         self.ui.EditECpushButton.clicked.connect(self.openEditEmergencyContact)
+        
+        self.ui.TenantIDLineEdit.setFocus()
+
 
     def updateTenant(self):
 
@@ -111,3 +114,13 @@ class editTenantDialog(QDialog):
         for room in roomNumbers:
             self.ui.RoomNoComboBox.addItem(str(room[0]))
         self.ui.RoomNoComboBox.setCurrentIndex(-1)
+        
+    def matchTenantIdToDetails(self):
+        tenantId = self.ui.TenantIDLineEdit.text()
+        selector = Select()
+        
+        if tenantId:
+            selector.SelectQuery(table="Tenants", select_type=None, spec_col=["Tenants.FirstName", "Tenants.MiddleName", "Tenants.LastName",
+                                                                              "Tenants.Email", "Tenants.PhoneNumber", "Tenants.RoomNumber"], tag="TenantID", key=tenantId)
+            resultBuilder = selector.retData()
+            print(f"Query Result: {resultBuilder}")

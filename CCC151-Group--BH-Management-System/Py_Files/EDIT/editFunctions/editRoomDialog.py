@@ -73,6 +73,8 @@ class editRoomDialog(QDialog):
         
         for label, data, in self.sexOptions.items():
             self.ui.TenantSexComboBox.addItem(label, data)
+        
+        self.ui.TenantSexComboBox.setCurrentIndex(-1)
             
     def assignCurrentNumberOfOccupants(self):
         selector = Select()

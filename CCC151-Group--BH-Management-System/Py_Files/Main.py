@@ -55,10 +55,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.RefreshpushButton.clicked.connect(lambda: self.load_data(self.index))
         self.SearchpushButton.clicked.connect(lambda: self.perform_search())
+
+        # table_widget.horizontalHeader().sectionClicked.connect(your_function)
+
+        # def your_function(index):
+        #     print(f"Header {index} clicked: {table_widget.horizontalHeaderItem(index).text()}")
+
+
         self.switch_tab(0)
-
-    
-
 
     def switch_tab(self, index):
         self.stackedWidget.setCurrentIndex(index)
@@ -94,6 +98,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         search_key = str(self.SearchLineEdit.text())
         search_column = self.SearchField.currentData()
         self.populator.Populate_Table(self.table_name, self.widget, self.select_type, 1, search_column, search_key)
+
+    def perform_sort(self):
+        pass
 
 # ===========
 #    SEARCH N SORT FUNCS

@@ -1,6 +1,7 @@
 import math
 import SpecialWidgetsUI
-from PyQt5.QtWidgets import QTableWidgetItem, QMainWindow, QMessageBox, QCompleter
+from PyQt5.QtWidgets import QTableWidgetItem, QMessageBox, QCompleter, QAbstractItemView
+from PyQt5.QtCore import Qt
 from . import Select, Insert
 
 # =========================
@@ -51,6 +52,11 @@ class Populate:
         for row_idx, row_data in enumerate(self.page_data):
             for col_idx, cell in enumerate(row_data):
                 table_widget.setItem(row_idx, col_idx, QTableWidgetItem(str(cell)))
+
+
+        self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        
 
         # array of pointers to the created buttons. I say buttons but they're actually modified labels my dudes
         while self.mw.paginationButtonsGrid.count():
@@ -106,6 +112,9 @@ class Populate:
         index = self.mw.jumpBox.findData(self.current_page)
         if index != -1:
             self.mw.jumpBox.setCurrentIndex(index)
+
+        
+        self.mw.jumpBox.activated.connect(lambda: self.jump())
 
 
     def jump(self):
@@ -186,10 +195,24 @@ class Populate:
 
         self.move_combobow.addItems(["Active", "Moved Out"])
 
+
+    # def populate_tenant_id_completer(self,ten):
+    #     try:
+            
+    #         tenant_ids = self.select.SelectQuery("Tenant", select_type="Tenants", spec_col=["TenantID"]).retData()
+
+    #         completer = QCompleter(tenant_ids, self)
+    #         completer.setCaseSensitivity(False)
+    #         completer.setFilterMode(Qt.MatchContains)
+    #         self.ui.TenantEMIDComboBox.setCompleter(completer)
+
+    #     except Exception as err:
+    #         print(f"Completer Error: {err}")
+    #         QMessageBox.critical(self, "Error", f"Could not load tenant IDs:\n{err}")
+
     def populate_tenant_id_combobox(self, tenant_combobox):
         self.tenant_combobox = tenant_combobox
         self.tenant_combobox.clear()
-
         tenant_ids = [str(row[0]) for row in self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"]).retData()]
         self.tenant_combobox.addItems(tenant_ids)
 
@@ -218,6 +241,7 @@ class Populate:
             index = self.renttent_combobox.findText(room_number)
             if index != -1:
                 self.renttent_combobox.setCurrentIndex(index)
+
 # ===========
 #    COMBOBOXES POPULATE   
 # =========================

@@ -14,7 +14,7 @@ from EDIT.editFunctions.editTenantDialog import editTenantDialog
 from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from EDIT.editFunctions.editRentDialog import editRentDialog
 from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDialog
-from EDIT.editFunctions.editRoomDialog import editRoomDialog
+# from EDIT.editFunctions.editPaymentDialog import payme
 from DATABASE.DB import DatabaseConnector
 import math
 from DATABASE.Functions.Populate import Populate
@@ -29,7 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.populator = Populate(self)
 
         self.button_base_style = """
-        background-color: rgb(250, 255, 242); /* Inactive background */
+        background-color: rgb(250, 255, 242); 
         border: 1px solid #660000;
         border-radius: 4px;
         padding: 5px;
@@ -43,19 +43,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.active_style = self.button_base_style.replace("rgb(250, 255, 242)", "rgb(210, 235, 200)")  # Light green when active
         self.inactive_style = self.button_base_style
 
-        self.AddpushButton.clicked.connect(self.on_Add_clicked)
         self.tenantPushButton.clicked.connect(lambda: self.switch_tab(0))
         self.roomPushButton.clicked.connect(lambda: self.switch_tab(1))
         self.rentPushButton.clicked.connect(lambda: self.switch_tab(2))
         self.paymentPushButton.clicked.connect(lambda: self.switch_tab(3))
         self.emergencyPushButton.clicked.connect(lambda: self.switch_tab(4))
-        self.EditpushButton.clicked.connect(self.onEditClicked)
+
+        self.AddpushButton.clicked.connect(self.on_Add_clicked)
+        self.EditpushButton.clicked.connect(self.on_Edit_clicked)
+        self.DeletepushButton.clicked.connect(self.on_Delete_clicked)
+
         self.RefreshpushButton.clicked.connect(lambda: self.load_data(self.index))
-
-        self.jumpBox.activated.connect(lambda: self.jump())
-
         self.SearchpushButton.clicked.connect(lambda: self.perform_search())
         self.switch_tab(0)
+
+    
 
 
     def switch_tab(self, index):
@@ -97,25 +99,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 #    SEARCH N SORT FUNCS
 # =========================
 
+    def map_indextotable(self, index):
+        table_mapping = {
+                    0: ("Tenant", self.TenantTable, "Tenant"),
+                    1: ("Room", self.RoomTable, None),
+                    2: ("Rents", self.RentTable, "Rents"),
+                    3: ("Pays", self.PaymentTable, "Pays"),
+                    4: ("EmergencyContact", self.EmergencyTable, None)
+                }
+        return table_mapping.get(index)
+        
     def load_data(self, index):
         
         if hasattr(self.populator, "full_data"): del self.populator.full_data
         
-        table_mapping = {
-                    0: ("Tenant", self.TenantTable, "Tenant"),
-                    1: ("Room", self.RoomTable, None),
-                    2: ("Rents", self.RentTable, "Rents/Pays"),
-                    3: ("Pays", self.PaymentTable, "Rents/Pays"),
-                    4: ("EmergencyContact", self.EmergencyTable, None)
-                }
-        
-        self.table_name, self.widget, self.select_type = table_mapping.get(index)
+        self.table_name, self.widget, self.select_type = self.map_indextotable(index)
         self.populator.Populate_Table(self.table_name, self.widget, self.select_type)
 
         self.columns = self.populator.columns
         self.SearchField.clear()
         self.SearchLineEdit.clear()
         for col in self.columns: self.SearchField.addItem(str(col), col)
+
+
+# =========================
+#    CRUDL BUTTONS FUNCS
+# ==========
 
     def on_Add_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()
@@ -145,7 +154,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if dialog.exec() == QDialog.accepted:
                 self.load_data(4)
 
-    def onEditClicked(self):
+    def on_Edit_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()
 
         if current_widget_index == 0:
@@ -172,7 +181,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             dialog = editEmergencyContactDialog(self)
             if dialog.exec() == QDialog.accepted:
                 self.load_data(4)
-        
+
+    def on_Delete_clicked(self):
+        current_widget_index = self.stackedWidget.currentIndex()
+
+
+# ===========
+#    CRUDL BUTTONS FUNCS
+# =========================
         
 if __name__ == "__main__":
     connection = DatabaseConnector.get_connection()

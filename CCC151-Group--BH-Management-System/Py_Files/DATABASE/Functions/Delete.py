@@ -4,7 +4,6 @@ import os
 # Add the root directory (where DATABASE is located) to the sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))  # 1. comment this line if it errors, only uncomment if you run it directly (testing, like running 2.)
 
-from DATABASE.DB import DatabaseConnector
 from .Function import Function
 
 class Delete(Function):
@@ -36,5 +35,5 @@ class Delete(Function):
             return self.cursor.fetchall()
         
         except Exception as exception:
-            print(f"Error selecting table '{table}' : {exception}")
+            print(f"Error deleting selection '{key}' from '{table}' : {exception}")
             self.conn.rollback()

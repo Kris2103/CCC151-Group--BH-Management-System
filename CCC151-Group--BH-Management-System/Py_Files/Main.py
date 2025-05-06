@@ -27,7 +27,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.selector = Select()
-        self.populator = Populate()
+        self.populator = Populate(self)
 
         self.button_base_style = """
         background-color: rgb(250, 255, 242); /* Inactive background */
@@ -55,14 +55,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.jumpBox.activated.connect(lambda: self.jump())
 
         self.SearchpushButton.clicked.connect(lambda: self.perform_search())
-
         self.switch_tab(0)
 
 
     def switch_tab(self, index):
         self.stackedWidget.setCurrentIndex(index)
         
-        if hasattr(self, "full_data"): del self.full_data
+        if hasattr(self.populator, "full_data"): del self.populator.full_data
 
         # Reset all to inactive
         self.tenantPushButton.setStyleSheet(self.inactive_style)

@@ -1,5 +1,4 @@
 import math
-from MainUI import Ui_MainWindow
 import SpecialWidgetsUI
 from PyQt5.QtWidgets import QTableWidgetItem, QMainWindow, QMessageBox, QCompleter
 from . import Select, Insert
@@ -8,15 +7,20 @@ from . import Select, Insert
 #    PAGINATION TABLE
 # ==========
 
-class Populate(QMainWindow, Ui_MainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setupUi(self)
-
+class Populate:
+    def __init__(self, main_window = None):
+        self.mw = main_window
         self.selector = Select.Select()
         self.inserter = Insert.Insert()
     
     def Populate_Table(self, table_name, table_widget, select_type, current_page = 1, search_column = None, search_key = None):
+        
+        self.table_name = table_name
+        self.table_widget = table_widget
+        self.select_type = select_type
+        self.current_page = current_page
+        self.search_column = search_column
+        self.search_key = search_key
 
         # Fetch ALL data with query, store for faster loading in page change...
         self.columns = self.selector.SelectQuery(table_name, select_type).retCols()
@@ -30,7 +34,7 @@ class Populate(QMainWindow, Ui_MainWindow):
             self.total_pages    = math.ceil(len(self.full_data)/self.rows_per_page)
 
         self.current_page = current_page
-        self.jumpLabel_totalpages.setText(str(self.total_pages))
+        self.mw.jumpLabel_totalpages.setText(str(self.total_pages))
 
         start_index             = (current_page-1) * self.rows_per_page
         end_index               = start_index + self.rows_per_page
@@ -49,48 +53,48 @@ class Populate(QMainWindow, Ui_MainWindow):
                 table_widget.setItem(row_idx, col_idx, QTableWidgetItem(str(cell)))
 
         # array of pointers to the created buttons. I say buttons but they're actually modified labels my dudes
-        while self.paginationButtonsGrid.count():
-            item = self.paginationButtonsGrid.takeAt(0)
+        while self.mw.paginationButtonsGrid.count():
+            item = self.mw.paginationButtonsGrid.takeAt(0)
             if item.widget():
                 item.widget().deleteLater()
         
-        self.jumpBox.clear()
+        self.mw.jumpBox.clear()
 
         self.PaginationButts = []
         buttCol = 0
 
-        self.prevTenButt    = SpecialWidgetsUI.ClickablePageLabel("<<", self.paginationFrame)
+        self.prevTenButt    = SpecialWidgetsUI.ClickablePageLabel("<<", self.mw.paginationFrame)
         self.prevTenButt.clicked.connect(lambda: self.PrevTenPage())
-        self.paginationButtonsGrid.addWidget(self.prevTenButt, 0, buttCol)
+        self.mw.paginationButtonsGrid.addWidget(self.prevTenButt, 0, buttCol)
         buttCol += 1
         self.PaginationButts.append(self.prevTenButt)
 
-        self.prevButt       = SpecialWidgetsUI.ClickablePageLabel("<", self.paginationFrame)
+        self.prevButt       = SpecialWidgetsUI.ClickablePageLabel("<", self.mw.paginationFrame)
         self.prevButt.clicked.connect(lambda: self.PrevPage())
-        self.paginationButtonsGrid.addWidget(self.prevButt, 0, buttCol)
+        self.mw.paginationButtonsGrid.addWidget(self.prevButt, 0, buttCol)
         buttCol += 1
         self.PaginationButts.append(self.prevButt)
 
         for i in range(1, self.total_pages + 1):
-            self.jumpBox.addItem(str(i), i)
+            self.mw.jumpBox.addItem(str(i), i)
 
             if (i <= 11 and self.current_page < 6) or i == self.current_page or ((i >= self.current_page - 5) and (i <= self.current_page + 5)) or (i >= self.total_pages - 10 and self.current_page > self.total_pages - 5):
                 # print(f"Creating button for page {i}")
-                numButt     = SpecialWidgetsUI.ClickablePageLabel(f"{i}", self.paginationFrame)
+                numButt     = SpecialWidgetsUI.ClickablePageLabel(f"{i}", self.mw.paginationFrame)
                 numButt.clicked.connect(lambda x=i: self.GotoPage(x))
-                self.paginationButtonsGrid.addWidget(numButt, 0, buttCol)
+                self.mw.paginationButtonsGrid.addWidget(numButt, 0, buttCol)
                 buttCol += 1
                 self.PaginationButts.append(numButt)
 
-        self.nextButt       = SpecialWidgetsUI.ClickablePageLabel(">", self.paginationFrame)
+        self.nextButt       = SpecialWidgetsUI.ClickablePageLabel(">", self.mw.paginationFrame)
         self.nextButt.clicked.connect(lambda: self.NextPage())
-        self.paginationButtonsGrid.addWidget(self.nextButt, 0, buttCol)
+        self.mw.paginationButtonsGrid.addWidget(self.nextButt, 0, buttCol)
         buttCol += 1
         self.PaginationButts.append(self.nextButt)
 
-        self.nextTenButt    = SpecialWidgetsUI.ClickablePageLabel(">>", self.paginationFrame)
+        self.nextTenButt    = SpecialWidgetsUI.ClickablePageLabel(">>", self.mw.paginationFrame)
         self.nextTenButt.clicked.connect(lambda: self.NextTenPage())
-        self.paginationButtonsGrid.addWidget(self.nextTenButt, 0, buttCol)
+        self.mw.paginationButtonsGrid.addWidget(self.nextTenButt, 0, buttCol)
         buttCol += 1
         self.PaginationButts.append(self.nextTenButt)
         
@@ -99,39 +103,39 @@ class Populate(QMainWindow, Ui_MainWindow):
         self.prevTenButt.setEnabled(self.current_page > 1)
         self.nextTenButt.setEnabled(self.current_page < self.total_pages)
 
-        index = self.jumpBox.findData(self.current_page)
+        index = self.mw.jumpBox.findData(self.current_page)
         if index != -1:
-            self.jumpBox.setCurrentIndex(index)
+            self.mw.jumpBox.setCurrentIndex(index)
 
 
     def jump(self):
-        page = self.jumpBox.currentData()
+        page = self.mw.jumpBox.currentData()
         if page is not None: self.GotoPage(page) 
 
     def NextPage(self):
         self.current_page += 1
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+        self.Populate_Table(self.table_name, self.table_widget, self.select_type, self.current_page)
 
     def NextTenPage(self):
         if self.current_page + 10 < self.total_pages:
             self.current_page += 10
         else: 
             self.current_page = self.total_pages
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+        self.Populate_Table(self.table_name, self.table_widget, self.select_type, self.current_page)
 
     def PrevPage(self):
         self.current_page -= 1
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+        self.Populate_Table(self.table_name, self.table_widget, self.select_type, self.current_page)
 
     def PrevTenPage(self):
         if self.current_page - 10 >= 1:
             self.current_page -= 10
         else:
             self.current_page = 1
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
+        self.Populate_Table(self.table_name, self.table_widget, self.select_type, self.current_page)
 
     def GotoPage(self, page):
-        self.Populate_Table(self.table_name, self.widget, self.select_type, page)
+        self.Populate_Table(self.table_name, self.table_widget, self.select_type, page)
 
 # ===========
 #    PAGINATION TABLE

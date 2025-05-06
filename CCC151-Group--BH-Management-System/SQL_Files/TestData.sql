@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS  Rents (
     RentingTenant VARCHAR(9) NOT NULL,
     MoveStatus VARCHAR(50) NOT NULL CHECK (MoveStatus IN ('Active', 'Moved Out')),
     MoveInDate DATE NOT NULL,
-    MoveOutDate DATE,
+    MoveOutDate DATE DEFAULT NULL,
     FOREIGN KEY (RentedRoom) REFERENCES Room(RoomNumber)		-- check
 		ON DELETE RESTRICT
 	            ON UPDATE CASCADE,    
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS  EmergencyContact (
     EMTenantID VARCHAR(9) NOT NULL,
     FOREIGN KEY (EMTenantID) REFERENCES Tenant(TenantID)
     	ON DELETE CASCADE
-		ON UPDATE CASCADE
+		  ON UPDATE CASCADE
 );
 
 -- Male

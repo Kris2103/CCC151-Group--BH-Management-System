@@ -1,6 +1,7 @@
 import sys
 import mysql.connector
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTableWidgetItem, QComboBox
+from PyQt5.QtWidgets import QMessageBox
 import SpecialWidgetsUI
 from ADD.AddTenantDialog import AddTenantDialog
 from ADD.AddRoomDialog import AddRoomDialog
@@ -10,8 +11,13 @@ from ADD.AddEmergencyContactDialog import AddEmergencyContactDialog
 from MainUI import Ui_MainWindow
 from DATABASE.Functions.Select import Select
 from EDIT.editFunctions.editTenantDialog import editTenantDialog
+from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from EDIT.editFunctions.editRentDialog import editRentDialog
+from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDialog
+from EDIT.editFunctions.editRoomDialog import editRoomDialog
+from DATABASE.DB import DatabaseConnector
 import math
+from DATABASE.Functions.Populate import Populate
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -20,13 +26,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.selector = Select()
-
-        #Sorting enabled for all tables
-        # self.TenantTable.setSortingEnabled(True)
-        # self.RoomTable.setSortingEnabled(True)
-        # self.RentTable.setSortingEnabled(True)
-        # self.PaymentTable.setSortingEnabled(True)
-        # self.EmergencyTable.setSortingEnabled(True)
+        self.populator = Populate(self)
 
         self.button_base_style = """
         background-color: rgb(250, 255, 242); /* Inactive background */
@@ -36,7 +36,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         font-family: 'Roboto', sans-serif;
         font-weight: 500;
         font-style: normal;
-        font-size: 13px;2
+        font-size: 13px;
         color: #800000; 
         """
 
@@ -54,14 +54,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.jumpBox.activated.connect(lambda: self.jump())
 
         self.SearchpushButton.clicked.connect(lambda: self.perform_search())
-
         self.switch_tab(0)
 
 
     def switch_tab(self, index):
         self.stackedWidget.setCurrentIndex(index)
         
-        if hasattr(self, "full_data"): del self.full_data
+        if hasattr(self.populator, "full_data"): del self.populator.full_data
 
         # Reset all to inactive
         self.tenantPushButton.setStyleSheet(self.inactive_style)
@@ -82,183 +81,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif index == 4:
             self.emergencyPushButton.setStyleSheet(self.active_style)
 
-        table_mapping = {
-            0: ("Tenant", self.TenantTable, "Tenant"),
-            1: ("Room", self.RoomTable, None),
-            2: ("Rents", self.RentTable, "Rents/Pays"),
-            3: ("Pays", self.PaymentTable, "Rents/Pays"),
-            4: ("EmergencyContact", self.EmergencyTable, None)
-        }
-        self.table_name, self.widget, self.select_type = table_mapping.get(index)
-        self.Populate_Table(self.table_name, self.widget, self.select_type)
+        self.load_data(index)
+
+        self.columns = self.populator.columns
+        self.SearchField.clear()
+        for col in self.columns: self.SearchField.addItem(str(col), col)
 
 # =========================
 #    SEARCH N SORT FUNCS
 # ==========
 
     def perform_search(self):
-        if hasattr(self, "full_data"): del self.full_data
+        if hasattr(self.populator, "full_data"): del self.populator.full_data
         search_key = str(self.SearchLineEdit.text())
         search_column = self.SearchField.currentData()
-
-        print(search_column)
-        print(search_key)
-        self.Populate_Table(self.table_name, self.widget, self.select_type, 1, search_column, search_key)
+        self.populator.Populate_Table(self.table_name, self.widget, self.select_type, 1, search_column, search_key)
 
 # ===========
 #    SEARCH N SORT FUNCS
 # =========================
 
-# =========================
-#    PAGINATION TABLE
-# ==========
-
-    def Populate_Table(self, table_name, table_widget, select_type, current_page = 1, search_column = None, search_key = None):
-
-        # Fetch ALL data with query, store for faster loading in page change...
-        if not hasattr(self, "full_data"):
-            self.full_data  = self.selector.SelectQuery(table_name, select_type, tag = search_column, key = search_key).retData()
-            self.columns = self.selector.SelectQuery(table_name, select_type).retCols()
-        # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
-
-            # Configure pages information according to taste
-            self.rows_per_page  = 15
-            self.total_pages    = math.ceil(len(self.full_data)/self.rows_per_page)
-        
-        for col in self.columns: self.SearchField.addItem(str(col), col)
-
-        self.current_page = current_page
-        self.jumpLabel_totalpages.setText(str(self.total_pages))
-
-        start_index             = (current_page-1) * self.rows_per_page
-        end_index               = start_index + self.rows_per_page
-        self.page_data          = self.full_data[start_index:end_index]
-        
-        # refresh table widget(data is not refreshed)
-        table_widget.clear()
-        table_widget.setRowCount(len(self.page_data))
-        table_widget.setColumnCount(len(self.columns))
-        table_widget.setHorizontalHeaderLabels(self.columns)
-        table_widget.verticalHeader().setVisible(False)
-
-        # load the data in TO EDIT: ignore first column(built-in id of widget)
-        for row_idx, row_data in enumerate(self.page_data):
-            for col_idx, cell in enumerate(row_data):
-                table_widget.setItem(row_idx, col_idx, QTableWidgetItem(str(cell)))
-
-        # array of pointers to the created buttons. I say buttons but they're actually modified labels my dudes
-        while self.paginationButtonsGrid.count():
-            item = self.paginationButtonsGrid.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
-        
-        self.jumpBox.clear()
-
-        self.PaginationButts = []
-        buttCol = 0
-
-        self.prevTenButt    = SpecialWidgetsUI.ClickablePageLabel("<<", self.paginationFrame)
-        self.prevTenButt.clicked.connect(lambda: self.PrevTenPage())
-        self.paginationButtonsGrid.addWidget(self.prevTenButt, 0, buttCol)
-        buttCol += 1
-        self.PaginationButts.append(self.prevTenButt)
-
-        self.prevButt       = SpecialWidgetsUI.ClickablePageLabel("<", self.paginationFrame)
-        self.prevButt.clicked.connect(lambda: self.PrevPage())
-        self.paginationButtonsGrid.addWidget(self.prevButt, 0, buttCol)
-        buttCol += 1
-        self.PaginationButts.append(self.prevButt)
-
-        for i in range(1, self.total_pages + 1):
-            self.jumpBox.addItem(str(i), i)
-
-            if (i <= 11 and self.current_page < 6) or i == self.current_page or ((i >= self.current_page - 5) and (i <= self.current_page + 5)) or (i >= self.total_pages - 10 and self.current_page > self.total_pages - 5):
-                # print(f"Creating button for page {i}")
-                numButt     = SpecialWidgetsUI.ClickablePageLabel(f"{i}", self.paginationFrame)
-                numButt.clicked.connect(lambda x=i: self.GotoPage(x))
-                self.paginationButtonsGrid.addWidget(numButt, 0, buttCol)
-                buttCol += 1
-                self.PaginationButts.append(numButt)
-
-        self.nextButt       = SpecialWidgetsUI.ClickablePageLabel(">", self.paginationFrame)
-        self.nextButt.clicked.connect(lambda: self.NextPage())
-        self.paginationButtonsGrid.addWidget(self.nextButt, 0, buttCol)
-        buttCol += 1
-        self.PaginationButts.append(self.nextButt)
-
-        self.nextTenButt    = SpecialWidgetsUI.ClickablePageLabel(">>", self.paginationFrame)
-        self.nextTenButt.clicked.connect(lambda: self.NextTenPage())
-        self.paginationButtonsGrid.addWidget(self.nextTenButt, 0, buttCol)
-        buttCol += 1
-        self.PaginationButts.append(self.nextTenButt)
-        
-        self.prevButt.setEnabled(self.current_page > 1)
-        self.nextButt.setEnabled(self.current_page < self.total_pages)
-        self.prevTenButt.setEnabled(self.current_page > 1)
-        self.nextTenButt.setEnabled(self.current_page < self.total_pages)
-
-        index = self.jumpBox.findData(self.current_page)
-        if index != -1:
-            self.jumpBox.setCurrentIndex(index)
-
-
-    def jump(self):
-        page = self.jumpBox.currentData()
-        if page is not None: self.GotoPage(page) 
-
-    def NextPage(self):
-        self.current_page += 1
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
-
-    def NextTenPage(self):
-        if self.current_page + 10 < self.total_pages:
-            self.current_page += 10
-        else: 
-            self.current_page = self.total_pages
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
-
-    def PrevPage(self):
-        self.current_page -= 1
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
-
-    def PrevTenPage(self):
-        if self.current_page - 10 >= 1:
-            self.current_page -= 10
-        else:
-            self.current_page = 1
-        self.Populate_Table(self.table_name, self.widget, self.select_type, self.current_page)
-
-    def GotoPage(self, page):
-        self.Populate_Table(self.table_name, self.widget, self.select_type, page)
-
-# ===========
-#    PAGINATION TABLE
-# =========================
-
-    def load_tenant_data(self):
-        selector = Select()
-        tenant_data, columns = selector.SelectQuery("Tenant", 0)
-        self.Populate_Table("Tenant", self.TenantTable, 0)
-
-    def load_room_data(self):
-        selector = Select()
-        room_data, columns = selector.SelectQuery("Room", 1)
-        self.Populate_Table("Room", self.RoomTable, 1)
-
-    def load_rent_data(self):
-        selector = Select()
-        rent_data, columns = selector.SelectQuery("Rents", 2)
-        self.Populate_Table("Rents", self.RentTable, 2)
-
-    def load_payment_data(self):
-        selector = Select()
-        payment_data, columns = selector.SelectQuery("Pays", 3)
-        self.Populate_Table("Pays", self.PaymentTable, 3)
-
-    def load_emergency_data(self):
-        selector = Select()
-        emergency_data, columns = selector.SelectQuery("EmergencyContact", 4)
-        self.Populate_Table("EmergencyContact", self.EmergencyTable, 4)
+    def load_data(self, index):
+        table_mapping = {
+                    0: ("Tenant", self.TenantTable, "Tenant"),
+                    1: ("Room", self.RoomTable, None),
+                    2: ("Rents", self.RentTable, "Rents/Pays"),
+                    3: ("Pays", self.PaymentTable, "Rents/Pays"),
+                    4: ("EmergencyContact", self.EmergencyTable, None)
+                }
+        self.table_name, self.widget, self.select_type = table_mapping.get(index)
+        self.populator.Populate_Table(self.table_name, self.widget, self.select_type)
 
     def on_Add_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()
@@ -266,46 +118,66 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if current_widget_index == 0:
             dialog = AddTenantDialog(self)
             if dialog.exec() == QDialog.Accepted:
-                self.load_tenant_data()
+                self.load_data(0)
 
         elif current_widget_index == 1:
             dialog = AddRoomDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_room_data()
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(1)
 
         elif current_widget_index == 2:
             dialog = AddRentDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_rent_data()
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(2)
 
         elif current_widget_index == 3:
             dialog = AddPaymentDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_payment_data()
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(3)
 
         elif current_widget_index == 4:
             dialog = AddEmergencyContactDialog(self)
-            if dialog.exec() == QDialog.Accepted:
-                self.load_emergency_data()
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(4)
 
     def onEditClicked(self):
-        currentWidgetIndex = self.stackedWidget.currentIndex()
-        
-        if currentWidgetIndex == 0:
+        current_widget_index = self.stackedWidget.currentIndex()
+
+        if current_widget_index == 0:
             dialog = editTenantDialog(self)
             if dialog.exec() == QDialog.Accepted:
-                self.load_tenant_data()
-        
-        elif currentWidgetIndex == 1:
-            print("Now in Edit Rooms Dialog")
-            
-        elif currentWidgetIndex == 2:
+                self.load_data(0)
+
+        elif current_widget_index == 1:
+            dialog = editRoomDialog(self)
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(1)
+
+        elif current_widget_index == 2:
             dialog = editRentDialog(self)
             if dialog.exec() == QDialog.accepted:
-                self.load_rent_data()
+                self.load_data(2)
+
+        # elif current_widget_index == 3:
+        #     dialog = editPaymentDialog(self)
+        #     if dialog.exec() == QDialog.accepted:
+        #         self.load_data(3)
+
+        elif current_widget_index == 4:
+            dialog = editEmergencyContactDialog(self)
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(4)
+        
         
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+    connection = DatabaseConnector.get_connection()
+    if connection is not None:
+        app = QApplication(sys.argv)
+        window = MainWindow()
+        window.show()
+        sys.exit(app.exec_())
+        
+    else:
+        app = QApplication(sys.argv) 
+        QMessageBox.critical(None, "Connection Error", "Could not establish connection with the Database.", QMessageBox.Ok)
+        sys.exit(1)

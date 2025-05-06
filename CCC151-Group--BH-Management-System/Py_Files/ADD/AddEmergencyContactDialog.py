@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
+from PyQt5.QtCore import Qt
 from .AddEmergencyContact import Ui_Dialog
-from DATABASE.Functions.Select import Select
+from DATABASE.Functions import Select, Insert
 from DATABASE.DB import DatabaseConnector
 import re
 
@@ -10,6 +11,9 @@ class AddEmergencyContactDialog(QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
+        self.select = Select.Select()
+        self.insert = Insert.Insert()
+
         self.ui.CancelpushButton.clicked.connect(self.reject)
         self.ui.AddpushButton.clicked.connect(self.handle_add_EC)
 
@@ -17,9 +21,8 @@ class AddEmergencyContactDialog(QDialog):
 
     def populate_tenant_id_completer(self):
         try:
-            select = Select()
-            rows, _ = select.SelectQuery("Tenant", select_type=0, spec_col=["TenantID"])
-            tenant_ids = [row[0] for row in rows]
+            
+            tenant_ids = self.select.SelectQuery("Tenant", select_type="Tenants", spec_col=["TenantID"]).retData()
 
             completer = QCompleter(tenant_ids, self)
             completer.setCaseSensitivity(False)
@@ -51,28 +54,11 @@ class AddEmergencyContactDialog(QDialog):
             return
 
         try:
-            select = Select()
-
-            # Query to insert the emergency contact into the database
-            insert_query = """
-                INSERT INTO EmergencyContact (ContactID, FirstName, MiddleName, LastName, Relationship, PhoneNumber, EMTenantID)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """
-
+            
             # Execute the insert query
-            select.cursor.execute(insert_query, (
-                contactID,
-                ecFirst_name,
-                ecMiddle_name,
-                ecLast_name,
-                relationship,
-                EC_phoneNumber,
-                tenant_EMID
-            ))
+            newEC = [contactID, ecFirst_name, ecMiddle_name, ecLast_name, relationship, EC_phoneNumber, tenant_EMID]
+            self.insert.InsertQuery("EmergencyContact", newEC)
 
-            # Commit the transaction
-            select.conn.commit()
-            select.cursor.close()
 
             QMessageBox.information(self, "Success", "Emergency Contact added successfully!")
             self.accept()

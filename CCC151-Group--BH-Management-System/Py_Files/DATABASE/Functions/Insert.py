@@ -13,21 +13,20 @@ class Insert(Function):
         return cls._instance
 
     def __init__(self):
-        super.__init__(self)
+        super().__init__()
 
     def InsertQuery(self, table, attr):
         
+        self.params = []
+        self.place = []
         for i in attr: self.params.append(i)
         columns = self.get_columns(table)
+        self.placeholders = ", ".join(["%s"] * len(columns))
         
-        query = (
-            
-            f"INSERT INTO {table} ("    + 
-            ", ".join(columns)          + 
-            ") VALUES ("                +
-            ", ".join(self.params)      +
-            ")"
-        )
+        query = f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({self.placeholders})"
+
+
+        print(query)
         
         # Example: 
         """

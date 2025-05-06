@@ -50,6 +50,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.paymentPushButton.clicked.connect(lambda: self.switch_tab(3))
         self.emergencyPushButton.clicked.connect(lambda: self.switch_tab(4))
         self.EditpushButton.clicked.connect(self.onEditClicked)
+        self.RefreshpushButton.clicked.connect(lambda: self.load_data(self.index))
 
         self.jumpBox.activated.connect(lambda: self.jump())
 
@@ -59,8 +60,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def switch_tab(self, index):
         self.stackedWidget.setCurrentIndex(index)
-        
-        if hasattr(self.populator, "full_data"): del self.populator.full_data
+        self.index = index
 
         # Reset all to inactive
         self.tenantPushButton.setStyleSheet(self.inactive_style)
@@ -70,22 +70,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.emergencyPushButton.setStyleSheet(self.inactive_style)
 
         # Highlight the clicked button
-        if index == 0:
+        if self.index == 0:
             self.tenantPushButton.setStyleSheet(self.active_style)
-        elif index == 1:
+        elif self.index == 1:
             self.roomPushButton.setStyleSheet(self.active_style)
-        elif index == 2:
+        elif self.index == 2:
             self.rentPushButton.setStyleSheet(self.active_style)
-        elif index == 3:
+        elif self.index == 3:
             self.paymentPushButton.setStyleSheet(self.active_style)
-        elif index == 4:
+        elif self.index == 4:
             self.emergencyPushButton.setStyleSheet(self.active_style)
 
         self.load_data(index)
-
-        self.columns = self.populator.columns
-        self.SearchField.clear()
-        for col in self.columns: self.SearchField.addItem(str(col), col)
 
 # =========================
 #    SEARCH N SORT FUNCS
@@ -102,6 +98,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 # =========================
 
     def load_data(self, index):
+        
+        if hasattr(self.populator, "full_data"): del self.populator.full_data
+        
         table_mapping = {
                     0: ("Tenant", self.TenantTable, "Tenant"),
                     1: ("Room", self.RoomTable, None),
@@ -109,8 +108,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     3: ("Pays", self.PaymentTable, "Rents/Pays"),
                     4: ("EmergencyContact", self.EmergencyTable, None)
                 }
+        
         self.table_name, self.widget, self.select_type = table_mapping.get(index)
         self.populator.Populate_Table(self.table_name, self.widget, self.select_type)
+
+        self.columns = self.populator.columns
+        self.SearchField.clear()
+        self.SearchLineEdit.clear()
+        for col in self.columns: self.SearchField.addItem(str(col), col)
 
     def on_Add_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()

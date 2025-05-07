@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QCompleter
 from PyQt5.QtWidgets import QMessageBox
 from ..EditRoom import Ui_Dialog
 from PyQt5.QtCore import Qt
@@ -18,13 +18,14 @@ class editRoomDialog(QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         self.fillSexComboBox()
-        self.ui.RoomNumberLineEdit.textEdited.connect(self.assignCurrentNumberOfOccupants)
+        self.fillRoomNumber()
+        self.ui.RoomNumberComboBox.currentTextChanged.connect(self.assignCurrentNumberOfOccupants)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
         self.ui.UpdatepushButton.clicked.connect(self.updateRoom)
 
         
     def updateRoom(self):
-        roomNumber = self.ui.RoomNumberLineEdit.text()
+        roomNumber = self.ui.RoomNumberComboBox.currentText()
         
         price = self.ui.PriceLineEdit.text()
         tenantSex = self.ui.TenantSexComboBox.currentData()
@@ -78,7 +79,7 @@ class editRoomDialog(QDialog):
             
     def assignCurrentNumberOfOccupants(self):
         selector = Select()
-        roomNumber = self.ui.RoomNumberLineEdit.text()
+        roomNumber = self.ui.RoomNumberComboBox.currentText()
         
         if roomNumber:
             print(roomNumber)
@@ -115,3 +116,24 @@ class editRoomDialog(QDialog):
                 self.ui.MaxNoOccupantsLineEdit.setText(str(maximumCapacity))
                 self.ui.NoOfOccupantsComboBox.setCurrentText(str(numberOfOccupants))
         
+    def fillRoomNumber(self):
+        self.ui.RoomNumberComboBox.clear()
+        selector = Select()
+        selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom", "Rents.MoveOutDate"])
+        resultBuilder = selector.retDict()
+        
+        roomNumbers = []
+        
+        for row in resultBuilder:
+            roomNumber = next(iter(row.values()))
+            self.ui.RoomNumberComboBox.addItem(str(roomNumber))
+            roomNumbers.append(str(roomNumber))
+            
+        self.ui.RoomNumberComboBox.setCurrentIndex(-1)
+        self.ui.RoomNumberComboBox.setEditable(True)
+        completer = QCompleter(roomNumbers, self)
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
+        completer.setFilterMode(Qt.MatchContains)
+        self.ui.RoomNumberComboBox.setCompleter(completer)
+        
+        self.ui.RoomNumberComboBox.setFocus()

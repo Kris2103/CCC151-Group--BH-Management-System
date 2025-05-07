@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog, QMessageBox
+from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
 from ..EditRent import Ui_Dialog
 from datetime import datetime
 from DATABASE.Functions.update import update

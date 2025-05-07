@@ -79,9 +79,10 @@ class Select(Function):
         else:
             self.columnquery    = ", ".join([f"{col}" for col in spec_col])
             self.columns = [col.split(" AS ")[-1].split(".")[-1] for col in spec_col]
-
-        self.Conditions(select_type)
-
+        
+        if self.Conditions(select_type):
+            return self # This allows payquery to be queried instead for its sepcial SPECIAL case. 
+        
         # Selecting with a tag(column) and key(search key)
         if tag and key:
             search_tag = self.aliascolumn.get(tag, f"{table}.{tag}")
@@ -112,17 +113,18 @@ class Select(Function):
         self.query = self.basequery + self.columnquery + self.table + self.conditions + self.search_query + self.groupquery + self.limitquery
 
         print(self.query)
-   
+        self.execute(self.query, self.params)
 
+        return self
+
+    def execute(self, query, params = None):
         try:
-            self.cursor.execute(self.query, self.params)
+            self.cursor.execute(query, params)
             self.rows = self.cursor.fetchall()
-            
             return self
         except Exception as exception:
-            print(f"Error selecting table '{table}' : {exception}")
+            print(f"Error selecting : {exception}")
             self.conn.rollback()
-
     
     def retData(self):
         return self.rows
@@ -152,7 +154,27 @@ class Select(Function):
                 self.aliascolumn["`Rent Duration in Months`"] = "TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate)"
                 self.columns.append("Rent Duration in Months")
             case "Pays":
-                pass
+                payquery = """  WITH RentDuration AS (  SELECT RentingTenant                                    AS TenantID, 
+			                                            TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate)           AS Duration
+	                            FROM Rents),
+                                PaidAmount AS (         SELECT PayingTenant                                     AS TenantID, 
+			                                            SUM(PaymentAmount)                                      AS Paid
+                                FROM Pays
+                                GROUP BY PayingTenant)
+                                SELECT                  Tenant.TenantID, Tenant.RoomNumber, 
+		                                                RentDuration.Duration as RentDuration, 
+                                                        Room.Price, PaidAmount.Paid AS PaidAmount, 
+                                                        ((Room.Price * RentDuration.Duration) - PaidAmount.Paid) AS TotalDue 
+                                FROM Tenant 
+                                LEFT JOIN Room 
+                                    ON Room.RoomNumber = Tenant.RoomNumber
+                                LEFT JOIN RentDuration 
+                                    ON RentDuration.TenantID = Tenant.TenantID
+                                LEFT JOIN PaidAmount
+	                                ON PaidAmount.TenantID = Tenant.TenantID"""
+                self.execute(payquery)
+                self.columns = [desc[0] for desc in self.cursor.description]
+                return self
             case None:
                 pass
 

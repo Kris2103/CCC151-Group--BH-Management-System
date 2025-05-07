@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
 from PyQt5.QtCore import Qt
 from .AddEmergencyContact import Ui_Dialog
-from DATABASE.Functions import Select, Insert
+from DATABASE.Functions import Select, Insert, Populate
 from DATABASE.DB import DatabaseConnector
 import re
 
@@ -13,25 +13,13 @@ class AddEmergencyContactDialog(QDialog):
 
         self.select = Select.Select()
         self.insert = Insert.Insert()
+        self.populate = Populate.Populate()
 
         self.ui.CancelpushButton.clicked.connect(self.reject)
         self.ui.AddpushButton.clicked.connect(self.handle_add_EC)
 
-        self.populate_tenant_id_completer()
-
-    def populate_tenant_id_completer(self):
-        try:
-            
-            tenant_ids = self.select.SelectQuery("Tenant", select_type="Tenants", spec_col=["TenantID"]).retData()
-
-            completer = QCompleter(tenant_ids, self)
-            completer.setCaseSensitivity(False)
-            completer.setFilterMode(Qt.MatchContains)
-            self.ui.TenantEMIDComboBox.setCompleter(completer)
-
-        except Exception as err:
-            print(f"Completer Error: {err}")
-            QMessageBox.critical(self, "Error", f"Could not load tenant IDs:\n{err}")
+        self.ui.TenantEMIDComboBox.setEditable(True)
+        self.populate.populate_tenant_id_combobox(self.ui.TenantEMIDComboBox)
 
     def handle_add_EC(self):
         ecFirst_name = self.ui.FirstNameLineEdit.text()

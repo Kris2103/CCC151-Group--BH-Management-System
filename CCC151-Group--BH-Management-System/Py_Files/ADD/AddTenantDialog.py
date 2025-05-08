@@ -120,6 +120,7 @@ class AddTenantDialog(QDialog):
                 maximum_capacity, current_occupants, room_tsex = result[0]
                 if room_tsex != tenant_sex and room_tsex != None:
                     QMessageBox.warning(self, "Sex invalid", f"Room {tenant_room} only accepts {room_tsex} tenants.")
+                    return
                 if current_occupants >= maximum_capacity:
                     QMessageBox.warning(self, "Room Full", f"Room {tenant_room} has reached its maximum capacity of {current_occupants}/{maximum_capacity}.")
                     return

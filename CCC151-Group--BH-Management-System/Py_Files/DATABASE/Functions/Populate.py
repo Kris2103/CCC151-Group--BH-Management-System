@@ -1,6 +1,6 @@
 import math
 import SpecialWidgetsUI
-from PyQt5.QtWidgets import QTableWidgetItem, QMainWindow, QMessageBox, QCompleter
+from PyQt5.QtWidgets import QTableWidgetItem, QMessageBox, QCompleter, QAbstractItemView, QHeaderView
 from PyQt5.QtCore import Qt
 from . import Select, Insert
 
@@ -52,12 +52,14 @@ class Populate:
         for row_idx, row_data in enumerate(self.page_data):
             for col_idx, cell in enumerate(row_data):
                 item = QTableWidgetItem(str(cell))
-                # Disable editing by setting flags for the item
-                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                # Set the item to the table widget
+                item.setTextAlignment(Qt.AlignCenter)
                 table_widget.setItem(row_idx, col_idx, item)
-                # table_widget.setSortingEnabled(True)
 
+        self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        # array of pointers to the created buttons. I say buttons but they're actually modified labels my dudes
         while self.mw.paginationButtonsGrid.count():
             item = self.mw.paginationButtonsGrid.takeAt(0)
             if item.widget():
@@ -111,6 +113,8 @@ class Populate:
         index = self.mw.jumpBox.findData(self.current_page)
         if index != -1:
             self.mw.jumpBox.setCurrentIndex(index)
+        
+        self.mw.jumpBox.activated.connect(lambda: self.jump())
 
 
     def jump(self):
@@ -191,12 +195,22 @@ class Populate:
 
         self.move_combobow.addItems(["Active", "Moved Out"])
 
-    def populate_tenant_id_combobox(self, tenant_combobox):
-        self.tenant_combobox = tenant_combobox
-        self.tenant_combobox.clear()
 
-        tenant_ids = [str(row[0]) for row in self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"]).retData()]
-        self.tenant_combobox.addItems(tenant_ids)
+    def populate_tenant_id_combobox(self, tenant_combobox):
+        try:    
+            self.tenant_combobox = tenant_combobox
+            self.tenant_combobox.clear()
+            tenant_ids = [str(row[0]) for row in self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"]).retData()]
+
+            self.tenant_combobox.addItems(tenant_ids)
+            completer = QCompleter(tenant_ids, self.tenant_combobox)
+            completer.setCaseSensitivity(False)
+            completer.setFilterMode(Qt.MatchContains)
+            self.tenant_combobox.setCompleter(completer)
+
+        except Exception as err:
+            print(f"Completer Error: {err}")
+            QMessageBox.critical(self, "Error", f"Could not load tenant IDs:\n{err}")
 
     def sync_tenant_id_from_room(self, roomnum_combobox):
         self.roomnum_combobox = roomnum_combobox
@@ -223,6 +237,28 @@ class Populate:
             index = self.renttent_combobox.findText(room_number)
             if index != -1:
                 self.renttent_combobox.setCurrentIndex(index)
+
+# ===========
+#    COMBOBOXES POPULATE   
+# =========================
+
+
+# =========================
+#    COMBOBOXES POPULATE
+# ==========
+
+    # def load_data(self, index):
+        
+    #     if hasattr(self.mw.populator, "full_data"): del self.mw.populator.full_data
+        
+    #     self.table_name, self.widget, self.select_type = self.map_indextotable(index)
+    #     self.populator.Populate_Table(self.table_name, self.widget, self.select_type)
+
+    #     self.columns = self.populator.columns
+    #     self.SearchField.clear()
+    #     self.SearchLineEdit.clear()
+    #     for col in self.columns: self.SearchField.addItem(str(col), col)
+
 # ===========
 #    COMBOBOXES POPULATE   
 # =========================

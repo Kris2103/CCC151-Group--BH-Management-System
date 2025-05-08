@@ -31,7 +31,7 @@ class Populate:
         # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
 
             # Configure pages information according to taste
-            self.rows_per_page  = 20
+            self.rows_per_page  = 15
             self.total_pages    = math.ceil(len(self.full_data)/self.rows_per_page)
 
         self.current_page = current_page
@@ -40,7 +40,7 @@ class Populate:
         start_index             = (current_page-1) * self.rows_per_page
         end_index               = start_index + self.rows_per_page
         self.page_data          = self.full_data[start_index:end_index]
-        
+
         # refresh table widget(data is not refreshed)
         table_widget.clear()
         table_widget.setRowCount(len(self.page_data))
@@ -48,7 +48,7 @@ class Populate:
         table_widget.setHorizontalHeaderLabels(self.columns)
         table_widget.verticalHeader().setVisible(False)
 
-        # load the data in TO EDIT: ignore first column(built-in id of widget)
+        # Load the data in TO EDIT: ignore first column (built-in id of widget)
         for row_idx, row_data in enumerate(self.page_data):
             for col_idx, cell in enumerate(row_data):
                 item = QTableWidgetItem(str(cell))

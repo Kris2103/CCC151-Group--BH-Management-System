@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
-    <height>411</height>
+    <width>448</width>
+    <height>409</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -151,7 +151,7 @@ vertical-align: middle;
      <string>First Name</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="MibbleNameLineEdit">
+   <widget class="QLineEdit" name="MiddleleNameLineEdit">
     <property name="geometry">
      <rect>
       <x>20</x>

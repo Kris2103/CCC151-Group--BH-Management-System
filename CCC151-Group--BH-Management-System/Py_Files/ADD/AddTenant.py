@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\AddTenant.ui'
+# Form implementation generated from reading ui file 'c:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\AddTenant.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(458, 411)
+        Dialog.resize(448, 411)
         self.frame = QtWidgets.QFrame(Dialog)
         self.frame.setGeometry(QtCore.QRect(10, 10, 431, 391))
         self.frame.setStyleSheet("background-color: rgb(240, 240, 240);\n"

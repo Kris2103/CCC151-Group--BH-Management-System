@@ -176,16 +176,6 @@ border: 1px solid rgb(169, 169, 169);
      <string>Status</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="RentingTenantIDComboBox">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>110</y>
-      <width>111</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
@@ -230,20 +220,10 @@ border: 1px solid rgb(169, 169, 169);
      <string>Renting Tenant ID</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="RoomNumberComboBox">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>110</y>
-      <width>111</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>150</x>
       <y>90</y>
       <width>101</width>
       <height>16</height>
@@ -292,6 +272,26 @@ border: 1px solid rgb(169, 169, 169);
     </property>
     <property name="text">
      <string>Move-out Date</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="RentingTenantLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>111</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="RoomNumberLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>110</y>
+      <width>111</width>
+      <height>21</height>
+     </rect>
     </property>
    </widget>
   </widget>

@@ -212,12 +212,6 @@ class Populate:
             print(f"Completer Error: {err}")
             QMessageBox.critical(self, "Error", f"Could not load tenant IDs:\n{err}")
 
-    # def populate_tenant_id_combobox(self, tenant_combobox):
-    #     self.tenant_combobox = tenant_combobox
-    #     self.tenant_combobox.clear()
-    #     tenant_ids = [str(row[0]) for row in self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"]).retData()]
-    #     self.tenant_combobox.addItems(tenant_ids)
-
     def sync_tenant_id_from_room(self, roomnum_combobox):
         self.roomnum_combobox = roomnum_combobox
         room = self.roomnum_combobox.currentText()
@@ -243,6 +237,27 @@ class Populate:
             index = self.renttent_combobox.findText(room_number)
             if index != -1:
                 self.renttent_combobox.setCurrentIndex(index)
+
+# ===========
+#    COMBOBOXES POPULATE   
+# =========================
+
+
+# =========================
+#    COMBOBOXES POPULATE
+# ==========
+
+    # def load_data(self, index):
+        
+    #     if hasattr(self.mw.populator, "full_data"): del self.mw.populator.full_data
+        
+    #     self.table_name, self.widget, self.select_type = self.map_indextotable(index)
+    #     self.populator.Populate_Table(self.table_name, self.widget, self.select_type)
+
+    #     self.columns = self.populator.columns
+    #     self.SearchField.clear()
+    #     self.SearchLineEdit.clear()
+    #     for col in self.columns: self.SearchField.addItem(str(col), col)
 
 # ===========
 #    COMBOBOXES POPULATE   

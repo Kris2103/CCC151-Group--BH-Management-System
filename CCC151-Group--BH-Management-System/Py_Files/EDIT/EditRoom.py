@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\EditRoom.ui'
+# Form implementation generated from reading ui file 'c:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\EditRoom.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -52,9 +52,6 @@ class Ui_Dialog(object):
 "\n"
 "")
         self.label_2.setObjectName("label_2")
-        self.RoomNumberLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.RoomNumberLineEdit.setGeometry(QtCore.QRect(20, 110, 111, 21))
-        self.RoomNumberLineEdit.setObjectName("RoomNumberLineEdit")
         self.label_3 = QtWidgets.QLabel(self.frame)
         self.label_3.setGeometry(QtCore.QRect(20, 90, 111, 16))
         self.label_3.setStyleSheet("background: none;\n"
@@ -140,6 +137,9 @@ class Ui_Dialog(object):
         self.MaxNoOccupantsLineEdit = QtWidgets.QLineEdit(self.frame)
         self.MaxNoOccupantsLineEdit.setGeometry(QtCore.QRect(60, 160, 111, 21))
         self.MaxNoOccupantsLineEdit.setObjectName("MaxNoOccupantsLineEdit")
+        self.RoomNumberComboBox = QtWidgets.QComboBox(self.frame)
+        self.RoomNumberComboBox.setGeometry(QtCore.QRect(20, 110, 111, 22))
+        self.RoomNumberComboBox.setObjectName("RoomNumberComboBox")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)

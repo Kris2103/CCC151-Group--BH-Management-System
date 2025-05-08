@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>447</width>
-    <height>351</height>
+    <width>451</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -151,7 +151,7 @@ vertical-align: middle;
      <string>First Name</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="MibbleNameLineEdit">
+   <widget class="QLineEdit" name="MiddleNameLineEdit">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -213,28 +213,6 @@ vertical-align: middle;
     </property>
     <property name="text">
      <string>Last Name</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>140</y>
-      <width>91</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background: none;
-    border: none;
-    color: #800000;
-    font-family: 'Cal Sans', sans-serif;
-    font-weight: 700;
-    font-style: normal;
-    font-size: 14px;</string>
-    </property>
-    <property name="text">
-     <string>TenantEM ID</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="PhoneNumberLineEdit">
@@ -301,7 +279,7 @@ vertical-align: middle;
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="UpdatepushButton">
+   <widget class="QPushButton" name="AddpushButton">
     <property name="geometry">
      <rect>
       <x>320</x>
@@ -322,7 +300,7 @@ padding: 6px 12px;
 </string>
     </property>
     <property name="text">
-     <string>Update</string>
+     <string>Add</string>
     </property>
    </widget>
    <widget class="QPushButton" name="CancelpushButton">
@@ -346,16 +324,6 @@ border: 1px solid rgb(169, 169, 169);
     </property>
     <property name="text">
      <string>Cancel</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="TenantEMIDComboBox">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>160</y>
-      <width>101</width>
-      <height>22</height>
-     </rect>
     </property>
    </widget>
   </widget>

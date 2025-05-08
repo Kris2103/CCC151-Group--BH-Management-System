@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\AddEmergencyContact.ui'
+# Form implementation generated from reading ui file 'c:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\AddEmergencyContact.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(455, 351)
+        Dialog.resize(447, 351)
         self.frame = QtWidgets.QFrame(Dialog)
         self.frame.setGeometry(QtCore.QRect(10, 10, 431, 331))
         self.frame.setStyleSheet("background-color: rgb(240, 240, 240);\n"
@@ -163,9 +163,9 @@ class Ui_Dialog(object):
 "border: 1px solid rgb(169, 169, 169);\n"
 "")
         self.CancelpushButton.setObjectName("CancelpushButton")
-        self.TenantEMIDLineEdit_2 = QtWidgets.QLineEdit(self.frame)
-        self.TenantEMIDLineEdit_2.setGeometry(QtCore.QRect(310, 160, 101, 22))
-        self.TenantEMIDLineEdit_2.setObjectName("TenantEMIDLineEdit_2")
+        self.TenantEMIDComboBox = QtWidgets.QComboBox(self.frame)
+        self.TenantEMIDComboBox.setGeometry(QtCore.QRect(310, 160, 101, 22))
+        self.TenantEMIDComboBox.setObjectName("TenantEMIDComboBox")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>304</width>
-    <height>300</height>
+    <height>302</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -87,42 +87,10 @@ vertical-align: middle;
      </property>
     </widget>
    </widget>
-   <widget class="QLineEdit" name="RoomNumberLineEdit">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>110</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>90</y>
-      <width>101</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background: none;
-    border: none;
-    color: #800000;
-    font-family: 'Cal Sans', sans-serif;
-    font-weight: 700;
-    font-style: normal;
-    font-size: 14px;</string>
-    </property>
-    <property name="text">
-     <string>Room Number</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="UpdatepushButton">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>140</x>
       <y>240</y>
       <width>93</width>
       <height>28</height>
@@ -146,7 +114,7 @@ padding: 6px 12px;
    <widget class="QPushButton" name="CancelpushButton">
     <property name="geometry">
      <rect>
-      <x>70</x>
+      <x>40</x>
       <y>240</y>
       <width>93</width>
       <height>28</height>
@@ -166,67 +134,23 @@ border: 1px solid rgb(169, 169, 169);
      <string>Cancel</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="RentingTenantIDLineEdit">
+   <widget class="QComboBox" name="MoveStatuscomboBox">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>160</y>
+      <width>111</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="MoveInDateEdit">
     <property name="geometry">
      <rect>
       <x>150</x>
       <y>160</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>140</y>
-      <width>131</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background: none;
-    border: none;
-    color: #800000;
-    font-family: 'Cal Sans', sans-serif;
-    font-weight: 700;
-    font-style: normal;
-    font-size: 14px;</string>
-    </property>
-    <property name="text">
-     <string>Renting Tenant ID</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>90</y>
-      <width>111</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background: none;
-    border: none;
-    color: #800000;
-    font-family: 'Cal Sans', sans-serif;
-    font-weight: 700;
-    font-style: normal;
-    font-size: 14px;</string>
-    </property>
-    <property name="text">
-     <string>Move-in Date</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="MoveInDateLineEdit">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>110</y>
-      <width>111</width>
-      <height>21</height>
+      <width>110</width>
+      <height>22</height>
      </rect>
     </property>
    </widget>
@@ -234,7 +158,7 @@ border: 1px solid rgb(169, 169, 169);
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>190</y>
+      <y>140</y>
       <width>111</width>
       <height>16</height>
      </rect>
@@ -252,30 +176,10 @@ border: 1px solid rgb(169, 169, 169);
      <string>Status</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="MoveStatuscomboBox">
+   <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>210</y>
-      <width>111</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="MoveInDateLineEdit_2">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>160</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_6">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
+      <x>150</x>
       <y>140</y>
       <width>111</width>
       <height>16</height>
@@ -291,7 +195,103 @@ border: 1px solid rgb(169, 169, 169);
     font-size: 14px;</string>
     </property>
     <property name="text">
+     <string>Move-in Date</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>131</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: none;
+    border: none;
+    color: #800000;
+    font-family: 'Cal Sans', sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 14px;</string>
+    </property>
+    <property name="text">
+     <string>Renting Tenant ID</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>90</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: none;
+    border: none;
+    color: #800000;
+    font-family: 'Cal Sans', sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 14px;</string>
+    </property>
+    <property name="text">
+     <string>Room Number</string>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="MoveOutDateEdit">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>210</y>
+      <width>110</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>190</y>
+      <width>111</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: none;
+    border: none;
+    color: #800000;
+    font-family: 'Cal Sans', sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 14px;</string>
+    </property>
+    <property name="text">
      <string>Move-out Date</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="RentingTenantLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>111</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="RoomNumberLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>110</y>
+      <width>111</width>
+      <height>21</height>
+     </rect>
     </property>
    </widget>
   </widget>

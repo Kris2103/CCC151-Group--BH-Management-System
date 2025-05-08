@@ -5,7 +5,8 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))  # 1. comment this line if it errors, only uncomment if you run it directly (testing, like running 2.)
 
 from DATABASE.DB import DatabaseConnector
-from .Function import Function
+from .Function import Function 
+# from Function import Function # uncomment for debugging
 
 """
 
@@ -67,36 +68,55 @@ class Select(Function):
     def __init__(self):
         super().__init__()
 
-    def SelectQuery(self, table, select_type, spec_col = [], tag = None, key = None):
+    def SelectQuery(self, table, select_type=None, spec_col = [], tag = None, key = None, group = None, limit = None):
         
         self.params.clear()
 
         self.basequery          = f"SELECT "
         self.table              = f" FROM {table} "
-        self.search_query       = ""
         self.conditions         = ""
+        self.limitquery         = (f" LIMIT {limit}") if limit else ("")
+        self.groupquery         = (f" GROUP BY {group}") if group else ("")
 
         self.columns            = self.get_columns(table)
+        self.aliascolumn        = {}
         
         if not spec_col:
             self.columnquery    = ", ".join([f"{table}.{col}" for col in self.columns])
         
         else:
             self.columnquery    = ", ".join([f"{col}" for col in spec_col])
+            self.columns = [col.split(" AS ")[-1].split(".")[-1] for col in spec_col]
+        
+        self.Conditions(select_type) # Special joins, CTEs, Aliases        
+        self.search_query = self.SearchQuery(table, tag, key) # In case of search call, execute search
 
-        self.Conditions(select_type)
+        self.query = self.basequery + self.columnquery + self.table + self.conditions + self.search_query + self.groupquery + self.limitquery
 
+        print(self.query)
+        self.execute(self.query, self.params)
+
+        return self
+    
+    def SearchQuery(self, table, tag, key):
         # Selecting with a tag(column) and key(search key)
+        search_query = ""
         if tag and key:
-            self.search_query = f"WHERE {tag} LIKE %s "
-            self.params.append(f"%{key}%")
+            search_tag = self.aliascolumn.get(tag, f"{table}.{tag}")
+            search_query = f"WHERE {search_tag} LIKE %s "
+            if key == "Male":
+                self.params.append(f"{key}")
+            else:
+                self.params.append(f"%{key}%")
 
         # Selecting all columns with key(search key)
         elif key:            
             searchAll = [(f"`{col}` LIKE %s") for col in self.columns]
             self.params.extend([f"%{key}%"] * len(self.columns))
 
-            self.search_query = "WHERE " + " OR ".join(searchAll)
+            search_query = "WHERE " + " OR ".join(searchAll)
+        
+        return search_query
 
         # Example: 
         """
@@ -108,20 +128,14 @@ class Select(Function):
 
         """
 
-        self.query = self.basequery + self.columnquery + self.table + self.conditions + self.search_query 
-
-        print(self.query)
-   
-
+    def execute(self, query, params = None):
         try:
-            self.cursor.execute(self.query, self.params)
+            self.cursor.execute(query, params)
             self.rows = self.cursor.fetchall()
-            
             return self
         except Exception as exception:
-            print(f"Error selecting table '{table}' : {exception}")
+            print(f"Error selecting : {exception}")
             self.conn.rollback()
-
     
     def retData(self):
         return self.rows
@@ -135,15 +149,57 @@ class Select(Function):
         return self.rows, self.columns
     
     def retDict(self):
+        print(list(zip(self.columns, self.rows[0])))
+
         return [dict(zip(self.columns, row)) for row in self.rows]
     
     def Conditions(self, select_type = None):
         match select_type:
             case "Tenant":
-                self.columnquery        += ", EmergencyContact.PhoneNumber AS EmergencyContact"
-                self.conditions         += "LEFT JOIN EmergencyContact ON Tenant.TenantID = EmergencyContact.EMTenantID "
-                self.columns.append("EmergencyContact")
-            case "Rents/Pays":
-                pass
+                self.columnquery        +=  ", EmergencyContact.PhoneNumber AS EmergencyContact"
+                self.conditions         +=  "LEFT JOIN EmergencyContact ON Tenant.TenantID = EmergencyContact.EMTenantID "
+                self.aliascolumn[           "EmergencyContact"]             = "EmergencyContact.PhoneNumber"
+                self.columns.append(        "EmergencyContact")
+            case "Rents":
+                self.columnquery        +=  ", TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate) AS `Rent Duration in Months`"
+                self.aliascolumn[           "`Rent Duration in Months`"]    = "TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate)"
+                self.columns.append(        "Rent Duration in Months")
+            case "Pays":
+                self.basequery =            """ WITH    RentDuration AS (   SELECT RentingTenant                    AS TenantID, 
+			                                            TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate)               AS Duration
+	                                            FROM Rents),
+                                
+                                                        PaidAmount AS (     SELECT PayingTenant                     AS TenantID, 
+			                                            SUM(PaymentAmount)                                          AS Paid
+                                                FROM Pays
+                                                GROUP BY PayingTenant) """  + self.basequery
+                
+                self.columnquery +=         """, RentDuration.Duration as RentDuration, Room.Price, 
+                                            ((Room.Price * RentDuration.Duration) - PaidAmount.Paid)                AS TotalDue """
+                
+                self.aliascolumn[           "RentDuration"]                 = "RentDuration.Duration"
+                self.aliascolumn[           "RoomPrice"]                    = "Room.Price"
+                self.aliascolumn[           "TotalDue"]                     = "((Room.Price * RentDuration.Duration) - PaidAmount.Paid)"
+                self.columns.append(        "RentDuration")
+                self.columns.append(        "RoomPrice")
+                self.columns.append(        "TotalDue")
+
+                self.conditions +=          """ LEFT JOIN Tenant
+                                                    ON Tenant.TenantID = Pays.PayingTenant
+                                                LEFT JOIN Room 
+                                                    ON Room.RoomNumber = Tenant.RoomNumber
+                                                LEFT JOIN RentDuration 
+                                                    ON RentDuration.TenantID = Tenant.TenantID
+                                                LEFT JOIN PaidAmount
+                                                    ON PaidAmount.TenantID = Tenant.TenantID """ 
             case None:
                 pass
+
+# if __name__ == "__main__":
+#     selector = Select()
+        
+#     selector.SelectQuery(table="Rents")
+#     resultBuilder = selector.retDict()
+#     print(f"Query Result: {resultBuilder}")
+
+# uncomment for debugging

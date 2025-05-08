@@ -1,11 +1,11 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
 from PyQt5.QtCore import Qt
-from .AddEmergencyContact import Ui_Dialog
-from DATABASE.Functions import Select, Insert, Populate
+from .AddECEmbed import Ui_Dialog
+from DATABASE.Functions import Select, Insert
 from DATABASE.DB import DatabaseConnector
 import re
 
-class AddEmergencyContactDialog(QDialog):
+class AddECEmbedDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Dialog()
@@ -13,13 +13,9 @@ class AddEmergencyContactDialog(QDialog):
 
         self.select = Select.Select()
         self.insert = Insert.Insert()
-        self.populate = Populate.Populate()
 
         self.ui.CancelpushButton.clicked.connect(self.reject)
         self.ui.AddpushButton.clicked.connect(self.handle_add_EC)
-
-        self.ui.TenantEMIDComboBox.setEditable(True)
-        self.populate.populate_tenant_id_combobox(self.ui.TenantEMIDComboBox)
 
     def handle_add_EC(self):
         ecFirst_name = self.ui.FirstNameLineEdit.text()
@@ -27,11 +23,10 @@ class AddEmergencyContactDialog(QDialog):
         ecLast_name = self.ui.LastNameLineEdit.text()
         relationship = self.ui.RelationshipLineEdit.text()
         contactID = self.ui.ContactIDLineEdit.text()
-        tenant_EMID = self.ui.TenantEMIDComboBox.currentText()
         EC_phoneNumber = self.ui.PhoneNumberLineEdit.text()
 
         # Validate required fields
-        if not all([ecFirst_name, ecLast_name, relationship, contactID, tenant_EMID, EC_phoneNumber]):
+        if not all([ecFirst_name, ecLast_name, relationship, contactID, EC_phoneNumber]):
             QMessageBox.warning(self, "Missing Input", "Please fill in all required fields.")
             return
 
@@ -44,7 +39,7 @@ class AddEmergencyContactDialog(QDialog):
         try:
             
             # Execute the insert query
-            newEC = [contactID, ecFirst_name, ecMiddle_name, ecLast_name, relationship, EC_phoneNumber, tenant_EMID]
+            newEC = [contactID, ecFirst_name, ecMiddle_name, ecLast_name, relationship, EC_phoneNumber]
             self.insert.InsertQuery("EmergencyContact", newEC)
 
 

@@ -19,6 +19,7 @@ class editTenantDialog(QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         self.fillSexComboBox()
+        self.fillRoomNoComboBox()
 
         self.ui.UpdatepushButton.clicked.connect(self.updateTenant)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
@@ -89,7 +90,7 @@ class editTenantDialog(QDialog):
     def fillSexComboBox(self):
         self.ui.SexComboBox.clear()
         
-        for data, label, in self.sexOptions.items():
+        for label, data, in self.sexOptions.items():
             self.ui.SexComboBox.addItem(label, data)
             
     def openEditEmergencyContact(self):
@@ -98,7 +99,12 @@ class editTenantDialog(QDialog):
         if result == QDialog.accepted:
             print("Now editing tenant's emergency contact")
                     
-    # def fillRoomNoComboBox(self):
-    #     selecter = Select()
+    def fillRoomNoComboBox(self):
+         selector = Select()
         
-    #     selecter.SelectQuery("Room", tag="Room Number")
+         selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.RoomNumber"], tag=None, key=None)
+         roomNumbers = selector.retData()
+         self.ui.RoomNoComboBox.clear()
+         
+         for room in roomNumbers:
+             self.ui.RoomNoComboBox.addItem(str(room[0]))

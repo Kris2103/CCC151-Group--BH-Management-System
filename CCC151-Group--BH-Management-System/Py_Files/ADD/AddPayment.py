@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\AddPayment.ui'
+# Form implementation generated from reading ui file 'c:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\AddPayment.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(312, 307)
+        Dialog.resize(312, 299)
         self.frame_2 = QtWidgets.QFrame(Dialog)
         self.frame_2.setGeometry(QtCore.QRect(10, 10, 291, 281))
         self.frame_2.setStyleSheet("background-color: rgb(240, 240, 240);\n"
@@ -63,7 +63,7 @@ class Ui_Dialog(object):
 "    font-size: 14px;")
         self.label_12.setObjectName("label_12")
         self.PaymentAmountLineEdit = QtWidgets.QLineEdit(self.frame_2)
-        self.PaymentAmountLineEdit.setGeometry(QtCore.QRect(20, 160, 121, 21))
+        self.PaymentAmountLineEdit.setGeometry(QtCore.QRect(20, 160, 111, 21))
         self.PaymentAmountLineEdit.setObjectName("PaymentAmountLineEdit")
         self.label_13 = QtWidgets.QLabel(self.frame_2)
         self.label_13.setGeometry(QtCore.QRect(20, 140, 121, 20))
@@ -109,7 +109,7 @@ class Ui_Dialog(object):
 "")
         self.CancelpushButton.setObjectName("CancelpushButton")
         self.PayingTenantIDComboBox = QtWidgets.QComboBox(self.frame_2)
-        self.PayingTenantIDComboBox.setGeometry(QtCore.QRect(160, 110, 121, 22))
+        self.PayingTenantIDComboBox.setGeometry(QtCore.QRect(160, 110, 111, 22))
         self.PayingTenantIDComboBox.setObjectName("PayingTenantIDComboBox")
         self.label_14 = QtWidgets.QLabel(self.frame_2)
         self.label_14.setGeometry(QtCore.QRect(160, 140, 121, 20))
@@ -121,9 +121,6 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_14.setObjectName("label_14")
-        self.PaymentDateLineEdit = QtWidgets.QLineEdit(self.frame_2)
-        self.PaymentDateLineEdit.setGeometry(QtCore.QRect(160, 160, 121, 21))
-        self.PaymentDateLineEdit.setObjectName("PaymentDateLineEdit")
         self.label_10 = QtWidgets.QLabel(self.frame_2)
         self.label_10.setGeometry(QtCore.QRect(90, 190, 111, 16))
         self.label_10.setStyleSheet("background: none;\n"
@@ -140,6 +137,9 @@ class Ui_Dialog(object):
         self.RoomNumberComboBox = QtWidgets.QComboBox(self.frame_2)
         self.RoomNumberComboBox.setGeometry(QtCore.QRect(20, 110, 111, 22))
         self.RoomNumberComboBox.setObjectName("RoomNumberComboBox")
+        self.dateEdit = QtWidgets.QDateEdit(self.frame_2)
+        self.dateEdit.setGeometry(QtCore.QRect(160, 160, 111, 22))
+        self.dateEdit.setObjectName("dateEdit")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)

@@ -151,10 +151,12 @@ class Select(Function):
                 self.conditions         +=  "LEFT JOIN EmergencyContact ON Tenant.TenantID = EmergencyContact.EMTenantID "
                 self.aliascolumn[           "EmergencyContact"]             = "EmergencyContact.PhoneNumber"
                 self.columns.append(        "EmergencyContact")
+
             case "Rents":
                 self.columnquery        +=  ", TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate) AS `Rent Duration in Months`"
                 self.aliascolumn[           "`Rent Duration in Months`"]    = "TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate)"
                 self.columns.append(        "Rent Duration in Months")
+
             case "Pays":
                 self.basequery =            """ WITH    RentDuration AS (   SELECT RentingTenant                    AS TenantID, 
 			                                            TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate)               AS Duration
@@ -176,13 +178,14 @@ class Select(Function):
                 self.columns.append(        "TotalDue")
 
                 self.conditions +=          """ LEFT JOIN Tenant
-                                                    ON Tenant.TenantID = Pays.PayingTenant
+                                                    ON Tenant.TenantID          = Pays.PayingTenant
                                                 LEFT JOIN Room 
-                                                    ON Room.RoomNumber = Tenant.RoomNumber
+                                                    ON Room.RoomNumber          = Tenant.RoomNumber
                                                 LEFT JOIN RentDuration 
-                                                    ON RentDuration.TenantID = Tenant.TenantID
+                                                    ON RentDuration.TenantID    = Tenant.TenantID
                                                 LEFT JOIN PaidAmount
-                                                    ON PaidAmount.TenantID = Tenant.TenantID """ 
+                                                    ON PaidAmount.TenantID      = Tenant.TenantID """ 
+                
             case None:
                 pass
 

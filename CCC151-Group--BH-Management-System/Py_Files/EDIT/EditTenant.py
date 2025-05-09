@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\EditTenant.ui'
+# Form implementation generated from reading ui file 'c:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\EditTenant.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -14,9 +14,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(450, 410)
+        Dialog.resize(450, 350)
         self.frame = QtWidgets.QFrame(Dialog)
-        self.frame.setGeometry(QtCore.QRect(10, 10, 431, 391))
+        self.frame.setGeometry(QtCore.QRect(10, 10, 431, 331))
         self.frame.setStyleSheet("background-color: rgb(240, 240, 240);\n"
 "border: 2px solid #800000;\n"
 "border-radius: 6px;\n"
@@ -125,10 +125,10 @@ class Ui_Dialog(object):
 "    font-size: 14px;")
         self.label_11.setObjectName("label_11")
         self.PhoneNumberLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.PhoneNumberLineEdit.setGeometry(QtCore.QRect(20, 310, 181, 31))
+        self.PhoneNumberLineEdit.setGeometry(QtCore.QRect(230, 260, 181, 21))
         self.PhoneNumberLineEdit.setObjectName("PhoneNumberLineEdit")
         self.label_12 = QtWidgets.QLabel(self.frame)
-        self.label_12.setGeometry(QtCore.QRect(20, 290, 111, 16))
+        self.label_12.setGeometry(QtCore.QRect(230, 240, 111, 16))
         self.label_12.setStyleSheet("background: none;\n"
 "    border: none;\n"
 "    color: #800000;\n"
@@ -148,7 +148,7 @@ class Ui_Dialog(object):
 "    font-size: 14px;")
         self.label_21.setObjectName("label_21")
         self.EmailLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.EmailLineEdit.setGeometry(QtCore.QRect(20, 260, 271, 21))
+        self.EmailLineEdit.setGeometry(QtCore.QRect(20, 260, 191, 21))
         self.EmailLineEdit.setObjectName("EmailLineEdit")
         self.RoomNoComboBox = QtWidgets.QComboBox(self.frame)
         self.RoomNoComboBox.setGeometry(QtCore.QRect(310, 160, 101, 22))
@@ -156,29 +156,8 @@ class Ui_Dialog(object):
         self.SexComboBox = QtWidgets.QComboBox(self.frame)
         self.SexComboBox.setGeometry(QtCore.QRect(310, 210, 101, 22))
         self.SexComboBox.setObjectName("SexComboBox")
-        self.EditECpushButton = QtWidgets.QPushButton(self.frame)
-        self.EditECpushButton.setGeometry(QtCore.QRect(210, 310, 171, 31))
-        self.EditECpushButton.setStyleSheet("background: rgb(0, 85, 0);\n"
-"    color: white;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 500;\n"
-"    font-style: normal;\n"
-"    font-size: 12px;\n"
-"    border: 1px solid rgb(0, 85, 0);\n"
-"")
-        self.EditECpushButton.setObjectName("EditECpushButton")
-        self.label_31 = QtWidgets.QLabel(self.frame)
-        self.label_31.setGeometry(QtCore.QRect(210, 290, 141, 16))
-        self.label_31.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_31.setObjectName("label_31")
         self.UpdatepushButton = QtWidgets.QPushButton(self.frame)
-        self.UpdatepushButton.setGeometry(QtCore.QRect(320, 350, 93, 31))
+        self.UpdatepushButton.setGeometry(QtCore.QRect(320, 290, 93, 31))
         self.UpdatepushButton.setStyleSheet("background-color: #388E3C; /* Darker green */\n"
 "color: white;\n"
 "font-family: \"Cal Sans\", sans-serif;\n"
@@ -190,7 +169,7 @@ class Ui_Dialog(object):
 "")
         self.UpdatepushButton.setObjectName("UpdatepushButton")
         self.CancelpushButton = QtWidgets.QPushButton(self.frame)
-        self.CancelpushButton.setGeometry(QtCore.QRect(220, 350, 93, 28))
+        self.CancelpushButton.setGeometry(QtCore.QRect(220, 290, 93, 31))
         self.CancelpushButton.setStyleSheet("background: rgb(157, 157, 157);\n"
 "color: white;\n"
 "font-family: \'Cal Sans\', sans-serif;\n"
@@ -216,7 +195,5 @@ class Ui_Dialog(object):
         self.label_11.setText(_translate("Dialog", "Sex"))
         self.label_12.setText(_translate("Dialog", "Phone Number"))
         self.label_21.setText(_translate("Dialog", "Email"))
-        self.EditECpushButton.setText(_translate("Dialog", "Edit Emergency Contact"))
-        self.label_31.setText(_translate("Dialog", "Emergency Contact"))
         self.UpdatepushButton.setText(_translate("Dialog", "Update"))
         self.CancelpushButton.setText(_translate("Dialog", "Cancel"))

@@ -24,11 +24,14 @@ class editTenantDialog(QDialog):
         self.ui.UpdatepushButton.clicked.connect(self.updateTenant)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
         self.ui.EditECpushButton.clicked.connect(self.openEditEmergencyContact)
+        
+        self.ui.TenantIDLineEdit.setFocus()
+
 
     def updateTenant(self):
 
         firstName = self.ui.FirstNameLineEdit.text()
-        middleName = self.ui.MibbleNameLineEdit.text()
+        middleName = self.ui.MiddleNameLineEdit.text()
         lastName = self.ui.LastNameLineEdit.text()
         email = self.ui.EmailLineEdit.text()
         phoneNumber = self.ui.PhoneNumberLineEdit.text()
@@ -93,6 +96,8 @@ class editTenantDialog(QDialog):
         for label, data, in self.sexOptions.items():
             self.ui.SexComboBox.addItem(label, data)
             
+        self.ui.SexComboBox.setCurrentIndex(-1)
+            
     def openEditEmergencyContact(self):
         emergencyContactDialog = editEmergencyContactDialog(self)
         result = emergencyContactDialog.exec_()
@@ -100,11 +105,22 @@ class editTenantDialog(QDialog):
             print("Now editing tenant's emergency contact")
                     
     def fillRoomNoComboBox(self):
-         selector = Select()
+        selector = Select()
+    
+        selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.RoomNumber"], tag=None, key=None)
+        roomNumbers = selector.retData()
+        self.ui.RoomNoComboBox.clear()
         
-         selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.RoomNumber"], tag=None, key=None)
-         roomNumbers = selector.retData()
-         self.ui.RoomNoComboBox.clear()
-         
-         for room in roomNumbers:
-             self.ui.RoomNoComboBox.addItem(str(room[0]))
+        for room in roomNumbers:
+            self.ui.RoomNoComboBox.addItem(str(room[0]))
+        self.ui.RoomNoComboBox.setCurrentIndex(-1)
+        
+    def matchTenantIdToDetails(self):
+        tenantId = self.ui.TenantIDLineEdit.text()
+        selector = Select()
+        
+        if tenantId:
+            selector.SelectQuery(table="Tenants", select_type=None, spec_col=["Tenants.FirstName", "Tenants.MiddleName", "Tenants.LastName",
+                                                                              "Tenants.Email", "Tenants.PhoneNumber", "Tenants.RoomNumber"], tag="TenantID", key=tenantId)
+            resultBuilder = selector.retData()
+            print(f"Query Result: {resultBuilder}")

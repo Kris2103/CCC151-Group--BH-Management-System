@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMessageBox
 from ..EditEmergencyContact import Ui_Dialog
 from PyQt5.QtCore import Qt
 from DATABASE.Functions.update import update
+from DATABASE.Functions.Select import Select
 
 class editEmergencyContactDialog(QDialog):
         
@@ -11,6 +12,7 @@ class editEmergencyContactDialog(QDialog):
         
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+        self.fillTenantEmId()
         
         self.ui.UpdatepushButton.clicked.connect(self.updateEmergencyContact)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
@@ -21,7 +23,7 @@ class editEmergencyContactDialog(QDialog):
         lastName = self.ui.LastNameLineEdit.text()
         relationship = self.ui.RelationshipLineEdit.text()
         phoneNumber = self.ui.PhoneNumberLineEdit.text()
-        tenantEmId = self.ui.TenantEMIDLineEdit_2.text()
+        tenantEmId = self.ui.TenantEMIDComboBox.currentText()
         
         contactId = self.ui.ContactIDLineEdit.text()
         
@@ -65,4 +67,17 @@ class editEmergencyContactDialog(QDialog):
         
     def closeWindow(self):
         print("Closing the Edit Emergency Contact Dialog")
-        self.reject()            
+        self.reject()
+        
+    def fillTenantEmId(self):
+        self.ui.TenantEMIDComboBox.clear()
+        selector = Select()
+        selector.SelectQuery(table="Tenant", select_type=None, spec_col=["Tenant.TenantID"])
+        
+        resultBuilder = selector.retDict()
+        for row in resultBuilder:
+            roomNumber = next(iter(row.values()))
+            self.ui.TenantEMIDComboBox.addItem(str(roomNumber))
+        
+        self.ui.TenantEMIDComboBox.setCurrentIndex(-1)
+        

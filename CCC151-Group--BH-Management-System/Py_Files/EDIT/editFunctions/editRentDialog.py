@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog, QMessageBox
+from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
 from ..EditRent import Ui_Dialog
 from datetime import datetime
 from DATABASE.Functions.update import update
@@ -166,5 +166,15 @@ class editRentDialog(QDialog):
         if self.previousRoomNumber is not None and newValue != self.previousRoomNumber:
             print(f"Room changed by user from {self.previousRoomNumber} to {newValue}")
             self.roomChanged = True
+            
+            updater = update()
+            selector = Select()
+            
+            selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.NoOfOccupants"], tag="RoomNumber", key=newValue)
+            
+            #decrement previous room's occupant count
+            updater.updateTableData("Room", {"NoOfOccupants": 0}, "RoomNumber", self.previousRoomNumber)
+            #increment new room's occupant count
+            updater.updateTableData("Room", {"NoOfOccupants": 1}, "RoomNumber", newValue)
         else:
             self.roomChanged = False

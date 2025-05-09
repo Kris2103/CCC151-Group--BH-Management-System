@@ -86,7 +86,10 @@ class Select(Function):
         if tag and key:
             search_tag = self.aliascolumn.get(tag, f"{table}.{tag}")
             self.search_query = f"WHERE {search_tag} LIKE %s "
-            self.params.append(f"%{key}%")
+            if key == "Male":
+                self.params.append(f"{key}")
+            else:
+                self.params.append(f"%{key}%")
 
 
         # Selecting all columns with key(search key)
@@ -144,7 +147,11 @@ class Select(Function):
                 self.conditions         += "LEFT JOIN EmergencyContact ON Tenant.TenantID = EmergencyContact.EMTenantID "
                 self.aliascolumn["EmergencyContact"] = "EmergencyContact.PhoneNumber"
                 self.columns.append("EmergencyContact")
-            case "Rents/Pays":
+            case "Rents":
+                self.columnquery        += ", TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate) AS `Rent Duration in Months`"
+                self.aliascolumn["`Rent Duration in Months`"] = "TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate)"
+                self.columns.append("Rent Duration in Months")
+            case "Pays":
                 pass
             case None:
                 pass

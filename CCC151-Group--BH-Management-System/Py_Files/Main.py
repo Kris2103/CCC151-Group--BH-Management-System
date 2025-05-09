@@ -97,7 +97,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if hasattr(self.populator, "full_data"): del self.populator.full_data
         search_key = str(self.SearchLineEdit.text())
         search_column = self.SearchField.currentData()
-        self.populator.Populate_Table(self.table_name, self.widget, self.select_type, 1, search_column, search_key)
+        self.populator.Populate_Table(table = self.table_name, table_widget = self.widget, select_type = self.select_type, tag = search_column, key = search_key)
 
     def perform_sort(self):
         pass

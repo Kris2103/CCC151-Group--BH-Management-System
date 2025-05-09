@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
 from PyQt5.QtCore import Qt
-from .AddECEmbed import Ui_Dialog
+from .AddEmergencyContact import Ui_Dialog
 from DATABASE.Functions import Select, Insert
 from DATABASE.DB import DatabaseConnector
 import re

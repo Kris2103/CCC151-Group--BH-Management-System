@@ -79,6 +79,7 @@ class Select(Function):
         self.groupquery         = (f" GROUP BY {group}") if group else ("")
 
         self.columns            = self.get_columns(table)
+        (print(col) for col in self.columns)
         self.aliascolumn        = {}
         
         if not spec_col:

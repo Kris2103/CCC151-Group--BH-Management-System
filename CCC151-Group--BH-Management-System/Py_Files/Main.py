@@ -19,6 +19,7 @@ from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from DATABASE.DB import DatabaseConnector
 import math
 from DATABASE.Functions.Populate import Populate
+from PyQt5.QtCore import Qt
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -100,8 +101,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         search_column = self.SearchField.currentData()
         self.populator.Populate_Table(table = self.table_name, table_widget = self.widget, select_type = self.select_type, tag = search_column, key = search_key)
 
-    def perform_sort(self):
-        pass
+    def perform_sort(self, column_index):
+        # Get the current table widget
+        table = self.widget
+        
+        # Get the current sort order
+        current_order = table.horizontalHeader().sortIndicatorOrder()
+        table.sortItems(column_index, Qt.AscendingOrder if current_order == Qt.DescendingOrder else Qt.DescendingOrder)
+        table.horizontalHeader().setSortIndicator(column_index, current_order)
 
 # ===========
 #    SEARCH N SORT FUNCS
@@ -127,8 +134,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.columns = self.populator.columns
         self.SearchField.clear()
         self.SearchLineEdit.clear()
-        for col in self.columns: self.SearchField.addItem(str(col), col)
-
+        for col in self.columns: 
+            self.SearchField.addItem(str(col), col)
+            self.SearchField.setCurrentIndex(-1)  # Set to no selection
+        # Connect header click events for sorting
+        self.widget.horizontalHeader().sectionClicked.connect(self.perform_sort)
 
 # =========================
 #    CRUDL BUTTONS FUNCS
@@ -189,9 +199,42 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             dialog = editEmergencyContactDialog(self)
             if dialog.exec() == QDialog.accepted:
                 self.load_data(4)
+                
+    # still working on this
+    # def on_Delete_clicked(self):
+    #     current_widget_index = self.stackedWidget.currentIndex()
+    #     table_name, table_widget, _ = self.map_indextotable(current_widget_index)
 
-    def on_Delete_clicked(self):
-        current_widget_index = self.stackedWidget.currentIndex()
+    #     selected_row = table_widget.currentRow()
+    #     if selected_row < 0:
+    #         QMessageBox.warning(self, "No Selection", "Please select a row to delete.", QMessageBox.Ok)
+    #         return
+
+    #     reply = QMessageBox.question(
+    #         self,
+    #         "Confirm Delete",
+    #         "Are you sure you want to delete the selected record?",
+    #         QMessageBox.Yes | QMessageBox.No
+    #     )
+
+    #     if reply == QMessageBox.Yes:
+    #         primary_key_column = self.populator.primary_key  # this assumes `Populate` has set this
+
+    #         if not primary_key_column:
+    #             QMessageBox.critical(self, "Error", "No primary key found for the table.", QMessageBox.Ok)
+    #             return
+
+    #         primary_key_value = table_widget.item(selected_row, 0).text()  # assumes PK is in the first column
+    #         delete_query = f"DELETE FROM {table_name} WHERE {primary_key_column} = %s"
+
+    #         try:
+    #             self.selector.cursor.execute(delete_query, (primary_key_value,))
+    #             self.selector.connection.commit()
+    #             QMessageBox.information(self, "Deleted", "Record deleted successfully.", QMessageBox.Ok)
+    #             self.load_data(current_widget_index)
+    #         except Exception as e:
+    #             QMessageBox.critical(self, "Delete Failed", f"An error occurred:\n{e}", QMessageBox.Ok)
+
 
 
 # ===========
@@ -210,3 +253,5 @@ if __name__ == "__main__":
         app = QApplication(sys.argv) 
         QMessageBox.critical(None, "Connection Error", "Could not establish connection with the Database.", QMessageBox.Ok)
         sys.exit(1)
+
+    

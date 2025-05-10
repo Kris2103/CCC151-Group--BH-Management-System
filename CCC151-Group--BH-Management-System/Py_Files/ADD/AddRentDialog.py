@@ -23,6 +23,10 @@ class AddRentDialog(QDialog):
         self.ui.RoomNumberComboBox.currentTextChanged.connect(self.sync_tenant_id_from_room)
         self.ui.RentingTenantIDComboBox.currentTextChanged.connect(self.sync_room_from_tenant_id)
 
+        self.ui.MoveStatuscomboBox.setCurrentIndex(-1)
+        self.ui.RoomNumberComboBox.setCurrentIndex(-1)
+        self.ui.RentingTenantIDComboBox.setCurrentIndex(-1)
+
     def populate_movestatus_combobox(self):
         self.ui.MoveStatuscomboBox.clear()
         self.ui.MoveStatuscomboBox.addItems(["Active"])
@@ -35,12 +39,22 @@ class AddRentDialog(QDialog):
         rooms = [str(row[0]) for row in select.cursor.fetchall()]
         self.ui.RoomNumberComboBox.addItems(rooms)
 
+        self.ui.RoomNumberComboBox.setEditable(True)
+        completer = QCompleter(rooms)
+        completer.setCaseSensitivity(False)
+        self.ui.RoomNumberComboBox.setCompleter(completer)
+
     def populate_tenant_id_combobox(self):
         self.ui.RentingTenantIDComboBox.clear()
         query = "SELECT TenantID FROM Tenant"
         self.select.cursor.execute(query)
         tenant_ids = [str(row[0]) for row in self.select.cursor.fetchall()]
         self.ui.RentingTenantIDComboBox.addItems(tenant_ids)
+
+        self.ui.RentingTenantIDComboBox.setEditable(True)
+        completer = QCompleter(tenant_ids)
+        completer.setCaseSensitivity(False)
+        self.ui.RentingTenantIDComboBox.setCompleter(completer)
 
     def sync_tenant_id_from_room(self):
         room = self.ui.RoomNumberComboBox.currentText()

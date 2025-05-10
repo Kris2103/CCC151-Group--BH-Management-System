@@ -19,12 +19,14 @@ class AddRoomDialog(QDialog):
 
         self.populate.populate_sex_combobox(self.ui.TenantSexComboBox)
 
+        self.ui.TenantSexComboBox.setCurrentIndex(-1)
+
     def handle_add_room(self):
         room_number = self.ui.RoomNumberLineEdit.text()
         room_price = self.ui.PriceLineEdit.text()
         tenant_sex = self.ui.TenantSexComboBox.currentText()
         room_max = self.ui.MaxNoOccupantsLineEdit.text()
-
+        
         if not room_number or not room_price or not room_max:
             QMessageBox.warning(self, "Input Error", "Please fill in all required fields.")
             return

@@ -21,6 +21,8 @@ class AddEmergencyContactDialog(QDialog):
         self.ui.TenantEMIDComboBox.setEditable(True)
         self.populate.populate_tenant_id_combobox(self.ui.TenantEMIDComboBox)
 
+        self.ui.TenantEMIDComboBox.setCurrentIndex(-1)
+
     def handle_add_EC(self):
         ecFirst_name = self.ui.FirstNameLineEdit.text()
         ecMiddle_name = self.ui.MiddleNameLineEdit.text()

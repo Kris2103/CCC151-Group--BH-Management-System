@@ -201,39 +201,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.load_data(4)
                 
     # still working on this
-    # def on_Delete_clicked(self):
-    #     current_widget_index = self.stackedWidget.currentIndex()
-    #     table_name, table_widget, _ = self.map_indextotable(current_widget_index)
+    def on_Delete_clicked(self):
+        current_widget_index = self.stackedWidget.currentIndex()
+        table_name, table_widget, _ = self.map_indextotable(current_widget_index)
 
-    #     selected_row = table_widget.currentRow()
-    #     if selected_row < 0:
-    #         QMessageBox.warning(self, "No Selection", "Please select a row to delete.", QMessageBox.Ok)
-    #         return
+        selected_row = table_widget.currentRow()
+        if selected_row < 0:
+            QMessageBox.warning(self, "No Selection", "Please select a row to delete.", QMessageBox.Ok)
+            return
 
-    #     reply = QMessageBox.question(
-    #         self,
-    #         "Confirm Delete",
-    #         "Are you sure you want to delete the selected record?",
-    #         QMessageBox.Yes | QMessageBox.No
-    #     )
+        reply = QMessageBox.question(
+            self,
+            "Confirm Delete",
+            "Are you sure you want to delete the selected record?",
+            QMessageBox.Yes | QMessageBox.No
+        )
 
-    #     if reply == QMessageBox.Yes:
-    #         primary_key_column = self.populator.primary_key  # this assumes `Populate` has set this
+        if reply == QMessageBox.Yes:
+            primary_key_column = self.populator.primary_key  # this assumes `Populate` has set this
 
-    #         if not primary_key_column:
-    #             QMessageBox.critical(self, "Error", "No primary key found for the table.", QMessageBox.Ok)
-    #             return
+            if not primary_key_column:
+                QMessageBox.critical(self, "Error", "No primary key found for the table.", QMessageBox.Ok)
+                return
 
-    #         primary_key_value = table_widget.item(selected_row, 0).text()  # assumes PK is in the first column
-    #         delete_query = f"DELETE FROM {table_name} WHERE {primary_key_column} = %s"
+            primary_key_value = table_widget.item(selected_row, 0).text()  # assumes PK is in the first column
+            delete_query = f"DELETE FROM {table_name} WHERE {primary_key_column} = %s"
 
-    #         try:
-    #             self.selector.cursor.execute(delete_query, (primary_key_value,))
-    #             self.selector.connection.commit()
-    #             QMessageBox.information(self, "Deleted", "Record deleted successfully.", QMessageBox.Ok)
-    #             self.load_data(current_widget_index)
-    #         except Exception as e:
-    #             QMessageBox.critical(self, "Delete Failed", f"An error occurred:\n{e}", QMessageBox.Ok)
+            try:
+                self.selector.cursor.execute(delete_query, (primary_key_value,))
+                self.selector.connection.commit()
+                QMessageBox.information(self, "Deleted", "Record deleted successfully.", QMessageBox.Ok)
+                self.load_data(current_widget_index)
+            except Exception as e:
+                QMessageBox.critical(self, "Delete Failed", f"An error occurred:\n{e}", QMessageBox.Ok)
 
 
 

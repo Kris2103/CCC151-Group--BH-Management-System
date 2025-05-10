@@ -14,7 +14,8 @@ from EDIT.editFunctions.editTenantDialog import editTenantDialog
 from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from EDIT.editFunctions.editRentDialog import editRentDialog
 from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDialog
-# from EDIT.editFunctions.editPaymentDialog import payme
+from EDIT.editFunctions.editRoomDialog import editRoomDialog
+# from EDIT.editFunctions.editPaymentDialog import editPaymentDialog
 from DATABASE.DB import DatabaseConnector
 import math
 from DATABASE.Functions.Populate import Populate
@@ -198,9 +199,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 # =========================
         
 if __name__ == "__main__":
-    connection = DatabaseConnector.get_connection()
+    connection = DatabaseConnector.getConnection()
     if connection is not None:
-        app = QApplication(sys.argv)
+        app = QApplication(sys.argv)    
         window = MainWindow()
         window.show()
         sys.exit(app.exec_())

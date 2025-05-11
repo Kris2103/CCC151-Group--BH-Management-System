@@ -99,7 +99,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if hasattr(self.populator, "full_data"): del self.populator.full_data
         search_key = str(self.SearchLineEdit.text())
         search_column = self.SearchField.currentData()
-        self.populator.Populate_Table(table = self.table_name, table_widget = self.widget, select_type = self.select_type, tag = search_column, key = search_key)
+        self.populator.Populate_Table(table_name = self.table_name, table_widget = self.widget, select_type = self.select_type, search_column = search_column, search_key = search_key)
 
     def perform_sort(self, column_index):
         # Get the current table widget
@@ -136,7 +136,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.SearchLineEdit.clear()
         for col in self.columns: 
             self.SearchField.addItem(str(col), col)
-            self.SearchField.setCurrentIndex(-1)  # Set to no selection
+            # self.SearchField.setCurrentIndex(-1)  # Set to no selection
         # Connect header click events for sorting
         self.widget.horizontalHeader().sectionClicked.connect(self.perform_sort)
 

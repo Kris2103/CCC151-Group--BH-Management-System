@@ -15,22 +15,22 @@ class AddTenantDialog(QDialog):
         self.select = Select.Select()
         self.insert = Insert.Insert()
         self.update = update.update()
-        self.populate = Populate.Populate()
+        self.populate = Populate.Populate(self)
 
         self.ui.CancelpushButton.clicked.connect(self.reject)
         self.ui.AddpushButton.clicked.connect(self.handle_add_tenant)
 
         self.populate.populate_sex_combobox(self.ui.SexComboBox)
-        self.populate.populate_room_combobox(self.ui.RoomNoComboBox)
+        # self.populate.populate_room_combobox(self.ui.RoomNoComboBox)
 
         self.ui.SexComboBox.setCurrentIndex(-1)
-        self.ui.RoomNoComboBox.setCurrentIndex(-1)
+        # self.ui.RoomNoComboBox.setCurrentIndex(-1)
         
         # Set up tenant ID field
         self.ui.TenantIDLineEdit.setText(self.generate_tenant_id())
         self.ui.TenantIDLineEdit.setReadOnly(True)  # Make it read-only since we generate it
         
-        self.ec_data = None
+        # self.ec_data = None
 
     def generate_tenant_id(self):
         # Get the current year
@@ -82,7 +82,7 @@ class AddTenantDialog(QDialog):
         tenant_email = self.ui.EmailLineEdit.text()
         tenant_phone = self.ui.PhoneNumberLineEdit.text()
         tenant_ID = self.ui.TenantIDLineEdit.text()
-        tenant_room = self.ui.RoomNoComboBox.currentText()
+        # tenant_room = self.ui.RoomNoComboBox.currentText()
         tenant_sex = self.ui.SexComboBox.currentText()
 
         email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
@@ -114,25 +114,6 @@ class AddTenantDialog(QDialog):
         #     return
         
         try:
-
-            # columns = ["MaximumCapacity", 
-            #            "NoOfOccupants", 
-            #            "TenantSex"]
-            
-            # result = self.select.SelectQuery(table      = "Room", 
-            #                                  spec_col   = columns, 
-            #                                  tag        = "RoomNumber", 
-            #                                  key        = tenant_room, 
-            #                                  limit      = 1).retData()
-
-            # if result:
-            #     maximum_capacity, current_occupants, room_tsex = result[0]
-            #     if room_tsex != tenant_sex and room_tsex != None:
-            #         QMessageBox.warning(self, "Sex invalid", f"Room {tenant_room} only accepts {room_tsex} tenants.")
-            #         return
-            #     if current_occupants >= maximum_capacity:
-            #         QMessageBox.warning(self, "Room Full", f"Room {tenant_room} has reached its maximum capacity of {current_occupants}/{maximum_capacity}.")
-            #         return
                 
             newTen = [
                         tenant_ID,

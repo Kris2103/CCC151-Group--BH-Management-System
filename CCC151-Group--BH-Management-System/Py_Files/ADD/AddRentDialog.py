@@ -1,13 +1,20 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
 from PyQt5.QtCore import QDate
-from DATABASE.Functions.Select import Select
+from DATABASE.Functions import Select, Insert, update, Populate
 from .AddRent import Ui_Dialog
 
 class AddRentDialog(QDialog):
+        # self.ui.SexComboBox.setCurrentIndex(-1)
+        # self.ui.RoomNoComboBox.setCurrentIndex(-1)
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+
+        self.select = Select.Select()
+        self.insert = Insert.Insert()
+        self.update = update.update()
+        self.populate = Populate.Populate(self)
 
         self.ui.CancelpushButton.clicked.connect(self.reject)
         self.ui.AddpushButton.clicked.connect(self.handle_add_rent)
@@ -15,84 +22,21 @@ class AddRentDialog(QDialog):
         self.ui.MoveInDateEdit.setCalendarPopup(True)
         self.ui.MoveInDateEdit.setDate(QDate.currentDate())
         
-        self.select = Select()
-        self.populate_movestatus_combobox()
-        self.populate_room_combobox()
-        self.populate_tenant_id_combobox()
+        self.populate.populate_movestatus_combobox(self.ui.MoveStatuscomboBox)
+        self.populate.populate_room_combobox(self.ui.RoomNoComboBox)
+        self.populate.populate_tenant_id_combobox(self.ui.RentingTenantIDComboBox)
 
-        self.ui.RoomNumberComboBox.currentTextChanged.connect(self.sync_tenant_id_from_room)
-        self.ui.RentingTenantIDComboBox.currentTextChanged.connect(self.sync_room_from_tenant_id)
+        self.ui.RoomNoComboBox.currentTextChanged.connect(lambda: self.populate.sync_tenant_id_from_room(self.ui.RoomNoComboBox, self.ui.RentingTenantIDComboBox))
+        self.ui.RentingTenantIDComboBox.currentTextChanged.connect(lambda: self.populate.sync_room_from_tenant_id(self.ui.RoomNoComboBox, self.ui.RentingTenantIDComboBox))
 
         self.ui.MoveStatuscomboBox.setCurrentIndex(-1)
-        self.ui.RoomNumberComboBox.setCurrentIndex(-1)
+        self.ui.RoomNoComboBox.setCurrentIndex(-1)
         self.ui.RentingTenantIDComboBox.setCurrentIndex(-1)
-
-    def populate_movestatus_combobox(self):
-        self.ui.MoveStatuscomboBox.clear()
-        self.ui.MoveStatuscomboBox.addItems(["Active"])
-
-    def populate_room_combobox(self):
-        self.ui.RoomNumberComboBox.clear()
-        query = "SELECT DISTINCT RoomNumber FROM Tenant"
-        select = Select()
-        select.cursor.execute(query)
-        rooms = [str(row[0]) for row in select.cursor.fetchall()]
-        self.ui.RoomNumberComboBox.addItems(rooms)
-
-        self.ui.RoomNumberComboBox.setEditable(True)
-        completer = QCompleter(rooms)
-        completer.setCaseSensitivity(False)
-        self.ui.RoomNumberComboBox.setCompleter(completer)
-
-    def populate_tenant_id_combobox(self):
-        self.ui.RentingTenantIDComboBox.clear()
-        query = "SELECT TenantID FROM Tenant"
-        self.select.cursor.execute(query)
-        tenant_ids = [str(row[0]) for row in self.select.cursor.fetchall()]
-        self.ui.RentingTenantIDComboBox.addItems(tenant_ids)
-
-        self.ui.RentingTenantIDComboBox.setEditable(True)
-        completer = QCompleter(tenant_ids)
-        completer.setCaseSensitivity(False)
-        self.ui.RentingTenantIDComboBox.setCompleter(completer)
-
-    def sync_tenant_id_from_room(self):
-        room = self.ui.RoomNumberComboBox.currentText()
-        if not room:
-            return
-        query = "SELECT TenantID FROM Tenant WHERE RoomNumber = %s"
-        self.select.cursor.execute(query, (room,))
-        result = self.select.cursor.fetchone()
-        if result:
-            tenant_id = str(result[0])
-            self.ui.RentingTenantIDComboBox.setCurrentText(tenant_id)
-        else:
-            self.ui.RentingTenantIDComboBox.setCurrentText("")
-
-    def sync_room_from_tenant_id(self):
-        tenant_id = self.ui.RentingTenantIDComboBox.currentText()
-        if not tenant_id:
-            return
-
-        # Clear any unread result before the new query
-        while self.select.cursor.nextset():
-            pass
-
-        query = "SELECT RoomNumber FROM Tenant WHERE TenantID = %s"
-        self.select.cursor.execute(query, (tenant_id,))
-        result = self.select.cursor.fetchone()
-
-        if result:
-            room_number = str(result[0])
-            index = self.ui.RoomNumberComboBox.findText(room_number)
-            if index != -1:
-                self.ui.RoomNumberComboBox.setCurrentIndex(index)
-
 
     def handle_add_rent(self):
         move_in_date = self.ui.MoveInDateEdit.date().toString("yyyy-MM-dd")
         rent_status = self.ui.MoveStatuscomboBox.currentText()
-        room_number = self.ui.RoomNumberComboBox.currentText()
+        room_number = self.ui.RoomNoComboBox.currentText()
         tenant_id = self.ui.RentingTenantIDComboBox.currentText()
 
         if not room_number or not tenant_id:
@@ -100,54 +44,54 @@ class AddRentDialog(QDialog):
             return
 
         # Check current occupancy and maximum capacity of the room
-        capacity_query = """
-            SELECT MaximumCapacity, NoOfOccupants
-            FROM Room
-            WHERE RoomNumber = %s
-        """
-        self.select.cursor.execute(capacity_query, (room_number,))
-        result = self.select.cursor.fetchone()
+        tenant_sex = self.select.SelectQuery(table     = "Tenant", 
+                                            spec_col   = "Sex", 
+                                            tag        = "TenantID", 
+                                            key        = tenant_id, 
+                                            limit      = 1).retData()
 
-        if result:
-            maximum_capacity, current_occupants = result
-            print(f"Maximum Capacity: {maximum_capacity}, Current Occupants: {current_occupants}")
+        columns = ["MaximumCapacity", 
+                    "NoOfOccupants", 
+                    "TenantSex"]
+            
+        room_data = self.select.SelectQuery(table      = "Room", 
+                                            spec_col   = columns, 
+                                            tag        = "RoomNumber", 
+                                            key        = room_number, 
+                                            limit      = 1).retData()
 
-            if current_occupants >= maximum_capacity:
-                QMessageBox.warning(self, "Room Full", "The room has reached its maximum capacity.")
+        if room_data:
+            maximum_capacity, current_occupants, room_tsex = room_data[0]
+            if room_tsex != tenant_sex and room_tsex != None:
+                QMessageBox.warning(self, "Sex invalid", f"Room {room_number} only accepts {room_tsex} tenants.")
                 return
-
+            if current_occupants >= maximum_capacity:
+                QMessageBox.warning(self, "Room Full", f"Room {room_number} has reached its maximum capacity of {current_occupants}/{maximum_capacity}.")
+                return
+                
         # Check if room is already rented with status "Active"
         query = "SELECT * FROM Rents WHERE RentedRoom = %s AND MoveStatus = 'Active' AND MoveInDate = %s"
         self.select.cursor.execute(query, (room_number, move_in_date))
+        
         if self.select.cursor.fetchone():
             QMessageBox.warning(self, "Room Occupied", f"The room is already rented on {move_in_date}.")
             return
 
         # Insert new rent record
         try:
-            insert_query = """
-                INSERT INTO Rents (MoveInDate, MoveStatus, RentedRoom, RentingTenant)
-                VALUES (%s, %s, %s, %s)
-            """
-            self.select.cursor.execute(insert_query, (
-                move_in_date, rent_status, room_number, tenant_id
-            ))
-
-            # Update the number of occupants in the Room table
-            update_occupants_query = """
-                UPDATE Room
-                SET NoOfOccupants = NoOfOccupants + 1
-                WHERE RoomNumber = %s
-            """
-            self.select.cursor.execute(update_occupants_query, (room_number,))
-
-            # Commit the changes and close the cursor
-            self.select.conn.commit()
+            newRent = [
+                        move_in_date, 
+                        rent_status, 
+                        room_number, 
+                        tenant_id
+                        ]
+            
+            self.insert.InsertQuery("Rents", newRent)
 
             # Repopulate UI elements after successful insertion
-            self.populate_room_combobox()
+            self.populate.populate_room_combobox(self.ui.RoomNoComboBox)
             self.ui.RentingTenantIDComboBox.setCurrentIndex(0)
-            self.ui.RoomNumberComboBox.setCurrentIndex(0)
+            self.ui.RoomNoComboBox.setCurrentIndex(0)
 
             QMessageBox.information(self, "Success", "Rent entry added successfully.")
             self.accept()

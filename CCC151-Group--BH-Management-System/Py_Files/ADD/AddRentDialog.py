@@ -51,7 +51,7 @@ class AddRentDialog(QDialog):
                                             limit      = 1).retData()
 
         columns = ["MaximumCapacity", 
-                    "NoOfOccupants", 
+                    "OccupantCount", 
                     "TenantSex"]
             
         room_data = self.select.SelectQuery(table      = "Room", 

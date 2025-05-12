@@ -88,7 +88,7 @@ class AddTenantDialog(QDialog):
         email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
         phone_pattern = r"^09\d{9}$"
 
-        if not all([tenant_ID, tenant_fname, tenant_lname, tenant_email, tenant_phone, tenant_room, tenant_sex]):
+        if not all([tenant_ID, tenant_fname, tenant_lname, tenant_email, tenant_phone, tenant_sex]):
             QMessageBox.warning(self, "Missing Input", "Please fill in all required fields.")
             return
         
@@ -104,57 +104,56 @@ class AddTenantDialog(QDialog):
         #     QMessageBox.warning(self, "Missing Emergency Contact Info", "Please add emergency contact info.")
         #     return
         
-        ec_first_name = self.ec_data["first_name"]
-        ec_last_name = self.ec_data["last_name"]
-        ec_relationship = self.ec_data["relationship"]
-        ec_phone = self.ec_data["phone"]
+        # ec_first_name = self.ec_data["first_name"]
+        # ec_last_name = self.ec_data["last_name"]
+        # ec_relationship = self.ec_data["relationship"]
+        # ec_phone = self.ec_data["phone"]
 
         # if not re.match(phone_pattern, ec_phone):
         #     QMessageBox.warning(self, "Invalid Emergency Contact Phone", "Emergency contact phone number must be 11 digits.")
         #     return
         
-        # try:
+        try:
 
-        #     columns = ["MaximumCapacity", "NoOfOccupants", "TenantSex"]
-        #     result = self.select.SelectQuery("Room", spec_col=columns, tag = "RoomNumber", key = tenant_room, limit = 1).retData()
-
-        #     if result:
-        #         maximum_capacity, current_occupants, room_tsex = result[0]
-        #         if room_tsex != tenant_sex and room_tsex != None:
-        #             QMessageBox.warning(self, "Sex invalid", f"Room {tenant_room} only accepts {room_tsex} tenants.")
-        #             return
-        #         if current_occupants >= maximum_capacity:
-        #             QMessageBox.warning(self, "Room Full", f"Room {tenant_room} has reached its maximum capacity of {current_occupants}/{maximum_capacity}.")
-        #             return
-                
-            # newTen = [
-            #                 tenant_ID,
-            #                 tenant_email,
-            #                 tenant_fname,
-            #                 tenant_mname,
-            #                 tenant_lname,
-            #                 tenant_sex,
-            #                 tenant_phone,
-            #                 #int(tenant_room)
-            #         ]
+            # columns = ["MaximumCapacity", 
+            #            "NoOfOccupants", 
+            #            "TenantSex"]
             
-            # self.insert.InsertQuery("Tenant", newTen)
+            # result = self.select.SelectQuery(table      = "Room", 
+            #                                  spec_col   = columns, 
+            #                                  tag        = "RoomNumber", 
+            #                                  key        = tenant_room, 
+            #                                  limit      = 1).retData()
+
+            # if result:
+            #     maximum_capacity, current_occupants, room_tsex = result[0]
+            #     if room_tsex != tenant_sex and room_tsex != None:
+            #         QMessageBox.warning(self, "Sex invalid", f"Room {tenant_room} only accepts {room_tsex} tenants.")
+            #         return
+            #     if current_occupants >= maximum_capacity:
+            #         QMessageBox.warning(self, "Room Full", f"Room {tenant_room} has reached its maximum capacity of {current_occupants}/{maximum_capacity}.")
+            #         return
+                
+            newTen = [
+                        tenant_ID,
+                        tenant_email,
+                        tenant_fname,
+                        tenant_mname,
+                        tenant_lname,
+                        tenant_sex,
+                        tenant_phone,
+                        # int(tenant_room)
+                    ]
+            
+            self.insert.InsertQuery("Tenant", newTen)
 
             # self.update.updateTableData("Room", {"NoOfOccupants" : (current_occupants + 1), "TenantSex" : tenant_sex}, "RoomNumber", tenant_room)
             
-        #     # Insert Emergency Contact
-        #     new_emergency_contact = [
-        #         tenant_ID,
-        #         ec_first_name,
-        #         ec_last_name,
-        #         ec_relationship,
-        #         ec_phone
-        # ]
-        #     self.insert.InsertQuery("EmergencyContact", new_emergency_contact)
+            # self.insert.InsertQuery("EmergencyContact", new_emergency_contact)
 
-        #     QMessageBox.information(self, "Success", f"Tenant added successfully!\nRoom {tenant_room} is now {current_occupants + 1}/{maximum_capacity}")
-        #     self.accept()
+            # QMessageBox.information(self, "Success", f"Tenant added successfully!\nRoom {tenant_room} is now {current_occupants + 1}/{maximum_capacity}")
+            self.accept()
             
-        # except Exception as err:
-        #     print(f"Error occurred while adding tenant: {err}")
-        #     QMessageBox.critical(self, "Database Error", f"Failed to add tenant:\n{err}")
+        except Exception as err:
+            print(f"Error occurred while adding tenant: {err}")
+            QMessageBox.critical(self, "Database Error", f"Failed to add tenant:\n{err}")

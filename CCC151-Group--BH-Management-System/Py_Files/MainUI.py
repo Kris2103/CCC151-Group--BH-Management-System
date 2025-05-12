@@ -54,13 +54,13 @@ class Ui_MainWindow(object):
         self.SearchField.setObjectName("SearchField")
 
         # sort
-        self.SortWith = QtWidgets.QComboBox(self.frame)
-        self.SortWith.setGeometry(QtCore.QRect(570, 20, 151, 31))
-        self.SortWith.setObjectName("SortWith")
+        # self.SortWith = QtWidgets.QComboBox(self.frame)
+        # self.SortWith.setGeometry(QtCore.QRect(570, 20, 151, 31))
+        # self.SortWith.setObjectName("SortWith")
 
-        self.SortBy = QtWidgets.QComboBox(self.frame)
-        self.SortBy.setGeometry(QtCore.QRect(570, 20, 151, 31))
-        self.SortBy.setObjectName("SortBy")
+        # self.SortBy = QtWidgets.QComboBox(self.frame)
+        # self.SortBy.setGeometry(QtCore.QRect(570, 20, 151, 31))
+        # self.SortBy.setObjectName("SortBy")
 
 # ===========
 #    SEARCHNSORT BUTTONS

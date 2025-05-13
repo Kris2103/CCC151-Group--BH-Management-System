@@ -58,8 +58,8 @@ class update:
             print(f"Error updating table '{table}' : {exception}")
             self._threadLocal.connection.rollback()
 
-        finally:
-            resultSetPointer.close()
+        # finally:
+        #     resultSetPointer.close()
 
                         
 # 2. comment everything below (only uncomment if testing, also uncomment 1.)

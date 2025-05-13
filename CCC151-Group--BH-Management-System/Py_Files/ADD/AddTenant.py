@@ -104,18 +104,19 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_9.setObjectName("label_9")
-        self.label_10 = QtWidgets.QLabel(self.frame)
-        self.label_10.setGeometry(QtCore.QRect(310, 140, 81, 16))
-        self.label_10.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_10.setObjectName("label_10")
+#         self.label_10 = QtWidgets.QLabel(self.frame)
+#         self.label_10.setGeometry(QtCore.QRect(310, 140, 81, 16))
+#         self.label_10.setStyleSheet("background: none;\n"
+# "    border: none;\n"
+# "    color: #800000;\n"
+# "    font-family: \'Cal Sans\', sans-serif;\n"
+# "    font-weight: 700;\n"
+# "    font-style: normal;\n"
+# "    font-size: 14px;")
+        # self.label_10.setObjectName("label_10")
         self.label_11 = QtWidgets.QLabel(self.frame)
-        self.label_11.setGeometry(QtCore.QRect(310, 190, 41, 16))
+        # self.label_11.setGeometry(QtCore.QRect(310, 190, 41, 16))
+        self.label_11.setGeometry(QtCore.QRect(310, 140, 81, 16))
         self.label_11.setStyleSheet("background: none;\n"
 "    border: none;\n"
 "    color: #800000;\n"
@@ -124,11 +125,12 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_11.setObjectName("label_11")
-        self.RoomNoComboBox = QtWidgets.QComboBox(self.frame)
-        self.RoomNoComboBox.setGeometry(QtCore.QRect(310, 160, 101, 22))
-        self.RoomNoComboBox.setObjectName("RoomNoComboBox")
+        # self.RoomNoComboBox = QtWidgets.QComboBox(self.frame)
+        # self.RoomNoComboBox.setGeometry(QtCore.QRect(310, 160, 101, 22))
+        # self.RoomNoComboBox.setObjectName("RoomNoComboBox")
         self.SexComboBox = QtWidgets.QComboBox(self.frame)
-        self.SexComboBox.setGeometry(QtCore.QRect(310, 210, 101, 22))
+        # self.SexComboBox.setGeometry(QtCore.QRect(310, 210, 101, 22))
+        self.SexComboBox.setGeometry(QtCore.QRect(310, 160, 101, 22))
         self.SexComboBox.setObjectName("SexComboBox")
         self.AddpushButton = QtWidgets.QPushButton(self.frame)
         self.AddpushButton.setGeometry(QtCore.QRect(320, 290, 93, 28))
@@ -191,7 +193,7 @@ class Ui_Dialog(object):
         self.label_3.setText(_translate("Dialog", "First Name"))
         self.label_4.setText(_translate("Dialog", "Middle Name"))
         self.label_9.setText(_translate("Dialog", "Last Name"))
-        self.label_10.setText(_translate("Dialog", "Room No."))
+        # self.label_10.setText(_translate("Dialog", "Room No."))
         self.label_11.setText(_translate("Dialog", "Sex"))
         self.AddpushButton.setText(_translate("Dialog", "Add"))
         self.CancelpushButton.setText(_translate("Dialog", "Cancel"))

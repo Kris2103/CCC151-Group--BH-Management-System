@@ -32,6 +32,9 @@ class editRentDialog(QDialog):
         self.ui.RentingTenantIDComboBox.currentTextChanged.connect(self.matchTenantIDToDetails)
         self.ui.RoomNumberComboBox.currentTextChanged.connect(self.onRoomNumberChanged)
 
+        # self.ui.RoomNoComboBox.currentTextChanged.connect(lambda: self.populate.sync_tenant_id_from_room(self.ui.RoomNoComboBox, self.ui.RentingTenantIDComboBox))
+        # self.ui.RentingTenantIDComboBox.currentTextChanged.connect(lambda: self.populate.sync_room_from_tenant_id(self.ui.RoomNoComboBox, self.ui.RentingTenantIDComboBox))
+
         self.matchTenantIDToDetails()
 
     def updateRent(self):

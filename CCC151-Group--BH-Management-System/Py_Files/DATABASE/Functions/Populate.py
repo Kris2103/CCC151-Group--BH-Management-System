@@ -204,6 +204,7 @@ class Populate:
             self.tenant_combobox.clear()
             tenant_ids = [str(row[0]) for row in self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"]).retData()]
 
+            self.tenant_combobox.setEditable(True)
             self.tenant_combobox.addItems(tenant_ids)
             completer = QCompleter(tenant_ids, self.tenant_combobox)
             completer.setCaseSensitivity(False)
@@ -213,32 +214,41 @@ class Populate:
         except Exception as err:
             print(f"Completer Error: {err}")
             QMessageBox.critical(self, "Error", f"Could not load tenant IDs:\n{err}")
+    
+    def sync_moveout_movein(self, moveout_combobox, movein_combobox):
+        self.moveout_combobox = moveout_combobox
+        self.movein_combobox = movein_combobox
+        movein = self.movein_combobox.currentText()
+        moveout = self.moveout_combobox.currentText()
+        
+        if movein and not moveout:
+            self.tenantid_combobox.setCurrentText()
 
-    def sync_tenant_id_from_room(self, roomnum_combobox):
+    def sync_tenant_id_from_room(self, roomnum_combobox, tenantid_combobox):
         self.roomnum_combobox = roomnum_combobox
+        self.tenantid_combobox = tenantid_combobox
         room = self.roomnum_combobox.currentText()
         if not room:
             return
         
         result = self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"], tag = "RoomNumber", key = room, limit = 1).retData()
         if result:
-            tenant_id = str(result[0])
-            self.roomnum_combobox.setCurrentText(tenant_id)
-        else:
-            self.roomnum_combobox.setCurrentText("")
+            tenant_id = str(result[0][0])
+            self.tenantid_combobox.setCurrentText(tenant_id)
 
-    def sync_room_from_tenant_id(self, renttent_combobox):
-        self.renttent_combobox = renttent_combobox
-        tenant_id = self.renttent_combobox.currentText()
+    def sync_room_from_tenant_id(self, roomnum_combobox, tenantid_combobox):
+        self.roomnum_combobox = roomnum_combobox
+        self.tenantid_combobox = tenantid_combobox        
+        tenant_id = self.tenantid_combobox.currentText()
         if not tenant_id:
             return
         
         result = self.selector.SelectQuery("Tenant", None, ["Tenant.RoomNumber"], tag = "TenantID", key = tenant_id, limit = 1).retData()
         if result:
-            room_number = str(result[0])
-            index = self.renttent_combobox.findText(room_number)
+            room_number = str(result[0][0])
+            index = self.roomnum_combobox.findText(room_number)
             if index != -1:
-                self.renttent_combobox.setCurrentIndex(index)
+                self.roomnum_combobox.setCurrentIndex(index)
 
 # ===========
 #    COMBOBOXES POPULATE   

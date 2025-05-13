@@ -19,8 +19,11 @@ class Insert(Function):
         
         self.params = []
         self.place = []
-        for i in attr: self.params.append(i)
-        columns = self.get_columns(table)
+        for i in attr: 
+            self.params.append(i)
+            print(i)
+        excluded = ['PayID', 'RentID']
+        columns = [col for col in self.get_columns(table) if col not in excluded]
         self.placeholders = ", ".join(["%s"] * len(columns))
         
         query = f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({self.placeholders})"

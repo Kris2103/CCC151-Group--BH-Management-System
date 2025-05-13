@@ -203,38 +203,46 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 
     # still working on this
     def on_Delete_clicked(self):
-        current_widget_index = self.stackedWidget.currentIndex()
-        table_name, table_widget, _ = self.map_indextotable(current_widget_index)
+        current_widget_index = self.stackedWidget.currentIndex()  # Get the current tab (widget index)
+        table_name, table_widget, _ = self.map_indextotable(current_widget_index)  # Mapping index to table
 
+        # Get the selected row
         selected_row = table_widget.currentRow()
-        if selected_row < 0:
+        if selected_row < 0:  # If no row is selected
             QMessageBox.warning(self, "No Selection", "Please select a row to delete.", QMessageBox.Ok)
             return
 
+        # Confirm the deletion
         reply = QMessageBox.question(
             self,
-            "Confirm Delete",
-            "Are you sure you want to delete the selected record?",
+            "Confirm Deletion",
+            f"Are you sure you want to delete this {table_name.lower()}?",
             QMessageBox.Yes | QMessageBox.No
         )
 
         if reply == QMessageBox.Yes:
-            primary_key_column = self.populator.primary_key  # this assumes `Populate` has set this
+            primary_key_column = self.populator.primary_key  # Assuming `Populate` class has primary key info
 
             if not primary_key_column:
                 QMessageBox.critical(self, "Error", "No primary key found for the table.", QMessageBox.Ok)
                 return
 
-            primary_key_value = table_widget.item(selected_row, 0).text()  # assumes PK is in the first column
+            # Extract primary key value from the first column of the selected row
+            primary_key_value = table_widget.item(selected_row, 0).text()  # Assumes the primary key is in the first column
+
+            # Build the SQL delete query
             delete_query = f"DELETE FROM {table_name} WHERE {primary_key_column} = %s"
 
             try:
+                # Execute the delete query
                 self.selector.cursor.execute(delete_query, (primary_key_value,))
-                self.selector.connection.commit()
+                self.selector.connection.commit()  # Commit the changes to the DB
                 QMessageBox.information(self, "Deleted", "Record deleted successfully.", QMessageBox.Ok)
-                self.load_data(current_widget_index)
+                self.load_data(current_widget_index)  # Reload data to reflect changes
             except Exception as e:
+                # Handle any exceptions that may occur during the deletion
                 QMessageBox.critical(self, "Delete Failed", f"An error occurred:\n{e}", QMessageBox.Ok)
+
 
 
 

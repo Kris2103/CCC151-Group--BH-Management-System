@@ -134,6 +134,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.columns = self.populator.columns
         self.SearchField.clear()
         self.SearchLineEdit.clear()
+        self.SearchField.addItem("Search All", None)
         for col in self.columns: 
             self.SearchField.addItem(str(col), col)
             # self.SearchField.setCurrentIndex(-1)  # Set to no selection

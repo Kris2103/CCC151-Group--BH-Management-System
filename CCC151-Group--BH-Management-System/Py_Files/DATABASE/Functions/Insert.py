@@ -22,7 +22,7 @@ class Insert(Function):
         for i in attr: 
             self.params.append(i)
             print(i)
-        excluded = ['PayID', 'RentID']
+        excluded = self.checkExcludables(table)
         columns = [col for col in self.get_columns(table) if col not in excluded]
         self.placeholders = ", ".join(["%s"] * len(columns))
         
@@ -44,6 +44,28 @@ class Insert(Function):
 
         self.cursor.execute(query, self.params)
         return self.cursor.fetchall()
+    
+    # check nullable columns and thus excluded in the insertion
+    def checkExcludables(self, table):
+        excludables = []
+        match table:
+            case "Tenant":
+                excludables.append("RoomNumber")
+            case "Rent":
+                excludables.append("RentID")
+            case "Pay":
+                excludables.append("PayID")
+            case "Room":
+                pass
+            case "EmergencyContact":
+                pass
+            case _:
+                pass
+
+        return excludables
+                 
+
+
 
 
 

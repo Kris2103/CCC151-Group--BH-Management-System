@@ -190,15 +190,16 @@ class Select(Function):
                                                 LEFT JOIN PaidAmount
                                                     ON PaidAmount.TenantID = Tenant.TenantID """ 
             case "Room":
-                self.basequery =            "WITH " + CTE_NoOfOccupants  + self.basequery
-                self.columnquery +=         """, NoOfOccupants.OccupantCount AS OccupantCount """
-                self.aliascolumn[           "OccupantCount"] = "NoOfOccupants.OccupantCount"
-                self.columns.append(        "OccupantCount")
-                self.conditions +=          """ LEFT JOIN Tenant
-                                                    ON Tenant.RoomNumber = Room.RoomNumber
-                                                LEFT JOIN NoOfOccupants
-                                                    ON Tenant.RoomNumber = NoOfOccupants.RoomNumber
-                                            """ 
+                # self.basequery =            "WITH " + CTE_NoOfOccupants  + self.basequery
+                # self.columnquery +=         """, NoOfOccupants.OccupantCount AS OccupantCount """
+                # self.aliascolumn[           "OccupantCount"] = "NoOfOccupants.OccupantCount"
+                # self.columns.append(        "OccupantCount")
+                # self.conditions +=          """ LEFT JOIN Tenant
+                #                                     ON Tenant.RoomNumber = Room.RoomNumber
+                #                                 LEFT JOIN NoOfOccupants
+                #                                     ON Tenant.RoomNumber = NoOfOccupants.RoomNumber
+                #                             """ 
+                pass
 
 
 CTE_RentDuration    = """ RentDuration AS (
@@ -255,12 +256,12 @@ CTE_PaymentStatus   = """ PaymentStatus AS (
                             LEFT JOIN PaidAmount pa ON t.TenantID = pa.TenantID
                             ) """
 
-CTE_NoOfOccupants      = """ NoOfOccupants AS (
-                            SELECT RoomNumber AS RoomNumber
-                            , COUNT(*) AS OccupantCount
-                                FROM Tenant
-                                GROUP BY RoomNumber
-                            ) """
+# CTE_NoOfOccupants      = """ NoOfOccupants AS (
+#                             SELECT RoomNumber AS RoomNumber
+#                             , COUNT(*) AS OccupantCount
+#                                 FROM Tenant
+#                                 GROUP BY RoomNumber
+#                             ) """
     
 # if __name__ == "__main__":
 #     selector = Select()
@@ -269,16 +270,3 @@ CTE_NoOfOccupants      = """ NoOfOccupants AS (
 #     resultBuilder = selector.retDict()
 #     print(f"Query Result: {resultBuilder}")
 
-# uncomment for debugging
-
-#                 self.columnquery        +=  """, MoveStatus.MoveStatus AS MoveStatus, 
-#                                                 PaymentStatus.PaymentStatus AS PaymentStatus, """
-#                 self.conditions         +=  """ LEFT JOIN MoveStatus ON Tenant.TenantID = MoveStatus.TenantID
-#                                                 LEFT JOIN PaymentStatus ON Tenant.TenantID = PaymentStatus.TenantID """
-                
-#                 self.aliascolumn[           "MoveStatus"]                           = "MoveStatus.MoveStatus"
-#                 self.aliascolumn[           "PaymentStatus"]                        = "PaymentStatus.PaymentStatus"
-#                 self.columns.append(        "MoveStatus")
-#                 self.columns.append(        "PaymentStatus")
-
-# """

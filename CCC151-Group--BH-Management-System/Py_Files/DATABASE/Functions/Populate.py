@@ -214,6 +214,15 @@ class Populate:
         except Exception as err:
             print(f"Completer Error: {err}")
             QMessageBox.critical(self, "Error", f"Could not load tenant IDs:\n{err}")
+    
+    def sync_moveout_movein(self, moveout_combobox, movein_combobox):
+        self.moveout_combobox = moveout_combobox
+        self.movein_combobox = movein_combobox
+        movein = self.movein_combobox.currentText()
+        moveout = self.moveout_combobox.currentText()
+        
+        if movein and not moveout:
+            self.tenantid_combobox.setCurrentText()
 
     def sync_tenant_id_from_room(self, roomnum_combobox, tenantid_combobox):
         self.roomnum_combobox = roomnum_combobox
@@ -224,10 +233,8 @@ class Populate:
         
         result = self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"], tag = "RoomNumber", key = room, limit = 1).retData()
         if result:
-            tenant_id = str(result[0])
+            tenant_id = str(result[0][0])
             self.tenantid_combobox.setCurrentText(tenant_id)
-        else:
-            self.tenantid_combobox.setCurrentText("")
 
     def sync_room_from_tenant_id(self, roomnum_combobox, tenantid_combobox):
         self.roomnum_combobox = roomnum_combobox
@@ -238,7 +245,7 @@ class Populate:
         
         result = self.selector.SelectQuery("Tenant", None, ["Tenant.RoomNumber"], tag = "TenantID", key = tenant_id, limit = 1).retData()
         if result:
-            room_number = str(result[0])
+            room_number = str(result[0][0])
             index = self.roomnum_combobox.findText(room_number)
             if index != -1:
                 self.roomnum_combobox.setCurrentIndex(index)

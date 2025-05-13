@@ -4,8 +4,7 @@ from DATABASE.Functions import Select, Insert, update, Populate
 from .AddRent import Ui_Dialog
 
 class AddRentDialog(QDialog):
-        # self.ui.SexComboBox.setCurrentIndex(-1)
-        # self.ui.RoomNoComboBox.setCurrentIndex(-1)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Dialog()
@@ -21,12 +20,16 @@ class AddRentDialog(QDialog):
         
         self.ui.MoveInDateEdit.setCalendarPopup(True)
         self.ui.MoveInDateEdit.setDate(QDate.currentDate())
+
+        self.ui.MoveOutDateEdit.setCalendarPopup(True)
+        self.ui.MoveOutDateEdit.setDate(QDate.currentDate().addMonths(1))
         
         self.populate.populate_movestatus_combobox(self.ui.MoveStatuscomboBox)
         self.populate.populate_room_combobox(self.ui.RoomNoComboBox)
         self.populate.populate_tenant_id_combobox(self.ui.RentingTenantIDComboBox)
 
-        self.ui.MoveStatuscomboBox.setCurrentIndex(-1)
+        self.ui.MoveStatuscomboBox.setCurrentIndex(0)
+        self.ui.MoveStatuscomboBox.setDisabled(True)
         self.ui.RoomNoComboBox.setCurrentIndex(-1)
         self.ui.RentingTenantIDComboBox.setCurrentIndex(-1)
 

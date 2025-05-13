@@ -44,6 +44,15 @@ E. key
 - used as "%key%"
 - used for searching, this is the search key
 
+
+Return functions:
+
+A. retData = rows
+B. retCol = columns
+C. retAll = rows, columns
+D. retDict = {columns : rows}
+
+
 """
 
 class Select(Function):
@@ -59,7 +68,7 @@ class Select(Function):
     def __init__(self):
         super().__init__()
 
-    def SelectQuery(self, table, select_type=None, spec_col = [], tag = None, key = None, group = None, limit = None):
+    def SelectQuery(self, table, select_type=None, spec_col = [], tag = [], key = [], filters = {}, group = None, limit = None, sort_column = None, sort_order = None):
         
         self.params.clear()
 
@@ -68,6 +77,7 @@ class Select(Function):
         self.conditions         = ""
         self.limitquery         = (f" LIMIT {limit}") if limit else ("")
         self.groupquery         = (f" GROUP BY {group}") if group else ("")
+        self.sortquery          = (f" ORDER BY {sort_column} {sort_order}") if sort_column and sort_order else ("")
 
         self.columns            = self.get_columns(table)
         self.aliascolumn        = {}
@@ -80,21 +90,23 @@ class Select(Function):
             self.columns = [col.split(" AS ")[-1].split(".")[-1] for col in spec_col]
         
         self.Conditions(select_type) # Special joins, CTEs, Aliases        
-        self.search_query = self.SearchQuery(table, tag, key) # In case of search call, execute search
+        self.search_query = self.SearchQuery(table, tag, key, filters) # In case of search call, execute search
 
-        self.query = self.basequery + self.columnquery + self.table + self.conditions + self.search_query + self.groupquery + self.limitquery
+        self.query = self.basequery + self.columnquery + self.table + self.conditions + self.search_query + self.groupquery + self.sortquery + self.limitquery
 
         print(self.query)
         self.execute(self.query, self.params)
 
         return self
     
-    def SearchQuery(self, table, tag, key):
+    def SearchQuery(self, table, tag, key, filters):
         # Selecting with a tag(column) and key(search key)
         search_query = ""
+        filters_conditions = []
+
         if tag and key:
             search_tag = self.aliascolumn.get(tag, f"{table}.{tag}")
-            search_query = f"WHERE {search_tag} LIKE %s "
+            filters_conditions.append(f"{search_tag} LIKE %s ")
             if key == "Male":
                 self.params.append(f"{key}")
             else:
@@ -107,6 +119,15 @@ class Select(Function):
 
             search_query = "WHERE " + " OR ".join(searchAll)
         
+        if filters_conditions:
+            for ind_tag, ind_key in filters.items():
+                search_tag = self.aliascolumn.get(tag, f"{table}.{ind_tag}")
+                filters_conditions.append(f"{search_tag} LIKE %s ")
+                self.params.append(f"{ind_key}")
+
+        if filters_conditions:
+            search_query = search_query = "WHERE " + " AND ".join(filters_conditions)
+
         return search_query
 
         # Example: 
@@ -147,33 +168,18 @@ class Select(Function):
     def Conditions(self, select_type = None):
         match select_type:
             case "Tenant":
-                self.columnquery        +=  ", EmergencyContact.PhoneNumber AS EmergencyContact"
-                self.conditions         +=  "LEFT JOIN EmergencyContact ON Tenant.TenantID = EmergencyContact.EMTenantID "
-                self.aliascolumn[           "EmergencyContact"]             = "EmergencyContact.PhoneNumber"
-                self.columns.append(        "EmergencyContact")
+                pass
             case "Rents":
                 self.columnquery        +=  ", TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate) AS `Rent Duration in Months`"
                 self.aliascolumn[           "`Rent Duration in Months`"]    = "TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate)"
                 self.columns.append(        "Rent Duration in Months")
+
             case "Pays":
-                self.basequery =            """ WITH    RentDuration AS (   SELECT RentingTenant                    AS TenantID, 
-			                                            TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate)               AS Duration
-	                                            FROM Rents),
-                                
-                                                        PaidAmount AS (     SELECT PayingTenant                     AS TenantID, 
-			                                            SUM(PaymentAmount)                                          AS Paid
-                                                FROM Pays
-                                                GROUP BY PayingTenant) """  + self.basequery
-                
-                self.columnquery +=         """, RentDuration.Duration as RentDuration, Room.Price, 
-                                            ((Room.Price * RentDuration.Duration) - PaidAmount.Paid)                AS TotalDue """
-                
-                self.aliascolumn[           "RentDuration"]                 = "RentDuration.Duration"
-                self.aliascolumn[           "RoomPrice"]                    = "Room.Price"
-                self.aliascolumn[           "TotalDue"]                     = "((Room.Price * RentDuration.Duration) - PaidAmount.Paid)"
-                self.columns.append(        "RentDuration")
-                self.columns.append(        "RoomPrice")
-                self.columns.append(        "TotalDue")
+                CTEs = [CTE_RentDuration, CTE_PaidAmount]
+                self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
+                self.columnquery +=         """, ((Room.Price * RentDuration.Duration) - PaidAmount.PaidAmount) AS RemainingDue """                
+                self.aliascolumn[           "RemainingDue"]                 = "((Room.Price * RentDuration.Duration) - PaidAmount.Paid)"
+                self.columns.append(        "RemainingDue")
 
                 self.conditions +=          """ LEFT JOIN Tenant
                                                     ON Tenant.TenantID = Pays.PayingTenant
@@ -183,9 +189,80 @@ class Select(Function):
                                                     ON RentDuration.TenantID = Tenant.TenantID
                                                 LEFT JOIN PaidAmount
                                                     ON PaidAmount.TenantID = Tenant.TenantID """ 
-            case None:
+            case "Room":
+                # self.basequery =            "WITH " + CTE_NoOfOccupants  + self.basequery
+                # self.columnquery +=         """, NoOfOccupants.OccupantCount AS OccupantCount """
+                # self.aliascolumn[           "OccupantCount"] = "NoOfOccupants.OccupantCount"
+                # self.columns.append(        "OccupantCount")
+                # self.conditions +=          """ LEFT JOIN Tenant
+                #                                     ON Tenant.RoomNumber = Room.RoomNumber
+                #                                 LEFT JOIN NoOfOccupants
+                #                                     ON Tenant.RoomNumber = NoOfOccupants.RoomNumber
+                #                             """ 
                 pass
 
+
+CTE_RentDuration    = """ RentDuration AS (
+                            SELECT 
+                                t.TenantID AS TenantID, 
+                                r.MoveInDate AS MoveInDate,
+                                r.MoveOutDate AS MoveOutDate,
+                                r.RentedRoom AS RoomNumber,
+                                TIMESTAMPDIFF(MONTH, r.MoveInDate, r.MoveOutDate) AS Duration
+                            FROM Tenant t
+                            LEFT JOIN Rents r ON t.TenantID = r.RentingTenant
+                            ) """
+CTE_MoveStatus      = """ MoveStatus AS (
+                            SELECT
+                                t.TenantID AS TenantID,
+                                CASE
+                                    WHEN rd.MoveOutDate IS NOT NULL AND rd.MoveOutDate <= CURRENT_DATE() THEN "Moved Out"
+                                    WHEN rd.MoveOutDate > CURRENT_DATE() THEN "Active"
+                                    ELSE "Moved Out"
+                                END AS MoveStatus
+                            FROM Tenant t
+                            LEFT JOIN RentDuration rd ON t.TenantID = rd.TenantID
+                            ) """
+
+CTE_PaidAmount      = """ PaidAmount AS (
+                            SELECT 
+                                p.PayingTenant AS TenantID, 
+                                SUM(p.PaymentAmount) AS PaidAmount
+                            FROM Pays p
+                            GROUP BY p.PayingTenant
+                            ) """
+
+CTE_RemainingDue    = """ RemainingDue AS (
+                            SELECT 
+                                rd.TenantID AS TenantID,
+                                ((COALESCE(r.Price, 0) * COALESCE(rd.Duration, 0)) - COALESCE(pa.PaidAmount, 0)) AS RemainingDue
+                            FROM RentDuration rd
+                            LEFT JOIN PaidAmount pa ON rd.TenantID = pa.TenantID
+                            LEFT JOIN Room r ON r.RoomNumber = rd.RoomNumber
+                            ) """
+
+CTE_PaymentStatus   = """ PaymentStatus AS (
+                            SELECT 
+                                t.TenantID AS TenantID,
+                                CASE
+                                    WHEN pa.PaidAmount IS NULL THEN "Pending"
+                                    WHEN COALESCE(pa.PaidAmount, 0) < COALESCE(red.RemainingDue, 0) AND CURRENT_DATE() > rd.MoveOutDate THEN "Overdue"
+                                    WHEN COALESCE(pa.PaidAmount, 0) >= COALESCE(red.RemainingDue, 0) THEN "Paid"
+                                    ELSE "Pending"
+                                END AS PaymentStatus
+                            FROM Tenant t
+                            LEFT JOIN RentDuration rd ON t.TenantID = rd.TenantID
+                            LEFT JOIN RemainingDue red ON t.TenantID = red.TenantID
+                            LEFT JOIN PaidAmount pa ON t.TenantID = pa.TenantID
+                            ) """
+
+# CTE_NoOfOccupants      = """ NoOfOccupants AS (
+#                             SELECT RoomNumber AS RoomNumber
+#                             , COUNT(*) AS OccupantCount
+#                                 FROM Tenant
+#                                 GROUP BY RoomNumber
+#                             ) """
+    
 # if __name__ == "__main__":
 #     selector = Select()
         
@@ -193,4 +270,3 @@ class Select(Function):
 #     resultBuilder = selector.retDict()
 #     print(f"Query Result: {resultBuilder}")
 
-# uncomment for debugging

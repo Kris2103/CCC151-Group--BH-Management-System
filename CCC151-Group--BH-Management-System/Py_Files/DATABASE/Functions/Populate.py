@@ -14,7 +14,7 @@ class Populate:
         self.selector = Select.Select()
         self.inserter = Insert.Insert()
     
-    def Populate_Table(self, table_name, table_widget, select_type, current_page = 1, search_column = None, search_key = None):
+    def Populate_Table(self, table_name, table_widget, select_type, current_page = 1, search_column = None, search_key = None, sort_column = None, sort_order = None):
         
         self.table_name = table_name
         self.table_widget = table_widget
@@ -22,11 +22,13 @@ class Populate:
         self.current_page = current_page
         self.search_column = search_column
         self.search_key = search_key
+        self.sort_column = sort_column
+        self.sort_order = sort_order
 
         # Fetch ALL data with query, store for faster loading in page change...
         self.columns = self.selector.SelectQuery(table_name, select_type).retCols()
         if not hasattr(self, "full_data"):
-            self.full_data  = self.selector.SelectQuery(table_name, select_type, tag = search_column, key = search_key).retData()
+            self.full_data = self.selector.SelectQuery(table_name, select_type, tag = search_column, key = search_key, sort_column = sort_column, sort_order = sort_order).retData()
 
         # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
 
@@ -202,6 +204,7 @@ class Populate:
             self.tenant_combobox.clear()
             tenant_ids = [str(row[0]) for row in self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"]).retData()]
 
+            self.tenant_combobox.setEditable(True)
             self.tenant_combobox.addItems(tenant_ids)
             completer = QCompleter(tenant_ids, self.tenant_combobox)
             completer.setCaseSensitivity(False)
@@ -211,32 +214,41 @@ class Populate:
         except Exception as err:
             print(f"Completer Error: {err}")
             QMessageBox.critical(self, "Error", f"Could not load tenant IDs:\n{err}")
+    
+    def sync_moveout_movein(self, moveout_combobox, movein_combobox):
+        self.moveout_combobox = moveout_combobox
+        self.movein_combobox = movein_combobox
+        movein = self.movein_combobox.currentText()
+        moveout = self.moveout_combobox.currentText()
+        
+        if movein and not moveout:
+            self.tenantid_combobox.setCurrentText()
 
-    def sync_tenant_id_from_room(self, roomnum_combobox):
+    def sync_tenant_id_from_room(self, roomnum_combobox, tenantid_combobox):
         self.roomnum_combobox = roomnum_combobox
+        self.tenantid_combobox = tenantid_combobox
         room = self.roomnum_combobox.currentText()
         if not room:
             return
         
         result = self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"], tag = "RoomNumber", key = room, limit = 1).retData()
         if result:
-            tenant_id = str(result[0])
-            self.roomnum_combobox.setCurrentText(tenant_id)
-        else:
-            self.roomnum_combobox.setCurrentText("")
+            tenant_id = str(result[0][0])
+            self.tenantid_combobox.setCurrentText(tenant_id)
 
-    def sync_room_from_tenant_id(self, renttent_combobox):
-        self.renttent_combobox = renttent_combobox
-        tenant_id = self.renttent_combobox.currentText()
+    def sync_room_from_tenant_id(self, roomnum_combobox, tenantid_combobox):
+        self.roomnum_combobox = roomnum_combobox
+        self.tenantid_combobox = tenantid_combobox        
+        tenant_id = self.tenantid_combobox.currentText()
         if not tenant_id:
             return
         
         result = self.selector.SelectQuery("Tenant", None, ["Tenant.RoomNumber"], tag = "TenantID", key = tenant_id, limit = 1).retData()
         if result:
-            room_number = str(result[0])
-            index = self.renttent_combobox.findText(room_number)
+            room_number = str(result[0][0])
+            index = self.roomnum_combobox.findText(room_number)
             if index != -1:
-                self.renttent_combobox.setCurrentIndex(index)
+                self.roomnum_combobox.setCurrentIndex(index)
 
 # ===========
 #    COMBOBOXES POPULATE   

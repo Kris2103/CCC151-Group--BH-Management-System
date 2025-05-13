@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\EditPayment.ui'
+# Form implementation generated from reading ui file 'c:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\EditPayment.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -63,7 +63,7 @@ class Ui_Dialog(object):
 "    font-size: 14px;")
         self.label_12.setObjectName("label_12")
         self.PaymentAmountLineEdit = QtWidgets.QLineEdit(self.frame_2)
-        self.PaymentAmountLineEdit.setGeometry(QtCore.QRect(20, 160, 121, 21))
+        self.PaymentAmountLineEdit.setGeometry(QtCore.QRect(20, 160, 111, 21))
         self.PaymentAmountLineEdit.setObjectName("PaymentAmountLineEdit")
         self.label_13 = QtWidgets.QLabel(self.frame_2)
         self.label_13.setGeometry(QtCore.QRect(20, 140, 121, 20))

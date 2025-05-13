@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>410</height>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>431</width>
-     <height>391</height>
+     <height>331</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -262,18 +262,18 @@ vertical-align: middle;
    <widget class="QLineEdit" name="PhoneNumberLineEdit">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>310</y>
+      <x>230</x>
+      <y>260</y>
       <width>181</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>290</y>
+      <x>230</x>
+      <y>240</y>
       <width>111</width>
       <height>16</height>
      </rect>
@@ -318,7 +318,7 @@ vertical-align: middle;
      <rect>
       <x>20</x>
       <y>260</y>
-      <width>271</width>
+      <width>191</width>
       <height>21</height>
      </rect>
     </property>
@@ -343,56 +343,11 @@ vertical-align: middle;
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="EditECpushButton">
-    <property name="geometry">
-     <rect>
-      <x>210</x>
-      <y>310</y>
-      <width>171</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background: rgb(0, 85, 0);
-	color: white;
-	font-family: 'Cal Sans', sans-serif;
-	font-weight: 500;
-	font-style: normal;
-	font-size: 12px;
-	border: 1px solid rgb(0, 85, 0);
-</string>
-    </property>
-    <property name="text">
-     <string>Edit Emergency Contact</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_31">
-    <property name="geometry">
-     <rect>
-      <x>210</x>
-      <y>290</y>
-      <width>141</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background: none;
-    border: none;
-    color: #800000;
-    font-family: 'Cal Sans', sans-serif;
-    font-weight: 700;
-    font-style: normal;
-    font-size: 14px;</string>
-    </property>
-    <property name="text">
-     <string>Emergency Contact</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="UpdatepushButton">
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>350</y>
+      <y>290</y>
       <width>93</width>
       <height>31</height>
      </rect>
@@ -416,9 +371,9 @@ padding: 6px 12px;
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>350</y>
+      <y>290</y>
       <width>93</width>
-      <height>28</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">

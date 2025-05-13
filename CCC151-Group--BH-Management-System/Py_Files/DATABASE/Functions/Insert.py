@@ -56,7 +56,7 @@ class Insert(Function):
             case "Pay":
                 excludables.append("PayID")
             case "Room":
-                pass
+                excludables.append("NoOfOccupants")
             case "EmergencyContact":
                 pass
             case _:

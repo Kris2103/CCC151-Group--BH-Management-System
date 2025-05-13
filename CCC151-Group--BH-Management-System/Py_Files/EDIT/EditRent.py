@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\EditRent.ui'
+# Form implementation generated from reading ui file 'c:\Users\Kristelle\Documents\CCC151-Group Project\CCC151-Group--BH-Management-System\UI_Files\EditRent.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -91,9 +91,6 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_10.setObjectName("label_10")
-        self.RentingTenantIDComboBox = QtWidgets.QComboBox(self.frame)
-        self.RentingTenantIDComboBox.setGeometry(QtCore.QRect(20, 110, 111, 22))
-        self.RentingTenantIDComboBox.setObjectName("RentingTenantIDComboBox")
         self.label_5 = QtWidgets.QLabel(self.frame)
         self.label_5.setGeometry(QtCore.QRect(150, 140, 111, 16))
         self.label_5.setStyleSheet("background: none;\n"
@@ -114,11 +111,8 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_4.setObjectName("label_4")
-        self.RoomNumberComboBox = QtWidgets.QComboBox(self.frame)
-        self.RoomNumberComboBox.setGeometry(QtCore.QRect(150, 110, 111, 22))
-        self.RoomNumberComboBox.setObjectName("RoomNumberComboBox")
         self.label_3 = QtWidgets.QLabel(self.frame)
-        self.label_3.setGeometry(QtCore.QRect(160, 90, 101, 16))
+        self.label_3.setGeometry(QtCore.QRect(150, 90, 101, 16))
         self.label_3.setStyleSheet("background: none;\n"
 "    border: none;\n"
 "    color: #800000;\n"
@@ -140,13 +134,19 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_6.setObjectName("label_6")
+        self.RoomNumberComboBox = QtWidgets.QComboBox(self.frame)
+        self.RoomNumberComboBox.setGeometry(QtCore.QRect(150, 110, 111, 22))
+        self.RoomNumberComboBox.setObjectName("RoomNumberComboBox")
+        self.RentingTenantComboBox = QtWidgets.QComboBox(self.frame)
+        self.RentingTenantComboBox.setGeometry(QtCore.QRect(20, 110, 111, 22))
+        self.RentingTenantComboBox.setObjectName("RentingTenantComboBox")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "Rent"))
         self.label_2.setText(_translate("Dialog", "Rent"))
         self.UpdatepushButton.setText(_translate("Dialog", "Update"))
         self.CancelpushButton.setText(_translate("Dialog", "Cancel"))

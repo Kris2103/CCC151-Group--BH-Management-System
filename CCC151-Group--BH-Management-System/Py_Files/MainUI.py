@@ -318,7 +318,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Sistore Boarding House Management System"))
         self.SearchpushButton.setText(_translate("MainWindow", "Search"))
         self.RefreshpushButton.setText(_translate("MainWindow", "Refresh"))
         self.AddpushButton.setText(_translate("MainWindow", "Add"))

@@ -170,10 +170,21 @@ class Select(Function):
             case "Tenant":
                 pass
             case "Rents":
-                self.columnquery        +=  ", TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate) AS `Rent Duration in Months`"
-                self.aliascolumn[           "`Rent Duration in Months`"]    = "TIMESTAMPDIFF(MONTH, MoveInDate, MoveOutDate)"
+                CTEs = [CTE_RentDuration, CTE_MoveStatus]
+                self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
+                self.columnquery        +=  """, RentDuration.Duration AS `Rent Duration in Months`, MoveStatus.MoveStatus AS `Move Status`"""
+                self.aliascolumn[           "`Rent Duration in Months`"]    = "RentDuration.Duration"
                 self.columns.append(        "Rent Duration in Months")
+                self.aliascolumn[           "`Move Status`"]    = "MoveStatus.MoveStatus"
+                self.columns.append(        "Move Status")
 
+                self.conditions +=          """ LEFT JOIN Tenant
+                                                    ON Tenant.TenantID = Rents.RentingTenant
+                                                LEFT JOIN RentDuration 
+                                                    ON RentDuration.TenantID = Tenant.TenantID
+                                                LEFT JOIN MoveStatus 
+                                                    ON MoveStatus.TenantID = Tenant.TenantID
+                                            """
             case "Pays":
                 CTEs = [CTE_RentDuration, CTE_PaidAmount]
                 self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
@@ -188,17 +199,9 @@ class Select(Function):
                                                 LEFT JOIN RentDuration 
                                                     ON RentDuration.TenantID = Tenant.TenantID
                                                 LEFT JOIN PaidAmount
-                                                    ON PaidAmount.TenantID = Tenant.TenantID """ 
+                                                    ON PaidAmount.TenantID = Tenant.TenantID
+                                            """ 
             case "Room":
-                # self.basequery =            "WITH " + CTE_NoOfOccupants  + self.basequery
-                # self.columnquery +=         """, NoOfOccupants.OccupantCount AS OccupantCount """
-                # self.aliascolumn[           "OccupantCount"] = "NoOfOccupants.OccupantCount"
-                # self.columns.append(        "OccupantCount")
-                # self.conditions +=          """ LEFT JOIN Tenant
-                #                                     ON Tenant.RoomNumber = Room.RoomNumber
-                #                                 LEFT JOIN NoOfOccupants
-                #                                     ON Tenant.RoomNumber = NoOfOccupants.RoomNumber
-                #                             """ 
                 pass
 
 
@@ -212,12 +215,12 @@ CTE_RentDuration    = """ RentDuration AS (
                             FROM Tenant t
                             LEFT JOIN Rents r ON t.TenantID = r.RentingTenant
                             ) """
+
 CTE_MoveStatus      = """ MoveStatus AS (
                             SELECT
                                 t.TenantID AS TenantID,
                                 CASE
-                                    WHEN rd.MoveOutDate IS NOT NULL AND rd.MoveOutDate <= CURRENT_DATE() THEN "Moved Out"
-                                    WHEN rd.MoveOutDate > CURRENT_DATE() THEN "Active"
+                                    WHEN rd.MoveOutDate > CURRENT_DATE() AND t.RoomNumber = rd.RoomNumber THEN "Active"
                                     ELSE "Moved Out"
                                 END AS MoveStatus
                             FROM Tenant t
@@ -255,13 +258,6 @@ CTE_PaymentStatus   = """ PaymentStatus AS (
                             LEFT JOIN RemainingDue red ON t.TenantID = red.TenantID
                             LEFT JOIN PaidAmount pa ON t.TenantID = pa.TenantID
                             ) """
-
-# CTE_NoOfOccupants      = """ NoOfOccupants AS (
-#                             SELECT RoomNumber AS RoomNumber
-#                             , COUNT(*) AS OccupantCount
-#                                 FROM Tenant
-#                                 GROUP BY RoomNumber
-#                             ) """
     
 # if __name__ == "__main__":
 #     selector = Select()

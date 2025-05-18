@@ -135,8 +135,8 @@ class editRentDialog(QDialog):
             selector = Select()
             selector.SelectQuery(
                 table="Rents",
-                select_type=None,
-                spec_col=["Rents.RentedRoom", "Rents.MoveInDate", "Rents.MoveOutDate", "Rents.MoveStatus"],
+                select_type="Rents",
+                spec_col=["Rents.RentedRoom", "Rents.MoveInDate", "Rents.MoveOutDate", "RentDuration.MoveStatus"],
                 tag="RentingTenant",
                 key=tenantID
             )

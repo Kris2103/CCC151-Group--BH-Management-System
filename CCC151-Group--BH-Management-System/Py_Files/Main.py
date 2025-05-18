@@ -137,7 +137,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.SearchField.addItem("Search All", None)
         for col in self.columns: 
             self.SearchField.addItem(str(col), col)
-            # self.SearchField.setCurrentIndex(-1)  # Set to no selection
         # Connect header click events for sorting
         self.widget.horizontalHeader().sectionClicked.connect(self.perform_sort)
 

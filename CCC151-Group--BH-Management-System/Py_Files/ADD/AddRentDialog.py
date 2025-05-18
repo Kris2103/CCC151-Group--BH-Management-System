@@ -61,23 +61,30 @@ class AddRentDialog(QDialog):
                                             key        = room_number, 
                                             limit      = 1).retData()
         try:
-            existing_rent = self.select.SelectQuery(table = "Rents",
-                                                    select_type = "Rents",
-                                                    filters = {"RentedRoom" : room_number,
-                                                            "RentingTenant" : tenant_id},
-                                                    limit = 1).retData()[0][6]
-            
-            if existing_rent == "Active": 
-                QMessageBox.warning(self, "Rent duplicate", f"Renting Room {room_number} by Tenant {tenant_id} is still an active contract.")
+            renting_tenant, existing_rent_status, existing_rented_room = self.select.SelectQuery(
+                table="Rents",
+                spec_col=["Rents.RentingTenant, RentDuration.MoveStatus", "Rents.RentedRoom"],
+                select_type="Rents",
+                filters={"RentingTenant": tenant_id},
+                limit=1
+            ).retData()
+
+            print(renting_tenant)
+            print(existing_rent_status)
+            print(existing_rented_room)
+
+            if existing_rent_status == "Active":
+                QMessageBox.warning(
+                    self, "Rent duplicate",
+                    f"Tenant {tenant_id} is still under an active contract with Room {existing_rented_room}."
+                )
                 return
+
         except IndexError as ie:
             print("No active contract existing, Rent is valid")
 
         if room_data:
             maximum_capacity, current_occupants, room_tsex = room_data[0]
-            # print(tenant_sex)
-            # print(room_tsex)
-            # print(tenant_sex)
             if room_tsex != tenant_sex and room_tsex != None:
                 QMessageBox.warning(self, "Sex invalid", f"Room {room_number} only accepts {room_tsex} tenants.")
                 return

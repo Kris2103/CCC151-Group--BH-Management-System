@@ -68,7 +68,8 @@ class Select(Function):
     def __init__(self):
         super().__init__()
 
-    def SelectQuery(self, table, select_type=None, spec_col = [], tag = [], key = [], filters = {}, group = None, limit = None, sort_column = None, sort_order = None):
+    def SelectQuery(self,   table,          select_type = None, spec_col    = [],   tag = [], key = [], filters = {}, 
+                            group = None,   limit       = None, sort_column = None, sort_order = None):
         
         self.params.clear()
 
@@ -80,16 +81,17 @@ class Select(Function):
         self.sortquery          = (f" ORDER BY {sort_column} {sort_order}") if sort_column and sort_order else ("")
 
         self.columns            = self.get_columns(table)
-        self.aliascolumn        = {}
-        
-        if not spec_col:
+        self.aliascolumn        = {} 
+
+        if not spec_col: 
             self.columnquery    = ", ".join([f"{table}.{col}" for col in self.columns])
         
-        else:
+        self.Conditions(select_type) # Special joins, CTEs, Aliases
+
+        if spec_col:
             self.columnquery    = ", ".join([f"{col}" for col in spec_col])
             self.columns = [col.split(" AS ")[-1].split(".")[-1] for col in spec_col]
-        
-        self.Conditions(select_type) # Special joins, CTEs, Aliases        
+               
         self.search_query = self.SearchQuery(table, tag, key, filters) # In case of search call, execute search
 
         self.query = self.basequery + self.columnquery + self.table + self.conditions + self.search_query + self.groupquery + self.sortquery + self.limitquery
@@ -100,36 +102,35 @@ class Select(Function):
         return self
     
     def SearchQuery(self, table, tag, key, filters):
-        # Selecting with a tag(column) and key(search key)
         search_query = ""
         filters_conditions = []
 
+        # Selecting with a tag(column) and key(search key)
         if tag and key:
             search_tag = self.aliascolumn.get(tag, f"{table}.{tag}")
-            filters_conditions.append(f"{search_tag} LIKE %s ")
-            if key == "Male":
-                self.params.append(f"{key}")
-            else:
-                self.params.append(f"%{key}%")
+            filters_conditions.append(f"{search_tag} LIKE %s")
+            self.params.append(f"%{key}%" if key != "Male" else key)
 
         # Selecting all columns with key(search key)
-        elif key:            
+        elif key:
             searchAll = [(f"`{col}` LIKE %s") for col in self.columns]
             self.params.extend([f"%{key}%"] * len(self.columns))
-
             search_query = "WHERE " + " OR ".join(searchAll)
-        
-        if filters_conditions:
+
+        # Selecting via dictionary, multiple tag-key pairs
+        if filters:
             for ind_tag, ind_key in filters.items():
-                search_tag = self.aliascolumn.get(tag, f"{table}.{ind_tag}")
-                filters_conditions.append(f"{search_tag} LIKE %s ")
-                self.params.append(f"{ind_key}")
+                filter_tag = self.aliascolumn.get(ind_tag, f"{table}.{ind_tag}")
+                filters_conditions.append(f"{filter_tag} LIKE %s")
+                self.params.append(ind_key)
 
         if filters_conditions:
-            search_query = search_query = "WHERE " + " AND ".join(filters_conditions)
+            if search_query:
+                search_query += " AND " + " AND ".join(filters_conditions)
+            else:
+                search_query = "WHERE " + " AND ".join(filters_conditions)
 
         return search_query
-
         # Example: 
         """
 
@@ -170,9 +171,9 @@ class Select(Function):
             case "Tenant":
                 pass
             case "Rents":
-                CTEs = [CTE_RentDuration, CTE_MoveStatus]
+                CTEs = [CTE_RentDuration]
                 self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
-                self.columnquery        +=  """, RentDuration.Duration AS `Rent Duration in Months`, MoveStatus.MoveStatus AS `Move Status`"""
+                self.columnquery        +=  """, RentDuration.Duration AS `Rent Duration in Months`, RentDuration.MoveStatus AS `Move Status`"""
                 self.aliascolumn[           "`Rent Duration in Months`"]    = "RentDuration.Duration"
                 self.columns.append(        "Rent Duration in Months")
                 self.aliascolumn[           "`Move Status`"]    = "MoveStatus.MoveStatus"
@@ -182,8 +183,6 @@ class Select(Function):
                                                     ON Tenant.TenantID = Rents.RentingTenant
                                                 LEFT JOIN RentDuration 
                                                     ON RentDuration.TenantID = Tenant.TenantID
-                                                LEFT JOIN MoveStatus 
-                                                    ON MoveStatus.TenantID = Tenant.TenantID
                                             """
             case "Pays":
                 CTEs = [CTE_RentDuration, CTE_PaidAmount]
@@ -211,20 +210,13 @@ CTE_RentDuration    = """ RentDuration AS (
                                 r.MoveInDate AS MoveInDate,
                                 r.MoveOutDate AS MoveOutDate,
                                 r.RentedRoom AS RoomNumber,
-                                TIMESTAMPDIFF(MONTH, r.MoveInDate, r.MoveOutDate) AS Duration
-                            FROM Tenant t
-                            LEFT JOIN Rents r ON t.TenantID = r.RentingTenant
-                            ) """
-
-CTE_MoveStatus      = """ MoveStatus AS (
-                            SELECT
-                                t.TenantID AS TenantID,
+                                TIMESTAMPDIFF(MONTH, r.MoveInDate, r.MoveOutDate) AS Duration,
                                 CASE
-                                    WHEN rd.MoveOutDate > CURRENT_DATE() AND t.RoomNumber = rd.RoomNumber THEN "Active"
+                                    WHEN r.MoveOutDate > CURRENT_DATE() AND t.RoomNumber = r.RentedRoom THEN "Active"
                                     ELSE "Moved Out"
                                 END AS MoveStatus
-                            FROM Tenant t
-                            LEFT JOIN RentDuration rd ON t.TenantID = rd.TenantID
+                            FROM Rents r
+                            LEFT JOIN Tenant t ON t.TenantID = r.RentingTenant
                             ) """
 
 CTE_PaidAmount      = """ PaidAmount AS (

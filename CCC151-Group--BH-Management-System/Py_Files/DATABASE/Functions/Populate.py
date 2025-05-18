@@ -14,7 +14,7 @@ class Populate:
         self.selector = Select.Select()
         self.inserter = Insert.Insert()
     
-    def Populate_Table(self, table_name, table_widget, select_type, current_page = 1, search_column = None, search_key = None, sort_column = None, sort_order = None):
+    def Populate_Table(self, table_name, table_widget, select_type, current_page = 1, search_column = None, search_key = None, group = None, sort_column = None, sort_order = None):
         
         self.table_name = table_name
         self.table_widget = table_widget
@@ -24,11 +24,12 @@ class Populate:
         self.search_key = search_key
         self.sort_column = sort_column
         self.sort_order = sort_order
+        self.group_by = group
 
         # Fetch ALL data with query, store for faster loading in page change...
         self.columns = self.selector.SelectQuery(table_name, select_type).retCols()
         if not hasattr(self, "full_data"):
-            self.full_data = self.selector.SelectQuery(table_name, select_type, tag = search_column, key = search_key, sort_column = sort_column, sort_order = sort_order).retData()
+            self.full_data = self.selector.SelectQuery(table_name, select_type, tag = search_column, key = search_key, sort_column = sort_column, sort_order = sort_order, group = group).retData()
 
         # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
 

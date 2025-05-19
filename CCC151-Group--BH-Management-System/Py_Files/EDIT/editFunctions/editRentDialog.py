@@ -22,9 +22,13 @@ class editRentDialog(QDialog):
         self.roomChanged = False
         self.previousRoomNumber = None
 
-        self.fillRentStatusComboBox()
-        self.fillRentingTenantID()
-        self.fillRoomNumber()
+        try:
+            self.fillRentStatusComboBox()
+            self.fillRentingTenantID()
+            self.fillRoomNumber()
+        except Exception as e:
+            print("Error occurred while filling the combo boxes:", e)
+            QMessageBox.critical(self, "Warning", "You currently have no rent data to edit", QMessageBox.Ok)
 
         self.ui.UpdatepushButton.clicked.connect(self.updateRent)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
@@ -99,7 +103,7 @@ class editRentDialog(QDialog):
 
     def closeWindow(self):
         print("Closing the Edit Rent Dialog")
-        self.reject()
+        self.close()
 
     def fillRentStatusComboBox(self):
         self.ui.MoveStatuscomboBox.clear()

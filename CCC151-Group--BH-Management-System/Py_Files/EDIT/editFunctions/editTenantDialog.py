@@ -83,7 +83,7 @@ class editTenantDialog(QDialog):
             "Sex" : sex
         }
         
-        updater.updateTableData("Tenants", setParameters, "TenantID", tenantId)
+        updater.updateTableData("Tenant", setParameters, "TenantID", tenantId)
         
     def closeWindow(self):
         print("Closing the Edit Tenant Dialog")
@@ -119,7 +119,7 @@ class editTenantDialog(QDialog):
         selector = Select()
         
         if tenantId:
-            selector.SelectQuery(table="Tenants", select_type=None, spec_col=["Tenants.FirstName", "Tenants.MiddleName", "Tenants.LastName",
-                                                                              "Tenants.Email", "Tenants.PhoneNumber", "Tenants.RoomNumber"], tag="TenantID", key=tenantId)
+            selector.SelectQuery(table="Tenant", select_type=None, spec_col=["Tenant.FirstName", "Tenant.MiddleName", "Tenant.LastName",
+                                                                              "Tenant.Email", "Tenant.PhoneNumber", "Tenant.RoomNumber"], tag="TenantID", key=tenantId)
             resultBuilder = selector.retData()
             print(f"Query Result: {resultBuilder}")

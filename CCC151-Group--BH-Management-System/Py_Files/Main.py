@@ -176,7 +176,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         current_widget_index = self.stackedWidget.currentIndex()
 
         if current_widget_index == 0:
+            
+            selectedRow = self.TenantTable.currentRow()
+            columnCount = self.TenantTable.columnCount()
+            
+            if selectedRow < 0:
+                QMessageBox.warning(self, "No Selection", "Please select a tenant to edit.", QMessageBox.Ok)
+                return
+            
+            rowData = {
+                self.TenantTable.horizontalHeaderItem(col).text(): self.TenantTable.item(selectedRow, col).text()
+                for col in range(columnCount)
+            }
+            
+            tenantIdItem = rowData["TenantID"]
+            tenantEmailItem = rowData["Email"]
+            tenantFirstNameItem = rowData["FirstName"]
+            tenantMiddleNameItem = rowData["MiddleName"]
+            tenantLastNameItem = rowData["LastName"]
+            tenantSexItem = rowData["Sex"]
+            tenantPhoneNumberItem = rowData["PhoneNumber"]
+            tenantRoomNumberItem = rowData["RoomNumber"]
+
             dialog = editTenantDialog(self)
+            dialog.ui.TenantIDLineEdit.setText(tenantIdItem)
+            dialog.ui.FirstNameLineEdit.setText(tenantFirstNameItem)
+            dialog.ui.MiddleNameLineEdit.setText(tenantMiddleNameItem)
+            dialog.ui.LastNameLineEdit.setText(tenantLastNameItem)
+            dialog.ui.EmailLineEdit.setText(tenantEmailItem)
+            dialog.ui.PhoneNumberLineEdit.setText(tenantPhoneNumberItem)
+            dialog.ui.SexComboBox.setCurrentText(tenantSexItem)
+            dialog.ui.RoomNoComboBox.setCurrentText(tenantRoomNumberItem)
+
+            
             if dialog.exec() == QDialog.Accepted:
                 self.load_data(0)
 

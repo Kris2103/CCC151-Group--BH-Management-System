@@ -95,10 +95,10 @@ class editRentDialog(QDialog):
             return
 
         print(f"Updating rent details with ID: {rentingTenant}")
-        # prevRoomSex, prevRoomMax, prevRoomOcc = self.select.SelectQuery(table = "Room", spec_col= ["TenantSex", "MaximuCapacity", "NoOfOccupants"], filter = {"RoomNumber" : self.previousRoomNumber}, limit = 1).retData()
-        # if self.roomChanged:
-        #     print(f"Room was changed by user from {self.previousRoomNumber} to {roomNumber}")
-        #     newRoomSex, newRoomMax, newRoomOcc = self.select.SelectQuery(table = "Room", spec_col= ["TenantSex", "MaximuCapacity", "NoOfOccupants"], filter = {"RoomNumber" : roomNumber}, limit = 1).retData()
+        # prevRoomSex, prevRoomMax, prevRoomOcc = self.select.SelectQuery(table = "Room", spec_col= ["TenantSex", "MaximuCapacity", "NoOfOccupants"], filters = {"RoomNumber" : self.previousRoomNumber}, limit = 1).retData()
+        if self.roomChanged:
+            print(f"Room was changed by user from {self.previousRoomNumber} to {roomNumber}")
+            # newRoomSex, newRoomMax, newRoomOcc = self.select.SelectQuery(table = "Room", spec_col= ["TenantSex", "MaximuCapacity", "NoOfOccupants"], filters = {"RoomNumber" : roomNumber}, limit = 1).retData()
 
         # rentParameters = {
         #     "MoveInDate": moveInDate,

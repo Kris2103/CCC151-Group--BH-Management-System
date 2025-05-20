@@ -72,12 +72,13 @@ class Select(Function):
                             group = None,   limit       = None, sort_column = None, sort_order = None):
         
         self.params.clear()
-
+        # , CTEs = []
+        # self.CTE                = ("WITH " + ", ".join(CTEs)) if CTEs else ""
         self.basequery          = f"SELECT DISTINCT "
         self.table              = f" FROM {table} "
         self.conditions         = ""
-        self.limitquery         = (f" LIMIT {limit}") if limit else ("")
-        self.groupquery         = (f" GROUP BY {group}") if group else ("")
+        self.limitquery         = (f" LIMIT {limit}") if limit else ""
+        self.groupquery         = (f" GROUP BY {group}") if group else ""
         self.sortquery          = (f" ORDER BY {sort_column} {sort_order}") if sort_column and sort_order else ("")
 
         self.columns            = self.get_columns(table)
@@ -169,6 +170,19 @@ class Select(Function):
     def Conditions(self, select_type = None):
         match select_type:
             case "Tenant":
+                # CTEs = [CTE_RentDuration, CTE_PaidAmount, CTE_RemainingDue]
+                # self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
+                # self.columnquery        +=  """, RentDuration.Duration AS `Rent Duration in Months`, RentDuration.MoveStatus AS `Move Status`"""
+                # self.aliascolumn[           "`Rent Duration in Months`"]    = "RentDuration.Duration"
+                # self.columns.append(        "Rent Duration in Months")
+                # self.aliascolumn[           "`Move Status`"]    = "MoveStatus.MoveStatus"
+                # self.columns.append(        "Move Status")
+
+                # self.conditions +=          """ LEFT JOIN Tenant
+                #                                     ON Tenant.TenantID = Rents.RentingTenant
+                #                                 LEFT JOIN RentDuration 
+                #                                     ON RentDuration.TenantID = Tenant.TenantID
+                #                             """
                 pass
             case "Rents":
                 CTEs = [CTE_RentDuration]
@@ -185,20 +199,18 @@ class Select(Function):
                                                     ON RentDuration.TenantID = Tenant.TenantID
                                             """
             case "Pays":
-                CTEs = [CTE_RentDuration, CTE_PaidAmount]
+                CTEs = [CTE_RentDuration, CTE_PaidAmount, CTE_RemainingDue]
                 self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
-                self.columnquery +=         """, ((Room.Price * RentDuration.Duration) - PaidAmount.PaidAmount) AS RemainingDue """                
-                self.aliascolumn[           "RemainingDue"]                 = "((Room.Price * RentDuration.Duration) - PaidAmount.Paid)"
+                self.columnquery +=         """, RemainingDue.RemainingDue AS RemainingDue """                
+                self.aliascolumn[           "RemainingDue"]                 = "RemainingDue.RemainingDue"
                 self.columns.append(        "RemainingDue")
 
-                self.conditions +=          """ LEFT JOIN Tenant
-                                                    ON Tenant.TenantID = Pays.PayingTenant
-                                                LEFT JOIN Room 
-                                                    ON Room.RoomNumber = Tenant.RoomNumber
+                self.conditions +=          """ LEFT JOIN RemainingDue 
+                                                    ON RemainingDue.TenantID = COALESCE(Pays.PayingTenant, Tenant.TenantID)
                                                 LEFT JOIN RentDuration 
-                                                    ON RentDuration.TenantID = Tenant.TenantID
+                                                    ON RentDuration.TenantID = COALESCE(Pays.PayingTenant, Tenant.TenantID)
                                                 LEFT JOIN PaidAmount
-                                                    ON PaidAmount.TenantID = Tenant.TenantID
+                                                    ON PaidAmount.TenantID = COALESCE(Pays.PayingTenant, Tenant.TenantID)
                                             """ 
             case "Room":
                 pass

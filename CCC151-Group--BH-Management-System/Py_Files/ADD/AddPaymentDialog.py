@@ -40,16 +40,37 @@ class AddPaymentDialog(QDialog):
         # self.debounce_interval = 500 # milliseconds - adjust as needed
 
     def Update_RemainingDue(self):
-        # self.update_timer.stop()
         tenant_id = self.ui.PayingTenantIDComboBox.currentText()
+
+        if not tenant_id:
+            self.ui.RemainingDue.setText("0.00")
+            return
+
         try:
             price = float(self.ui.PaymentAmountLineEdit.text())
-        except ValueError as ve:
+        except ValueError:
             price = 0.0
-        remainingDue = float(self.select.SelectQuery("Tenant", select_type = "Pays", spec_col = ["RemainingDue.RemainingDue"], filters = {"TenantID" : tenant_id}).retData()[0][0])
-        remainingDue -= price
-        print(remainingDue)
-        self.ui.RemainingDue.setText(remainingDue)
+
+        try:
+            remaining_due_data = self.select.SelectQuery(
+                "Tenant",
+                select_type="Tenant",
+                spec_col=["RemainingDue.RemainingDue"],
+                filters={"TenantID": tenant_id}
+            ).retData()
+
+            if remaining_due_data:
+                remainingDue = float(remaining_due_data[0][0])
+            else:
+                remainingDue = 0.0
+
+            remainingDue -= price
+            self.ui.RemainingDue.setText(f"{remainingDue:.2f}")
+
+        except Exception as e:
+            print("Error fetching remaining due:", e)
+            self.ui.RemainingDue.setText("0.00")
+
 
     # def delayed_Update_RemainingDue(self):
     #     self.update_timer.start(self.debounce_interval)

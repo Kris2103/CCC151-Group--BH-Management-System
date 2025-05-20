@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
+from PyQt5.QtCore import QDate
 from ..EditRent import Ui_Dialog
 from datetime import datetime
 from DATABASE.Functions import Select, update, Insert, Populate
@@ -17,6 +18,11 @@ class editRentDialog(QDialog):
 
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+        self.ui.MoveInDateEdit.setCalendarPopup(True)
+        self.ui.MoveOutDateEdit.setCalendarPopup(True)
+        self.ui.MoveInDateEdit.setDate(QDate.currentDate())
+        self.ui.MoveOutDateEdit.setDate(QDate.currentDate().addMonths(1))
+
 
         self.select = Select.Select()
         self.insert = Insert.Insert()

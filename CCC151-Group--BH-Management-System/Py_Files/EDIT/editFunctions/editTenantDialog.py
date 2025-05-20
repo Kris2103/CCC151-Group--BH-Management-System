@@ -55,8 +55,6 @@ class editTenantDialog(QDialog):
             errors.append("Email is required.")
         if not phoneNumber:
             errors.append("Phone number is required.")
-        if not roomNo:
-            errors.append("Room number is required.")
         if not sex:
             errors.append("Sex is required.")
         if not tenantId:
@@ -84,6 +82,8 @@ class editTenantDialog(QDialog):
         }
         
         updater.updateTableData("Tenant", setParameters, "TenantID", tenantId)
+        QMessageBox.information(self, "Update Done", "Update is successful", QMessageBox.Ok)
+        self.accept()
         
     def closeWindow(self):
         print("Closing the Edit Tenant Dialog")

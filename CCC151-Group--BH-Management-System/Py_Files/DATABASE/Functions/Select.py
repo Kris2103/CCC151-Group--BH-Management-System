@@ -182,7 +182,9 @@ class Select(Function):
                 #                                 LEFT JOIN RentDuration 
                 #                                     ON RentDuration.TenantID = Tenant.TenantID
                 #                                 LEFT JOIN PaidAmount 
-                #                                     ON RentDuration.TenantID = Tenant.TenantID
+                #                                     ON PaidAmount.TenantID = Tenant.TenantID
+                #                                 LEFT JOIN RemainingDue
+                #                                     ON RemainingDue.TenantID = 
                 #                             """
                 pass
             case "Rents":
@@ -209,9 +211,9 @@ class Select(Function):
                 self.conditions +=          """ LEFT JOIN RemainingDue 
                                                     ON RemainingDue.TenantID = Pays.PayingTenant
                                                 LEFT JOIN RentDuration 
-                                                    ON RentDuration.TenantID = Pays.PayingTenant, Tenant.TenantID
+                                                    ON RentDuration.TenantID = Pays.PayingTenant
                                                 LEFT JOIN PaidAmount
-                                                    ON PaidAmount.TenantID = Pays.PayingTenant, Tenant.TenantID
+                                                    ON PaidAmount.TenantID = Pays.PayingTenant
                                             """ 
             case "Room":
                 pass

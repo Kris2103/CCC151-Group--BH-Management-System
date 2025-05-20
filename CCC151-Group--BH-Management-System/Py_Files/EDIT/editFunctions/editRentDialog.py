@@ -1,8 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
 from ..EditRent import Ui_Dialog
 from datetime import datetime
-from DATABASE.Functions.update import update
-from DATABASE.Functions.Select import Select
+from DATABASE.Functions import Select, update, Insert, Populate
 from dateutil.relativedelta import relativedelta
 
 
@@ -18,6 +17,11 @@ class editRentDialog(QDialog):
 
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+
+        self.select = Select.Select()
+        self.insert = Insert.Insert()
+        self.updater = update.update()
+        self.populate = Populate.Populate(self)
 
         self.roomChanged = False
         self.previousRoomNumber = None
@@ -85,19 +89,30 @@ class editRentDialog(QDialog):
             return
 
         print(f"Updating rent details with ID: {rentingTenant}")
+        prevRoomSex, prevRoomMax, prevRoomOcc = self.select.SelectQuery(table = "Room", spec_col= ["TenantSex", "MaximuCapacity", "NoOfOccupants"], filter = {"RoomNumber" : self.previousRoomNumber}, limit = 1).retData()
         if self.roomChanged:
             print(f"Room was changed by user from {self.previousRoomNumber} to {roomNumber}")
+            newRoomSex, newRoomMax, newRoomOcc = self.select.SelectQuery(table = "Room", spec_col= ["TenantSex", "MaximuCapacity", "NoOfOccupants"], filter = {"RoomNumber" : roomNumber}, limit = 1).retData()
 
-        updater = update()
-
-        setParameters = {
+        rentParameters = {
             "MoveInDate": moveInDate,
             "MoveOutDate": moveOutDate,
-            "RentedRoom": roomNumber,
-            "MoveStatus": status
+            "RentedRoom": roomNumber
         }
+        if status == "Active":
+            tenantParameters = {
+                "RoomNumber" : roomNumber
+            }
+        elif status == "Moved Out":
+            tenantParameters = {
+                "RoomNumber" : None
+            }
+            roomParameters = [
+                
+            ]
 
-        updater.updateTableData("Rents", setParameters, "RentingTenant", rentingTenant)
+        self.updater.updateTableData("Rents", rentParameters, "RentingTenant", rentingTenant)
+        self.updater.updateTableData("Tenant", tenantParameters, "TenantID", rentingTenant)
         QMessageBox.information(self, "Update Successful", "Rent information updated successfully.", QMessageBox.Ok)
         self.accept()
 
@@ -112,9 +127,8 @@ class editRentDialog(QDialog):
 
     def fillRentingTenantID(self):
         self.ui.RentingTenantIDComboBox.clear()
-        selector = Select()
-        selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentingTenant"])
-        resultBuilder = selector.retDict()
+        self.select.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentingTenant"])
+        resultBuilder = self.select.retDict()
         print(f"Query Result: {resultBuilder}")
 
         for row in resultBuilder:
@@ -123,9 +137,8 @@ class editRentDialog(QDialog):
 
     def fillRoomNumber(self):
         self.ui.RoomNumberComboBox.clear()
-        selector = Select()
-        selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom", "Rents.MoveOutDate"])
-        resultBuilder = selector.retDict()
+        self.select.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom", "Rents.MoveOutDate"])
+        resultBuilder = self.select.retDict()
         #print(f"Query Result: {resultBuilder}")
 
         for row in resultBuilder:
@@ -136,15 +149,14 @@ class editRentDialog(QDialog):
         tenantID = self.ui.RentingTenantIDComboBox.currentText()
 
         if tenantID:
-            selector = Select()
-            selector.SelectQuery(
+            self.select.SelectQuery(
                 table="Rents",
                 select_type="Rents",
                 spec_col=["Rents.RentedRoom", "Rents.MoveInDate", "Rents.MoveOutDate", "RentDuration.MoveStatus"],
                 tag="RentingTenant",
                 key=tenantID
             )
-            resultBuilder = selector.retData()
+            resultBuilder = self.select.retData()
             print(f"\n\nMatch Query Result: {resultBuilder}")
 
             if resultBuilder:
@@ -174,14 +186,11 @@ class editRentDialog(QDialog):
             print(f"Room changed by user from {self.previousRoomNumber} to {newValue}")
             self.roomChanged = True
             
-            updater = update()
-            selector = Select()
-            
-            selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.NoOfOccupants"], tag="RoomNumber", key=newValue)
+            self.select.SelectQuery(table="Room", select_type=None, spec_col=["Room.NoOfOccupants"], tag="RoomNumber", key=newValue)
             
             #decrement previous room's occupant count
-            updater.updateTableData("Room", {"NoOfOccupants": 0}, "RoomNumber", self.previousRoomNumber)
+            self.updater.updateTableData("Room", {"NoOfOccupants": 0}, "RoomNumber", self.previousRoomNumber)
             #increment new room's occupant count
-            updater.updateTableData("Room", {"NoOfOccupants": 1}, "RoomNumber", newValue)
+            self.updater.updateTableData("Room", {"NoOfOccupants": 1}, "RoomNumber", newValue)
         else:
             self.roomChanged = False

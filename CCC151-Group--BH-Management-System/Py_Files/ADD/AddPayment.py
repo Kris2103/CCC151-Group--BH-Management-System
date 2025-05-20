@@ -121,19 +121,28 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_14.setObjectName("label_14")
-        self.label_10 = QtWidgets.QLabel(self.frame_2)
-        self.label_10.setGeometry(QtCore.QRect(90, 190, 111, 16))
-        self.label_10.setStyleSheet("background: none;\n"
+       
+        # =================
+        # REMAINING DUE
+        self.RemainingDueLabel = QtWidgets.QLabel(self.frame_2)
+        self.RemainingDueLabel.setGeometry(QtCore.QRect(90, 190, 111, 16))
+        self.RemainingDueLabel.setStyleSheet("background: none;\n"
 "    border: none;\n"
 "    color: #800000;\n"
 "    font-family: \'Cal Sans\', sans-serif;\n"
 "    font-weight: 700;\n"
 "    font-style: normal;\n"
 "    font-size: 14px;")
-        self.label_10.setObjectName("label_10")
-        self.PaymentStatusComboBox = QtWidgets.QComboBox(self.frame_2)
-        self.PaymentStatusComboBox.setGeometry(QtCore.QRect(90, 210, 111, 22))
-        self.PaymentStatusComboBox.setObjectName("PaymentStatusComboBox")
+        self.RemainingDueLabel.setObjectName("label_10")
+
+        self.RemainingDue = QtWidgets.QLineEdit(self.frame_2)
+        self.RemainingDue.setGeometry(QtCore.QRect(90, 210, 111, 22))
+        self.RemainingDue.setObjectName("PaymentAmountLineEdit")
+        self.RemainingDue.setDisabled(True)
+        # REMAINING DUE
+        # ==================
+       
+       
         self.RoomNumberComboBox = QtWidgets.QComboBox(self.frame_2)
         self.RoomNumberComboBox.setGeometry(QtCore.QRect(20, 110, 111, 22))
         self.RoomNumberComboBox.setObjectName("RoomNumberComboBox")
@@ -154,4 +163,5 @@ class Ui_Dialog(object):
         self.AddpushButton.setText(_translate("Dialog", "Add"))
         self.CancelpushButton.setText(_translate("Dialog", "Cancel"))
         self.label_14.setText(_translate("Dialog", "Payment Date"))
-        self.label_10.setText(_translate("Dialog", "Payment Status"))
+        self.RemainingDueLabel.setText(_translate("Dialog", "Remaining Due"))
+        self.RemainingDue.setText(_translate("Dialog", ""))

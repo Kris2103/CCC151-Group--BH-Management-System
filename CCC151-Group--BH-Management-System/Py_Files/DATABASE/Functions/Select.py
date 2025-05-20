@@ -178,9 +178,10 @@ class Select(Function):
                 # self.aliascolumn[           "`Move Status`"]    = "MoveStatus.MoveStatus"
                 # self.columns.append(        "Move Status")
 
-                # self.conditions +=          """ LEFT JOIN Tenant
-                #                                     ON Tenant.TenantID = Rents.RentingTenant
+                # self.conditions +=          """ 
                 #                                 LEFT JOIN RentDuration 
+                #                                     ON RentDuration.TenantID = Tenant.TenantID
+                #                                 LEFT JOIN PaidAmount 
                 #                                     ON RentDuration.TenantID = Tenant.TenantID
                 #                             """
                 pass
@@ -206,11 +207,11 @@ class Select(Function):
                 self.columns.append(        "RemainingDue")
 
                 self.conditions +=          """ LEFT JOIN RemainingDue 
-                                                    ON RemainingDue.TenantID = COALESCE(Pays.PayingTenant, Tenant.TenantID)
+                                                    ON RemainingDue.TenantID = Pays.PayingTenant
                                                 LEFT JOIN RentDuration 
-                                                    ON RentDuration.TenantID = COALESCE(Pays.PayingTenant, Tenant.TenantID)
+                                                    ON RentDuration.TenantID = Pays.PayingTenant, Tenant.TenantID
                                                 LEFT JOIN PaidAmount
-                                                    ON PaidAmount.TenantID = COALESCE(Pays.PayingTenant, Tenant.TenantID)
+                                                    ON PaidAmount.TenantID = Pays.PayingTenant, Tenant.TenantID
                                             """ 
             case "Room":
                 pass

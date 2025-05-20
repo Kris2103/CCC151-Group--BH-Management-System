@@ -28,24 +28,32 @@ class AddPaymentDialog(QDialog):
         self.ui.PayingTenantIDComboBox.currentTextChanged.connect(lambda: self.populate.sync_room_from_tenant_id(self.ui.RoomNumberComboBox, self.ui.PayingTenantIDComboBox))
         # self.ui.PaymentAmountLineEdit.textChanged.connect(self.delayed_update_payment_status) # Use delayed function
         # self.ui.PaymentStatusComboBox.currentTextChanged.connect(self.delayed_update_payment_status) # Use delayed function
-        self.ui.RemainingDueLabel.currentTextChanged.connect(lambda: self.delayed_Update_RemainingDue())
+        self.ui.PaymentAmountLineEdit.textChanged.connect(lambda: self.Update_RemainingDue())
+        self.ui.PayingTenantIDComboBox.currentTextChanged.connect(lambda: self.Update_RemainingDue())
 
         self.ui.RoomNumberComboBox.setCurrentIndex(-1)
         self.ui.PayingTenantIDComboBox.setCurrentIndex(-1)
 
-        self.update_timer = QTimer(self)
-        self.update_timer.timeout.connect(self.update_payment_status)
-        self.debounce_interval = 500 # milliseconds - adjust as needed
+        # self.update_timer = QTimer(self)
+        # self.update_timer.setSingleShot(True)
+        # self.update_timer.timeout.connect(self.Update_RemainingDue)
+        # self.debounce_interval = 500 # milliseconds - adjust as needed
 
     def Update_RemainingDue(self):
+        # self.update_timer.stop()
         tenant_id = self.ui.PayingTenantIDComboBox.currentText()
-        remainingDue = str(self.select.SelectQuery("Pays", select_type = "Pays", spec_col = ["RemainingDue"], filter = {"PayingTenant" : tenant_id}).retData())
-
+        try:
+            price = float(self.ui.PaymentAmountLineEdit.text())
+        except ValueError as ve:
+            price = 0.0
+        remainingDue = float(self.select.SelectQuery("Tenant", select_type = "Pays", spec_col = ["RemainingDue.RemainingDue"], filters = {"TenantID" : tenant_id}).retData()[0][0])
+        remainingDue -= price
+        print(remainingDue)
         self.ui.RemainingDue.setText(remainingDue)
 
-    def delayed_Update_RemainingDue(self):
-        self.update_timer.start(self.debounce_interval)
-        self.Update_RemainingDue()
+    # def delayed_Update_RemainingDue(self):
+    #     self.update_timer.start(self.debounce_interval)
+        # self.Update_RemainingDue()
 
     # def populate_room_combobox(self):
     #     self.ui.RoomNumberComboBox.clear()

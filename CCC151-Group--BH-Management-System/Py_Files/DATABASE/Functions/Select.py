@@ -73,7 +73,7 @@ class Select(Function):
         
         self.params.clear()
 
-        self.basequery          = f"SELECT "
+        self.basequery          = f"SELECT DISTINCT "
         self.table              = f" FROM {table} "
         self.conditions         = ""
         self.limitquery         = (f" LIMIT {limit}") if limit else ("")
@@ -212,7 +212,7 @@ CTE_RentDuration    = """ RentDuration AS (
                                 r.RentedRoom AS RoomNumber,
                                 TIMESTAMPDIFF(MONTH, r.MoveInDate, r.MoveOutDate) AS Duration,
                                 CASE
-                                    WHEN r.MoveOutDate > CURRENT_DATE() AND t.RoomNumber = r.RentedRoom THEN "Active"
+                                    WHEN (CURRENT_DATE() BETWEEN r.MoveInDate AND r.MoveOutDate) AND t.RoomNumber = r.RentedRoom THEN "Active"
                                     ELSE "Moved Out"
                                 END AS MoveStatus
                             FROM Rents r
@@ -224,6 +224,8 @@ CTE_PaidAmount      = """ PaidAmount AS (
                                 p.PayingTenant AS TenantID, 
                                 SUM(p.PaymentAmount) AS PaidAmount
                             FROM Pays p
+                            LEFT JOIN Rents r ON r.RentingTenant = p.PayingTenant
+                                            AND p.PaymentDate BETWEEN r.MoveInDate AND r.MoveOutDate
                             GROUP BY p.PayingTenant
                             ) """
 
@@ -244,13 +246,14 @@ CTE_PaymentStatus   = """ PaymentStatus AS (
                                     WHEN COALESCE(pa.PaidAmount, 0) < COALESCE(red.RemainingDue, 0) AND CURRENT_DATE() > rd.MoveOutDate THEN "Overdue"
                                     WHEN COALESCE(pa.PaidAmount, 0) >= COALESCE(red.RemainingDue, 0) THEN "Paid"
                                     ELSE "Pending"
-                                END AS PaymentStatus
+                                END AS PaymentStatus,
+                                COALESCE(red.RemainingDue, 0) / COALESCE(rd.Duration, 0) AS UnpaidMonths
                             FROM Tenant t
                             LEFT JOIN RentDuration rd ON t.TenantID = rd.TenantID
                             LEFT JOIN RemainingDue red ON t.TenantID = red.TenantID
                             LEFT JOIN PaidAmount pa ON t.TenantID = pa.TenantID
                             ) """
-    
+
 # if __name__ == "__main__":
 #     selector = Select()
         

@@ -61,14 +61,17 @@ class AddRentDialog(QDialog):
                                             key        = room_number, 
                                             limit      = 1).retData()
         try:
-            renting_tenant, existing_rent_status, existing_rented_room = self.select.SelectQuery(
+            existing_rent_id, renting_tenant, existing_rent_status, existing_rented_room = self.select.SelectQuery(
                 table="Rents",
-                spec_col=["Rents.RentingTenant, RentDuration.MoveStatus", "Rents.RentedRoom"],
+                spec_col=["Rents.RentID", "Rents.RentingTenant", "RentDuration.MoveStatus", "Rents.RentedRoom"],
                 select_type="Rents",
                 filters={"RentingTenant": tenant_id},
+                sort_column="RentID",
+                sort_order="DESC",
                 limit=1
-            ).retData()
+            ).retData()[0]
 
+            print(existing_rent_id)
             print(renting_tenant)
             print(existing_rent_status)
             print(existing_rented_room)
@@ -82,6 +85,8 @@ class AddRentDialog(QDialog):
 
         except IndexError as ie:
             print("No active contract existing, Rent is valid")
+        except Exception as e:
+            print(f"No information found...Tenant is free to undergo a new contract. Error: {e}")
 
         if room_data:
             maximum_capacity, current_occupants, room_tsex = room_data[0]

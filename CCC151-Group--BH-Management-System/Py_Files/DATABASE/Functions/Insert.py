@@ -51,12 +51,12 @@ class Insert(Function):
         match table:
             case "Tenant":
                 excludables.append("RoomNumber")
-            case "Rent":
+            case "Rents":
                 excludables.append("RentID")
-            case "Pay":
+            case "Pays":
                 excludables.append("PayID")
             case "Room":
-                pass
+                excludables.append("NoOfOccupants")
             case "EmergencyContact":
                 pass
             case _:

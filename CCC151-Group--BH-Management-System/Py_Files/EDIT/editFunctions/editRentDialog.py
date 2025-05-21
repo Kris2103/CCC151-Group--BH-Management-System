@@ -99,14 +99,25 @@ class editRentDialog(QDialog):
             tenantParameters = {
                 "RoomNumber" : roomNumber
             }
-        elif status == "Moved Out":
+        
+        if status == "Moved Out":
             tenantParameters = {
                 "RoomNumber" : None
             }
-            roomParameters = [
+            
+            if self.previousRoomNumber:
+                self.select.SelectQuery(table="Room",
+                                        spec_col=["Room.NoOfOccupants"],
+                                        filters={"RoomNumber": self.previousRoomNumber},
+                                        limit=1)
                 
-            ]
-
+                resultBuilder = self.select.retData()
+                
+                if resultBuilder:
+                    currentOccupants = int(resultBuilder[0][0])
+                    updatedOccupants = max(0, currentOccupants - 1)
+                    self.updater.updateTableData("Room", {"NoOfOccupants": updatedOccupants}, "RoomNumber", self.previousRoomNumber)
+              
         self.updater.updateTableData("Rents", rentParameters, "RentingTenant", rentingTenant)
         self.updater.updateTableData("Tenant", tenantParameters, "TenantID", rentingTenant)
         QMessageBox.information(self, "Update Successful", "Rent information updated successfully.", QMessageBox.Ok)

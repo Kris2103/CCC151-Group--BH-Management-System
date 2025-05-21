@@ -58,12 +58,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.RefreshpushButton.clicked.connect(lambda: self.load_data(self.index))
         self.SearchpushButton.clicked.connect(lambda: self.perform_search())
 
-        # table_widget.horizontalHeader().sectionClicked.connect(your_function)
-
-        # def your_function(index):
-        #     print(f"Header {index} clicked: {table_widget.horizontalHeaderItem(index).text()}")
-
-
         self.switch_tab(0)
 
     def switch_tab(self, index):

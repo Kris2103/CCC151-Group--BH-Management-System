@@ -170,23 +170,46 @@ class Select(Function):
     def Conditions(self, select_type = None):
         match select_type:
             case "Tenant":
-                # CTEs = [CTE_RentDuration, CTE_PaidAmount, CTE_RemainingDue]
-                # self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
-                # self.columnquery        +=  """, RentDuration.Duration AS `Rent Duration in Months`, RentDuration.MoveStatus AS `Move Status`"""
-                # self.aliascolumn[           "`Rent Duration in Months`"]    = "RentDuration.Duration"
-                # self.columns.append(        "Rent Duration in Months")
-                # self.aliascolumn[           "`Move Status`"]    = "MoveStatus.MoveStatus"
-                # self.columns.append(        "Move Status")
+                CTEs = [CTE_RentDuration, CTE_PaidAmount, CTE_RemainingDue, CTE_PaymentStatus]
+                self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
+                self.columnquery        +=  """, RentDuration.Duration AS `Rent Duration in Months`, 
+                                                RentDuration.MoveStatus AS `Move Status`, 
+                                                PaymentStatus.PaymentStatus AS `Payment Status`, 
+                                                PaymentStatus.UnpaidMonths AS `Unpaid Months`,
+                                                RemainingDue.RemainingDue AS `Remaining Due`,
+                                                PaidAmount.PaidAmount AS `Paid Amount`,
+                                                EmergencyContact.PhoneNumber AS `Emergency Contact` """
+                self.aliascolumn[           "`Rent Duration in Months`"]    = "RentDuration.Duration"
+                self.columns.append(        "Rent Duration in Months")
+                self.aliascolumn[           "`Move Status`"]    = "RentDuration.MoveStatus"
+                self.columns.append(        "Move Status")
+                self.aliascolumn[           "`Payment Status`"]    = "PaymentStatus.PaymentStatus"
+                self.columns.append(        "Payment Status")
+                self.aliascolumn[           "`Unpaid Months`"]    = "PaymentStatus.UnpaidMonths"
+                self.columns.append(        "Unpaid Months")
+                self.aliascolumn[           "`Remaining Due`"]    = "RemainingDue.RemainingDue"
+                self.columns.append(        "Remaining Due")
+                self.aliascolumn[           "`Paid Amount`"]    = "PaidAmount.PaidAmount"
+                self.columns.append(        "Paid Amount")
+                self.aliascolumn[           "`Emergency Contact`"]    = "EmergencyContact.PhoneNumber"
+                self.columns.append(        "Emergency Contact")
 
-                # self.conditions +=          """ 
-                #                                 LEFT JOIN RentDuration 
-                #                                     ON RentDuration.TenantID = Tenant.TenantID
-                #                                 LEFT JOIN PaidAmount 
-                #                                     ON PaidAmount.TenantID = Tenant.TenantID
-                #                                 LEFT JOIN RemainingDue
-                #                                     ON RemainingDue.TenantID = 
-                #                             """
-                pass
+                for col in self.columns:
+                    print(col)
+
+                self.conditions +=          """ 
+                                                LEFT JOIN RentDuration 
+                                                    ON RentDuration.TenantID = Tenant.TenantID
+                                                LEFT JOIN PaidAmount 
+                                                    ON PaidAmount.TenantID = Tenant.TenantID
+                                                LEFT JOIN RemainingDue
+                                                    ON RemainingDue.TenantID = Tenant.TenantID
+                                                LEFT JOIN PaymentStatus
+                                                    ON PaymentStatus.TenantID = Tenant.TenantID
+                                                LEFT JOIN EmergencyContact
+                                                    ON EmergencyContact.EMTenantID = Tenant.TenantID 
+                                            """
+                # pass
             case "Rents":
                 CTEs = [CTE_RentDuration]
                 self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
@@ -237,7 +260,8 @@ CTE_RentDuration    = """ RentDuration AS (
 CTE_PaidAmount      = """ PaidAmount AS (
                             SELECT 
                                 p.PayingTenant AS TenantID, 
-                                SUM(p.PaymentAmount) AS PaidAmount
+                                SUM(p.PaymentAmount) AS PaidAmount,
+                                MAX(p.PaymentDate) AS LastPaymentDate
                             FROM Pays p
                             LEFT JOIN Rents r ON r.RentingTenant = p.PayingTenant
                                             AND p.PaymentDate BETWEEN r.MoveInDate AND r.MoveOutDate
@@ -247,6 +271,8 @@ CTE_PaidAmount      = """ PaidAmount AS (
 CTE_RemainingDue    = """ RemainingDue AS (
                             SELECT 
                                 rd.TenantID AS TenantID,
+                                r.Price as Price,
+                                COALESCE(r.Price, 0) * COALESCE(rd.Duration, 0) AS TotalDue,
                                 ((COALESCE(r.Price, 0) * COALESCE(rd.Duration, 0)) - COALESCE(pa.PaidAmount, 0)) AS RemainingDue
                             FROM RentDuration rd
                             LEFT JOIN PaidAmount pa ON rd.TenantID = pa.TenantID
@@ -257,12 +283,18 @@ CTE_PaymentStatus   = """ PaymentStatus AS (
                             SELECT 
                                 t.TenantID AS TenantID,
                                 CASE
-                                    WHEN pa.PaidAmount IS NULL THEN "Pending"
-                                    WHEN COALESCE(pa.PaidAmount, 0) < COALESCE(red.RemainingDue, 0) AND CURRENT_DATE() > rd.MoveOutDate THEN "Overdue"
-                                    WHEN COALESCE(pa.PaidAmount, 0) >= COALESCE(red.RemainingDue, 0) THEN "Paid"
+                                    WHEN pa.PaidAmount IS NULL AND red.RemainingDue IS NULL THEN "No Payments"
+                                    WHEN COALESCE(red.RemainingDue, 0) <= 0 THEN "Paid"
+                                    WHEN COALESCE(red.RemainingDue, 0) > 0 AND CURRENT_DATE() > rd.MoveOutDate THEN "Overdue"
+                                    WHEN COALESCE(pa.PaidAmount, 0) < (COALESCE(red.Price, 0) * TIMESTAMPDIFF(
+                                                                                                                MONTH, 
+                                                                                                                rd.MoveInDate, 
+                                                                                                                CURRENT_DATE()
+                                                                                                            ) 
+                                                                    )THEN "Overdue"
                                     ELSE "Pending"
                                 END AS PaymentStatus,
-                                COALESCE(red.RemainingDue, 0) / COALESCE(rd.Duration, 0) AS UnpaidMonths
+                                COALESCE(rd.Duration, 0) - FLOOR(COALESCE(pa.PaidAmount, 0) / COALESCE(red.Price, 1)) AS UnpaidMonths                            
                             FROM Tenant t
                             LEFT JOIN RentDuration rd ON t.TenantID = rd.TenantID
                             LEFT JOIN RemainingDue red ON t.TenantID = red.TenantID

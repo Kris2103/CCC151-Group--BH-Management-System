@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox, QCompleter
+from PyQt5.QtCore import QDate
 from ..EditRent import Ui_Dialog
 from datetime import datetime
 from DATABASE.Functions import Select, update, Insert, Populate
@@ -17,6 +18,11 @@ class editRentDialog(QDialog):
 
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+        self.ui.MoveInDateEdit.setCalendarPopup(True)
+        self.ui.MoveOutDateEdit.setCalendarPopup(True)
+        self.ui.MoveInDateEdit.setDate(QDate.currentDate())
+        self.ui.MoveOutDateEdit.setDate(QDate.currentDate().addMonths(1))
+
 
         self.select = Select.Select()
         self.insert = Insert.Insert()
@@ -26,9 +32,13 @@ class editRentDialog(QDialog):
         self.roomChanged = False
         self.previousRoomNumber = None
 
-        self.fillRentStatusComboBox()
-        self.fillRentingTenantID()
-        self.fillRoomNumber()
+        try:
+            self.fillRentStatusComboBox()
+            self.fillRentingTenantID()
+            self.fillRoomNumber()
+        except Exception as e:
+            print("Error occurred while filling the combo boxes:", e)
+            QMessageBox.critical(self, "Warning", "You currently have no rent data to edit", QMessageBox.Ok)
 
         self.ui.UpdatepushButton.clicked.connect(self.updateRent)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
@@ -85,36 +95,47 @@ class editRentDialog(QDialog):
             return
 
         print(f"Updating rent details with ID: {rentingTenant}")
-        # prevRoomSex, prevRoomMax, prevRoomOcc = self.select.SelectQuery(table = "Room", spec_col= ["TenantSex", "MaximuCapacity", "NoOfOccupants"], filters = {"RoomNumber" : self.previousRoomNumber}, limit = 1).retData()
-        if self.roomChanged:
-            print(f"Room was changed by user from {self.previousRoomNumber} to {roomNumber}")
-            # newRoomSex, newRoomMax, newRoomOcc = self.select.SelectQuery(table = "Room", spec_col= ["TenantSex", "MaximuCapacity", "NoOfOccupants"], filters = {"RoomNumber" : roomNumber}, limit = 1).retData()
+        # prevRoomSex, prevRoomMax, prevRoomOcc = self.select.SelectQuery(table = "Room", spec_col= ["TenantSex", "MaximuCapacity", "NoOfOccupants"], filter = {"RoomNumber" : self.previousRoomNumber}, limit = 1).retData()
+        # if self.roomChanged:
+        #     print(f"Room was changed by user from {self.previousRoomNumber} to {roomNumber}")
+        #     newRoomSex, newRoomMax, newRoomOcc = self.select.SelectQuery(table = "Room", spec_col= ["TenantSex", "MaximuCapacity", "NoOfOccupants"], filter = {"RoomNumber" : roomNumber}, limit = 1).retData()
 
-        rentParameters = {
-            "MoveInDate": moveInDate,
-            "MoveOutDate": moveOutDate,
-            "RentedRoom": roomNumber
-        }
-        if status == "Active":
-            tenantParameters = {
-                "RoomNumber" : roomNumber
-            }
-        elif status == "Moved Out":
-            tenantParameters = {
-                "RoomNumber" : None
-            }
-            roomParameters = [
+        # rentParameters = {
+        #     "MoveInDate": moveInDate,
+        #     "MoveOutDate": moveOutDate,
+        #     "RentedRoom": roomNumber
+        # }
+        # if status == "Active":
+        #     tenantParameters = {
+        #         "RoomNumber" : roomNumber
+        #     }
+        
+        # if status == "Moved Out":
+        #     tenantParameters = {
+        #         "RoomNumber" : None
+        #     }
+            
+        #     if self.previousRoomNumber:
+        #         self.select.SelectQuery(table="Room",
+        #                                 spec_col=["Room.NoOfOccupants"],
+        #                                 filters={"RoomNumber": self.previousRoomNumber},
+        #                                 limit=1)
                 
-            ]
-
-        self.updater.updateTableData("Rents", rentParameters, "RentingTenant", rentingTenant)
-        self.updater.updateTableData("Tenant", tenantParameters, "TenantID", rentingTenant)
+        #         resultBuilder = self.select.retData()
+                
+        #         if resultBuilder:
+        #             currentOccupants = int(resultBuilder[0][0])
+        #             updatedOccupants = max(0, currentOccupants - 1)
+        #             self.updater.updateTableData("Room", {"NoOfOccupants": updatedOccupants}, "RoomNumber", self.previousRoomNumber)
+              
+        # self.updater.updateTableData("Rents", rentParameters, "RentingTenant", rentingTenant)
+        # self.updater.updateTableData("Tenant", tenantParameters, "TenantID", rentingTenant)
         QMessageBox.information(self, "Update Successful", "Rent information updated successfully.", QMessageBox.Ok)
         self.accept()
 
     def closeWindow(self):
         print("Closing the Edit Rent Dialog")
-        self.reject()
+        self.close()
 
     def fillRentStatusComboBox(self):
         self.ui.MoveStatuscomboBox.clear()
@@ -133,7 +154,7 @@ class editRentDialog(QDialog):
 
     def fillRoomNumber(self):
         self.ui.RoomNumberComboBox.clear()
-        self.select.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom", "Rents.MoveOutDate"])
+        self.select.SelectQuery(table="Room", select_type=None, spec_col=["Room.RoomNumber"])
         resultBuilder = self.select.retDict()
         #print(f"Query Result: {resultBuilder}")
 

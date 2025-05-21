@@ -18,19 +18,16 @@ class editRoomDialog(QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         self.fillSexComboBox()
-        self.fillRoomNumber()
-        self.ui.RoomNumberComboBox.currentTextChanged.connect(self.assignCurrentNumberOfOccupants)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
         self.ui.UpdatepushButton.clicked.connect(self.updateRoom)
 
         
     def updateRoom(self):
-        roomNumber = self.ui.RoomNumberComboBox.currentText()
+        roomNumber = self.ui.RoomNumberLineEdit.text()
         
         price = self.ui.PriceLineEdit.text()
         tenantSex = self.ui.TenantSexComboBox.currentData()
         maximumAcceptedOccupants = self.ui.MaxNoOccupantsLineEdit.text()
-        numberOfOccupants = self.ui.NoOfOccupantsComboBox.currentText()
         
         errors = []
         
@@ -40,8 +37,6 @@ class editRoomDialog(QDialog):
             errors.append("Please set room price.")
         if not maximumAcceptedOccupants:
             errors.append("Please assign the maximum number of occupants")
-        if not numberOfOccupants:
-            errors.append("Please assign the number of occupants")
         
         if errors:
             errorMessage = "\n".join(errors)
@@ -58,7 +53,6 @@ class editRoomDialog(QDialog):
             "Price" : price,
             "TenantSex" : tenantSex,
             "MaximumCapacity" : maximumAcceptedOccupants,
-            "NoOfOccupants" : numberOfOccupants
         }
         
         updater.updateTableData("Room", setParameters, "RoomNumber", roomNumber)
@@ -77,63 +71,63 @@ class editRoomDialog(QDialog):
         
         self.ui.TenantSexComboBox.setCurrentIndex(-1)
             
-    def assignCurrentNumberOfOccupants(self):
-        selector = Select()
-        roomNumber = self.ui.RoomNumberComboBox.currentText()
+    # def assignCurrentNumberOfOccupants(self):
+    #     selector = Select()
+    #     roomNumber = self.ui.RoomNumberComboBox.currentText()
         
-        if roomNumber:
-            print(roomNumber)
-            selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.MaximumCapacity"], tag="RoomNumber", key=roomNumber)
-            resultBuilder = selector.retData()
+    #     if roomNumber:
+    #         print(roomNumber)
+    #         selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.MaximumCapacity"], tag="RoomNumber", key=roomNumber)
+    #         resultBuilder = selector.retData()
             
-            selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.NoOfOccupants", "Room.MaximumCapacity", "Room.TenantSex", "Room.Price"], tag="RoomNumber", key=roomNumber)
-            currentOccupants = selector.retData()
+    #         selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.NoOfOccupants", "Room.MaximumCapacity", "Room.TenantSex", "Room.Price"], tag="RoomNumber", key=roomNumber)
+    #         currentOccupants = selector.retData()
             
-            print(f"Current Occupants: {currentOccupants}")
+    #         print(f"Current Occupants: {currentOccupants}")
             
-            if len(resultBuilder) != 1:
-                resultBuilder = 0
-                self.ui.PriceLineEdit.setText("")
-                self.ui.MaxNoOccupantsLineEdit.setText("")
-                self.ui.TenantSexComboBox.setCurrentIndex(-1)
-            else:
-                resultBuilder = resultBuilder[0][0]
-                numberOfOccupants = currentOccupants[0][0]
-                maximumCapacity = currentOccupants[0][1]
-                tenantSex = currentOccupants[0][2]
-                price = currentOccupants[0][3]
+    #         if len(resultBuilder) != 1:
+    #             resultBuilder = 0
+    #             self.ui.PriceLineEdit.setText("")
+    #             self.ui.MaxNoOccupantsLineEdit.setText("")
+    #             self.ui.TenantSexComboBox.setCurrentIndex(-1)
+    #         else:
+    #             resultBuilder = resultBuilder[0][0]
+    #             numberOfOccupants = currentOccupants[0][0]
+    #             maximumCapacity = currentOccupants[0][1]
+    #             tenantSex = currentOccupants[0][2]
+    #             price = currentOccupants[0][3]
         
-            print(f"Query Result: {resultBuilder}")
-            self.ui.NoOfOccupantsComboBox.clear()
+    #         print(f"Query Result: {resultBuilder}")
+    #         self.ui.NoOfOccupantsComboBox.clear()
 
             
-            if resultBuilder is not 0:
-                for i in range(resultBuilder + 1):
-                    self.ui.NoOfOccupantsComboBox.addItem(str(i))
+    #         if resultBuilder is not 0:
+    #             for i in range(resultBuilder + 1):
+    #                 self.ui.NoOfOccupantsComboBox.addItem(str(i))
 
-                self.ui.PriceLineEdit.setText(str(price))
-                self.ui.TenantSexComboBox.setCurrentText(tenantSex)
-                self.ui.MaxNoOccupantsLineEdit.setText(str(maximumCapacity))
-                self.ui.NoOfOccupantsComboBox.setCurrentText(str(numberOfOccupants))
+    #             self.ui.PriceLineEdit.setText(str(price))
+    #             self.ui.TenantSexComboBox.setCurrentText(tenantSex)
+    #             self.ui.MaxNoOccupantsLineEdit.setText(str(maximumCapacity))
+    #             self.ui.NoOfOccupantsComboBox.setCurrentText(str(numberOfOccupants))
         
-    def fillRoomNumber(self):
-        self.ui.RoomNumberComboBox.clear()
-        selector = Select()
-        selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom", "Rents.MoveOutDate"])
-        resultBuilder = selector.retDict()
+    # def fillRoomNumber(self):
+    #     self.ui.RoomNumberComboBox.clear()
+    #     selector = Select()
+    #     selector.SelectQuery(table="Rents", select_type=None, spec_col=["Rents.RentedRoom", "Rents.MoveOutDate"])
+    #     resultBuilder = selector.retDict()
         
-        roomNumbers = []
+    #     roomNumbers = []
         
-        for row in resultBuilder:
-            roomNumber = next(iter(row.values()))
-            self.ui.RoomNumberComboBox.addItem(str(roomNumber))
-            roomNumbers.append(str(roomNumber))
+    #     for row in resultBuilder:
+    #         roomNumber = next(iter(row.values()))
+    #         self.ui.RoomNumberComboBox.addItem(str(roomNumber))
+    #         roomNumbers.append(str(roomNumber))
             
-        self.ui.RoomNumberComboBox.setCurrentIndex(-1)
-        self.ui.RoomNumberComboBox.setEditable(True)
-        completer = QCompleter(roomNumbers, self)
-        completer.setCaseSensitivity(Qt.CaseInsensitive)
-        completer.setFilterMode(Qt.MatchContains)
-        self.ui.RoomNumberComboBox.setCompleter(completer)
+    #     self.ui.RoomNumberComboBox.setCurrentIndex(-1)
+    #     self.ui.RoomNumberComboBox.setEditable(True)
+    #     completer = QCompleter(roomNumbers, self)
+    #     completer.setCaseSensitivity(Qt.CaseInsensitive)
+    #     completer.setFilterMode(Qt.MatchContains)
+    #     self.ui.RoomNumberComboBox.setCompleter(completer)
         
-        self.ui.RoomNumberComboBox.setFocus()
+    #     self.ui.RoomNumberComboBox.setFocus()

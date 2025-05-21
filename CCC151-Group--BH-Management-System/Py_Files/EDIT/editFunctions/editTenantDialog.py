@@ -55,8 +55,6 @@ class editTenantDialog(QDialog):
             errors.append("Email is required.")
         if not phoneNumber:
             errors.append("Phone number is required.")
-        if not roomNo:
-            errors.append("Room number is required.")
         if not sex:
             errors.append("Sex is required.")
         if not tenantId:
@@ -83,7 +81,9 @@ class editTenantDialog(QDialog):
             "Sex" : sex
         }
         
-        updater.updateTableData("Tenants", setParameters, "TenantID", tenantId)
+        updater.updateTableData("Tenant", setParameters, "TenantID", tenantId)
+        QMessageBox.information(self, "Update Done", "Update is successful", QMessageBox.Ok)
+        self.accept()
         
     def closeWindow(self):
         print("Closing the Edit Tenant Dialog")
@@ -119,7 +119,7 @@ class editTenantDialog(QDialog):
         selector = Select()
         
         if tenantId:
-            selector.SelectQuery(table="Tenants", select_type=None, spec_col=["Tenants.FirstName", "Tenants.MiddleName", "Tenants.LastName",
-                                                                              "Tenants.Email", "Tenants.PhoneNumber", "Tenants.RoomNumber"], tag="TenantID", key=tenantId)
+            selector.SelectQuery(table="Tenant", select_type=None, spec_col=["Tenant.FirstName", "Tenant.MiddleName", "Tenant.LastName",
+                                                                              "Tenant.Email", "Tenant.PhoneNumber", "Tenant.RoomNumber"], tag="TenantID", key=tenantId)
             resultBuilder = selector.retData()
             print(f"Query Result: {resultBuilder}")

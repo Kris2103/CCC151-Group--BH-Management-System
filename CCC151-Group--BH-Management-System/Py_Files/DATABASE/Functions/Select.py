@@ -176,10 +176,12 @@ class Select(Function):
                                                 RentDuration.MoveStatus AS `Move Status`, 
                                                 PaymentStatus.PaymentStatus AS `Payment Status`, 
                                                 PaymentStatus.UnpaidMonths AS `Unpaid Months`,
-                                                RemainingDue.RemainingDue AS `Remaining Due` """
+                                                RemainingDue.RemainingDue AS `Remaining Due`,
+                                                PaidAmount.PaidAmount AS `Paid Amount`,
+                                                EmergencyContact.PhoneNumber AS `Emergency Contact` """
                 self.aliascolumn[           "`Rent Duration in Months`"]    = "RentDuration.Duration"
                 self.columns.append(        "Rent Duration in Months")
-                self.aliascolumn[           "`Move Status`"]    = "MoveStatus.MoveStatus"
+                self.aliascolumn[           "`Move Status`"]    = "RentDuration.MoveStatus"
                 self.columns.append(        "Move Status")
                 self.aliascolumn[           "`Payment Status`"]    = "PaymentStatus.PaymentStatus"
                 self.columns.append(        "Payment Status")
@@ -187,6 +189,10 @@ class Select(Function):
                 self.columns.append(        "Unpaid Months")
                 self.aliascolumn[           "`Remaining Due`"]    = "RemainingDue.RemainingDue"
                 self.columns.append(        "Remaining Due")
+                self.aliascolumn[           "`Paid Amount`"]    = "PaidAmount.PaidAmount"
+                self.columns.append(        "Paid Amount")
+                self.aliascolumn[           "`Emergency Contact`"]    = "EmergencyContact.PhoneNumber"
+                self.columns.append(        "Emergency Contact")
 
                 for col in self.columns:
                     print(col)
@@ -200,6 +206,8 @@ class Select(Function):
                                                     ON RemainingDue.TenantID = Tenant.TenantID
                                                 LEFT JOIN PaymentStatus
                                                     ON PaymentStatus.TenantID = Tenant.TenantID
+                                                LEFT JOIN EmergencyContact
+                                                    ON EmergencyContact.EMTenantID = Tenant.TenantID 
                                             """
                 # pass
             case "Rents":
@@ -276,8 +284,8 @@ CTE_PaymentStatus   = """ PaymentStatus AS (
                                 t.TenantID AS TenantID,
                                 CASE
                                     WHEN pa.PaidAmount IS NULL AND red.RemainingDue IS NULL THEN "No Payments"
-                                    WHEN COALESCE(pa.PaidAmount, 0) >= COALESCE(red.TotalDue, 0) THEN "Paid"
-                                    WHEN COALESCE(pa.PaidAmount, 0) < COALESCE(red.RemainingDue, 0) AND CURRENT_DATE() > rd.MoveOutDate THEN "Overdue"
+                                    WHEN COALESCE(red.RemainingDue, 0) <= 0 THEN "Paid"
+                                    WHEN COALESCE(red.RemainingDue, 0) > 0 AND CURRENT_DATE() > rd.MoveOutDate THEN "Overdue"
                                     WHEN COALESCE(pa.PaidAmount, 0) < (COALESCE(red.Price, 0) * TIMESTAMPDIFF(
                                                                                                                 MONTH, 
                                                                                                                 rd.MoveInDate, 

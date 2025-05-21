@@ -122,6 +122,9 @@ class Populate:
         
         self.mw.jumpBox.activated.connect(lambda: self.jump())
 
+        infoIcon = SpecialWidgetsUI.CustomRowDelegate(self.table_widget)
+        self.table_widget.setItemDelegate(infoIcon)
+        infoIcon.emitter.iconClicked.connect(lambda: infoIcon.infoClicked(self.mw))
 
     def jump(self):
         page = self.mw.jumpBox.currentData()

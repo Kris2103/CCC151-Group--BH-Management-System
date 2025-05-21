@@ -58,12 +58,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.RefreshpushButton.clicked.connect(lambda: self.load_data(self.index))
         self.SearchpushButton.clicked.connect(lambda: self.perform_search())
 
-        # table_widget.horizontalHeader().sectionClicked.connect(your_function)
-
-        # def your_function(index):
-        #     print(f"Header {index} clicked: {table_widget.horizontalHeaderItem(index).text()}")
-
-
         self.switch_tab(0)
 
     def switch_tab(self, index):
@@ -116,7 +110,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def map_indextotable(self, index):
         table_mapping = {
-                    0: ("Tenant", self.TenantTable, "Tenant"),
+                    0: ("Tenant", self.TenantTable, None),
                     1: ("Room", self.RoomTable, "Room"),
                     2: ("Rents", self.RentTable, "Rents"),
                     3: ("Pays", self.PaymentTable, "Pays"),
@@ -176,12 +170,76 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         current_widget_index = self.stackedWidget.currentIndex()
 
         if current_widget_index == 0:
+            
+            selectedItems = self.TenantTable.selectedItems()
+            if not selectedItems:
+                QMessageBox.warning(self, "No Selection", "Please select a tenant to edit.", QMessageBox.Ok)
+                return
+                
+            selectedRow = self.TenantTable.currentRow()
+            columnCount = self.TenantTable.columnCount()
+            
+            rowData = {
+                self.TenantTable.horizontalHeaderItem(col).text(): self.TenantTable.item(selectedRow, col).text()
+                for col in range(columnCount)
+            }
+            
+            tenantIdItem = rowData["TenantID"]
+            tenantEmailItem = rowData["Email"]
+            tenantFirstNameItem = rowData["FirstName"]
+            tenantMiddleNameItem = rowData["MiddleName"]
+            tenantLastNameItem = rowData["LastName"]
+            tenantSexItem = rowData["Sex"]
+            tenantPhoneNumberItem = rowData["PhoneNumber"]
+            tenantRoomNumberItem = rowData["RoomNumber"]
+
             dialog = editTenantDialog(self)
+            dialog.ui.TenantIDLineEdit.setText(tenantIdItem)
+            dialog.ui.FirstNameLineEdit.setText(tenantFirstNameItem)
+            dialog.ui.MiddleNameLineEdit.setText(tenantMiddleNameItem)
+            dialog.ui.LastNameLineEdit.setText(tenantLastNameItem)
+            dialog.ui.EmailLineEdit.setText(tenantEmailItem)
+            dialog.ui.PhoneNumberLineEdit.setText(tenantPhoneNumberItem)
+            dialog.ui.SexComboBox.setCurrentText(tenantSexItem)
+            dialog.ui.RoomNoComboBox.setCurrentText(tenantRoomNumberItem)
+            
+            self.TenantTable.clearSelection()
+
+
+            
             if dialog.exec() == QDialog.Accepted:
                 self.load_data(0)
 
         elif current_widget_index == 1:
+            
+            selectedItems = self.RoomTable.selectedItems()
+            if not selectedItems:
+                QMessageBox.warning(self, "No Selection", "Please select a tenant to edit.", QMessageBox.Ok)
+                return
+            
+            selectedRow = self.RoomTable.currentRow()
+            columnCount = self.RoomTable.columnCount()
+            
+            rowData = {
+                self.RoomTable.horizontalHeaderItem(col).text(): self.RoomTable.item(selectedRow, col).text()
+                for col in range(columnCount)
+            }
+            
+            roomNumberItem = rowData["RoomNumber"]
+            priceItem = rowData["Price"]
+            tenantSexItem = rowData["TenantSex"]
+            maximumCapacityItem = rowData["MaximumCapacity"]
+            
+            
             dialog = editRoomDialog(self)
+            dialog.ui.RoomNumberLineEdit.setText(roomNumberItem)
+            dialog.ui.PriceLineEdit.setText(priceItem)
+            dialog.ui.TenantSexComboBox.setCurrentText(tenantSexItem)
+            dialog.ui.MaxNoOccupantsLineEdit.setText(maximumCapacityItem)
+            
+            self.RoomTable.clearSelection()
+
+            
             if dialog.exec() == QDialog.accepted:
                 self.load_data(1)
 

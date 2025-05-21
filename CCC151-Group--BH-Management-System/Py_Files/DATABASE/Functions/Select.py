@@ -250,7 +250,6 @@ CTE_RentDuration    = """ RentDuration AS (
                                 r.RentedRoom AS RoomNumber,
                                 TIMESTAMPDIFF(MONTH, r.MoveInDate, r.MoveOutDate) AS Duration,
                                 CASE
-                                    WHEN r.MoveInDate IS NULL OR r.MoveOutDate IS NULL OR r.RentedRoom IS NULL OR t.RoomNumber IS NULL THEN "No Rents"
                                     WHEN (CURRENT_DATE() BETWEEN r.MoveInDate AND r.MoveOutDate) AND t.RoomNumber = r.RentedRoom THEN "Active"
                                     ELSE "Moved Out"
                                 END AS MoveStatus

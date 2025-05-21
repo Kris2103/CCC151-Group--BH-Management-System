@@ -132,29 +132,29 @@ class Ui_Dialog(object):
         # self.SexComboBox.setGeometry(QtCore.QRect(310, 210, 101, 22))
         self.SexComboBox.setGeometry(QtCore.QRect(310, 160, 101, 22))
         self.SexComboBox.setObjectName("SexComboBox")
-        self.AddpushButton = QtWidgets.QPushButton(self.frame)
-        self.AddpushButton.setGeometry(QtCore.QRect(320, 290, 93, 28))
-        self.AddpushButton.setStyleSheet("background-color: #388E3C; /* Darker green */\n"
-"color: white;\n"
-"font-family: \"Cal Sans\", sans-serif;\n"
-"font-weight: 700; /* Bold */\n"
-"font-size: 16px;\n"
-"border: none;\n"
-"border-radius: 4px;\n"
-"padding: 6px 12px;\n"
-"")
-        self.AddpushButton.setObjectName("AddpushButton")
-        self.CancelpushButton = QtWidgets.QPushButton(self.frame)
-        self.CancelpushButton.setGeometry(QtCore.QRect(220, 290, 93, 28))
-        self.CancelpushButton.setStyleSheet("background: rgb(157, 157, 157);\n"
-"color: white;\n"
-"font-family: \'Cal Sans\', sans-serif;\n"
-"font-weight: 500;\n"
-"font-style: normal;\n"
-"font-size: 12px;\n"
-"border: 1px solid rgb(169, 169, 169);\n"
-"")
-        self.CancelpushButton.setObjectName("CancelpushButton")
+#         self.AddpushButton = QtWidgets.QPushButton(self.frame)
+#         self.AddpushButton.setGeometry(QtCore.QRect(320, 290, 93, 28))
+#         self.AddpushButton.setStyleSheet("background-color: #388E3C; /* Darker green */\n"
+# "color: white;\n"
+# "font-family: \"Cal Sans\", sans-serif;\n"
+# "font-weight: 700; /* Bold */\n"
+# "font-size: 16px;\n"
+# "border: none;\n"
+# "border-radius: 4px;\n"
+# "padding: 6px 12px;\n"
+# "")
+#         self.AddpushButton.setObjectName("AddpushButton")
+#         self.CancelpushButton = QtWidgets.QPushButton(self.frame)
+#         self.CancelpushButton.setGeometry(QtCore.QRect(220, 290, 93, 28))
+#         self.CancelpushButton.setStyleSheet("background: rgb(157, 157, 157);\n"
+# "color: white;\n"
+# "font-family: \'Cal Sans\', sans-serif;\n"
+# "font-weight: 500;\n"
+# "font-style: normal;\n"
+# "font-size: 12px;\n"
+# "border: 1px solid rgb(169, 169, 169);\n"
+# "")
+#         self.CancelpushButton.setObjectName("CancelpushButton")
         self.label_21 = QtWidgets.QLabel(self.frame)
         self.label_21.setGeometry(QtCore.QRect(20, 240, 111, 16))
         self.label_21.setStyleSheet("background: none;\n"
@@ -195,7 +195,7 @@ class Ui_Dialog(object):
         self.label_9.setText(_translate("Dialog", "Last Name"))
         # self.label_10.setText(_translate("Dialog", "Room No."))
         self.label_11.setText(_translate("Dialog", "Sex"))
-        self.AddpushButton.setText(_translate("Dialog", "Add"))
-        self.CancelpushButton.setText(_translate("Dialog", "Cancel"))
+        # self.AddpushButton.setText(_translate("Dialog", "Add"))
+        # self.CancelpushButton.setText(_translate("Dialog", "Cancel"))
         self.label_21.setText(_translate("Dialog", "Email"))
         self.label_12.setText(_translate("Dialog", "Phone Number"))

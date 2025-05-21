@@ -122,11 +122,9 @@ class Populate:
         
         self.mw.jumpBox.activated.connect(lambda: self.jump())
 
-
-        self.table_widget.cellClicked.connect(lambda: self.row_clicked())
-        self.table_widget.setItemDelegate(SpecialWidgetsUI.CustomRowDelegate(self.table_widget))
-
-
+        infoIcon = SpecialWidgetsUI.CustomRowDelegate(self.table_widget)
+        self.table_widget.setItemDelegate(infoIcon)
+        infoIcon.emitter.iconClicked.connect(lambda: infoIcon.infoClicked(self.mw))
 
     def jump(self):
         page = self.mw.jumpBox.currentData()
@@ -156,9 +154,6 @@ class Populate:
 
     def GotoPage(self, page):
         self.Populate_Table(self.table_name, self.table_widget, self.select_type, page)
-
-    def row_clicked(self):
-        print("row clicked")
 
 # ===========
 #    PAGINATION TABLE

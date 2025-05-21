@@ -34,7 +34,7 @@ class editTenantDialog(QDialog):
         lastName = self.ui.LastNameLineEdit.text()
         email = self.ui.EmailLineEdit.text()
         phoneNumber = self.ui.PhoneNumberLineEdit.text()
-        roomNo = self.ui.RoomNoComboBox.currentData()
+        roomNo = self.ui.RoomNoComboBox.currentText()
         if not roomNo:  
             roomNo = None 
         sex = self.ui.SexComboBox.currentData()

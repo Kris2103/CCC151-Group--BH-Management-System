@@ -23,7 +23,6 @@ class editTenantDialog(QDialog):
 
         self.ui.UpdatepushButton.clicked.connect(self.updateTenant)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
-        self.ui.EditECpushButton.clicked.connect(self.openEditEmergencyContact)
         
         self.ui.TenantIDLineEdit.setFocus()
 

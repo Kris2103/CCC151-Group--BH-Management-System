@@ -43,7 +43,7 @@ class Insert(Function):
         """
 
         self.cursor.execute(query, self.params)
-        return self.cursor.fetchall()
+        self.conn.commit()
     
     # check nullable columns and thus excluded in the insertion
     def checkExcludables(self, table):

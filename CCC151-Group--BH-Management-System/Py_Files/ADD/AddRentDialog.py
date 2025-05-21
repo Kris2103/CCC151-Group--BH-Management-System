@@ -50,23 +50,46 @@ class AddRentDialog(QDialog):
                                             key        = tenant_id, 
                                             limit      = 1).retData()[0][0]
         
-        columns = ["MaximumCapacity",  
-                   "NoOfOccupants",
-                    "TenantSex"]
+        room_columns = ["MaximumCapacity",  
+                        "NoOfOccupants",
+                        "TenantSex"]
             
         room_data = self.select.SelectQuery(table      = "Room", 
-                                            spec_col   = columns, 
+                                            spec_col   = room_columns, 
                                             select_type= "Room",
                                             tag        = "RoomNumber", 
                                             key        = room_number, 
                                             limit      = 1).retData()
+        try:
+            existing_rent_id, renting_tenant, existing_rent_status, existing_rented_room = self.select.SelectQuery(
+                table="Rents",
+                spec_col=["Rents.RentID", "Rents.RentingTenant", "RentDuration.MoveStatus", "Rents.RentedRoom"],
+                select_type="Rents",
+                filters={"RentingTenant": tenant_id},
+                sort_column="RentID",
+                sort_order="DESC",
+                limit=1
+            ).retData()[0]
+
+            print(existing_rent_id)
+            print(renting_tenant)
+            print(existing_rent_status)
+            print(existing_rented_room)
+
+            if existing_rent_status == "Active":
+                QMessageBox.warning(
+                    self, "Rent duplicate",
+                    f"Tenant {tenant_id} is still under an active contract with Room {existing_rented_room}."
+                )
+                return
+
+        except IndexError as ie:
+            print("No active contract existing, Rent is valid")
+        except Exception as e:
+            print(f"No information found...Tenant is free to undergo a new contract. Error: {e}")
 
         if room_data:
             maximum_capacity, current_occupants, room_tsex = room_data[0]
-
-            print(tenant_sex)
-            print(room_tsex)
-            # print(tenant_sex)
             if room_tsex != tenant_sex and room_tsex != None:
                 QMessageBox.warning(self, "Sex invalid", f"Room {room_number} only accepts {room_tsex} tenants.")
                 return
@@ -84,7 +107,7 @@ class AddRentDialog(QDialog):
                         ]
             
             self.insert.InsertQuery("Rents", newRent)
-            self.updater.updateTableData("Room", {"NoOfOccupants" : current_occupants + 1}, "RoomNumber", int(room_number))
+            self.updater.updateTableData("Room", {"NoOfOccupants" : current_occupants + 1, "TenantSex" : tenant_sex}, "RoomNumber", int(room_number))
             self.updater.updateTableData("Tenant", {"RoomNumber" : room_number}, "TenantID", tenant_id)
 
             # Repopulate UI elements after successful insertion

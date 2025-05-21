@@ -18,6 +18,7 @@ class AddRoomDialog(QDialog):
         self.ui.AddpushButton.clicked.connect(self.handle_add_room)
 
         self.populate.populate_sex_combobox(self.ui.TenantSexComboBox)
+        self.ui.TenantSexComboBox.addItem("None")
 
         self.ui.TenantSexComboBox.setCurrentIndex(-1)
 

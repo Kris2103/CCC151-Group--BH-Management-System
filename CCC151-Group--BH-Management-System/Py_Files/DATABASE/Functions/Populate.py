@@ -14,7 +14,7 @@ class Populate:
         self.selector = Select.Select()
         self.inserter = Insert.Insert()
     
-    def Populate_Table(self, table_name, table_widget, select_type, current_page = 1, search_column = None, search_key = None, sort_column = None, sort_order = None):
+    def Populate_Table(self, table_name, table_widget, select_type, current_page = 1, search_column = None, search_key = None, group = None, sort_column = None, sort_order = None):
         
         self.table_name = table_name
         self.table_widget = table_widget
@@ -24,11 +24,12 @@ class Populate:
         self.search_key = search_key
         self.sort_column = sort_column
         self.sort_order = sort_order
+        self.group_by = group
 
         # Fetch ALL data with query, store for faster loading in page change...
         self.columns = self.selector.SelectQuery(table_name, select_type).retCols()
         if not hasattr(self, "full_data"):
-            self.full_data = self.selector.SelectQuery(table_name, select_type, tag = search_column, key = search_key, sort_column = sort_column, sort_order = sort_order).retData()
+            self.full_data = self.selector.SelectQuery(table_name, select_type, tag = search_column, key = search_key, sort_column = sort_column, sort_order = sort_order, group = group).retData()
 
         # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
 
@@ -56,6 +57,9 @@ class Populate:
                 item = QTableWidgetItem(str(cell))
                 item.setTextAlignment(Qt.AlignCenter)
                 table_widget.setItem(row_idx, col_idx, item)
+
+        # Add an additional row for more Info buttons
+
 
         self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -228,7 +232,8 @@ class Populate:
         self.roomnum_combobox = roomnum_combobox
         self.tenantid_combobox = tenantid_combobox
         room = self.roomnum_combobox.currentText()
-        if not room:
+        tenant = self.tenant_combobox.currentText()
+        if room == "" or not room or tenant != "": # room combobox has no entry, or tenant combobox has already been filled, do not autosync
             return
         
         result = self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"], tag = "RoomNumber", key = room, limit = 1).retData()
@@ -238,9 +243,10 @@ class Populate:
 
     def sync_room_from_tenant_id(self, roomnum_combobox, tenantid_combobox):
         self.roomnum_combobox = roomnum_combobox
+        room = self.roomnum_combobox.currentText()
         self.tenantid_combobox = tenantid_combobox        
         tenant_id = self.tenantid_combobox.currentText()
-        if not tenant_id:
+        if tenant_id == "" or not tenant_id or room != "": # tenant combobox has no entry, or room combobox has already been filled, do not autosync
             return
         
         result = self.selector.SelectQuery("Tenant", None, ["Tenant.RoomNumber"], tag = "TenantID", key = tenant_id, limit = 1).retData()

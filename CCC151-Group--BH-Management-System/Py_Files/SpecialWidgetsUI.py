@@ -60,9 +60,9 @@ class CustomRowDelegate(QStyledItemDelegate):
             return False
 
         if event.type() == event.MouseButtonRelease and self.icon_rect.contains(event.pos()):
-                tenant_id = index.data()  
-                print(f"Icon clicked on tenant: {tenant_id}")
-                self.emitter.iconClicked.emit(tenant_id)
+                self.row_id = index.data()  
+                print(f"Icon clicked on: {self.row_id}")
+                self.emitter.iconClicked.emit(self.row_id)
                 return True
 
         return False
@@ -72,7 +72,7 @@ class CustomRowDelegate(QStyledItemDelegate):
         current_widget_index = self.mw.stackedWidget.currentIndex()
 
         if current_widget_index == 0:
-            dialog = TenantInfoDialog(self.mw)
+            dialog = TenantInfoDialog(self.mw, self.row_id)
             dialog.exec()
 
         # elif current_widget_index == 1:

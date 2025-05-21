@@ -9,193 +9,291 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtCore import Qt
 
 class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(448, 350)
-        self.frame = QtWidgets.QFrame(Dialog)
-        self.frame.setGeometry(QtCore.QRect(10, 10, 431, 331))
-        self.frame.setStyleSheet("background-color: rgb(240, 240, 240);\n"
-"border: 2px solid #800000;\n"
-"border-radius: 6px;\n"
-"")
-        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame.setObjectName("frame")
-        self.frame_3 = QtWidgets.QFrame(self.frame)
-        self.frame_3.setGeometry(QtCore.QRect(20, 10, 391, 61))
-        self.frame_3.setStyleSheet("background-color: #800000;  /* Maroon background */\n"
-"                border: 1px solid #660000;  /* Darker maroon border */\n"
-"                border-radius: 4px;\n"
-"                padding: 5px;\n"
-"                font-family: \'Times New Roman\', serif;  /* Formal font */\n"
-"                font-size: 14px;\n"
-"                color: white;")
-        self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_3.setObjectName("frame_3")
-        self.label_2 = QtWidgets.QLabel(self.frame_3)
-        self.label_2.setGeometry(QtCore.QRect(120, 10, 161, 41))
-        self.label_2.setStyleSheet("background-color: rgb(250, 255, 242);\n"
-"border: 1px solid #660000;\n"
-"border-radius: 4px;\n"
-"padding: 5px;\n"
-"font-family: \'Cal Sans\', sans-serif;\n"
-"font-weight: 700;\n"
-"font-style: normal;\n"
-"font-size: 20px;\n"
-"color: #800000;\n"
-"text-align: center;\n"
-"vertical-align: middle;\n"
-"\n"
-"")
-        self.label_2.setObjectName("label_2")
-        self.TenantIDLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.TenantIDLineEdit.setGeometry(QtCore.QRect(310, 110, 101, 22))
-        self.TenantIDLineEdit.setObjectName("TenantIDLineEdit")
-        self.label = QtWidgets.QLabel(self.frame)
-        self.label.setGeometry(QtCore.QRect(310, 90, 81, 16))
-        self.label.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label.setObjectName("label")
-        self.FirstNameLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.FirstNameLineEdit.setGeometry(QtCore.QRect(20, 110, 271, 21))
-        self.FirstNameLineEdit.setObjectName("FirstNameLineEdit")
-        self.label_3 = QtWidgets.QLabel(self.frame)
-        self.label_3.setGeometry(QtCore.QRect(20, 90, 91, 16))
-        self.label_3.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_3.setObjectName("label_3")
-        self.MiddleNameLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.MiddleNameLineEdit.setGeometry(QtCore.QRect(20, 160, 271, 21))
-        self.MiddleNameLineEdit.setObjectName("MiddleNameLineEdit")
-        self.label_4 = QtWidgets.QLabel(self.frame)
-        self.label_4.setGeometry(QtCore.QRect(20, 140, 91, 16))
-        self.label_4.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_4.setObjectName("label_4")
-        self.LastNameLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.LastNameLineEdit.setGeometry(QtCore.QRect(20, 210, 271, 21))
-        self.LastNameLineEdit.setObjectName("LastNameLineEdit")
-        self.label_9 = QtWidgets.QLabel(self.frame)
-        self.label_9.setGeometry(QtCore.QRect(20, 190, 91, 16))
-        self.label_9.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_9.setObjectName("label_9")
-#         self.label_10 = QtWidgets.QLabel(self.frame)
-#         self.label_10.setGeometry(QtCore.QRect(310, 140, 81, 16))
-#         self.label_10.setStyleSheet("background: none;\n"
-# "    border: none;\n"
-# "    color: #800000;\n"
-# "    font-family: \'Cal Sans\', sans-serif;\n"
-# "    font-weight: 700;\n"
-# "    font-style: normal;\n"
-# "    font-size: 14px;")
-        # self.label_10.setObjectName("label_10")
-        self.label_11 = QtWidgets.QLabel(self.frame)
-        # self.label_11.setGeometry(QtCore.QRect(310, 190, 41, 16))
-        self.label_11.setGeometry(QtCore.QRect(310, 140, 81, 16))
-        self.label_11.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_11.setObjectName("label_11")
-        # self.RoomNoComboBox = QtWidgets.QComboBox(self.frame)
-        # self.RoomNoComboBox.setGeometry(QtCore.QRect(310, 160, 101, 22))
-        # self.RoomNoComboBox.setObjectName("RoomNoComboBox")
-        self.SexComboBox = QtWidgets.QComboBox(self.frame)
-        # self.SexComboBox.setGeometry(QtCore.QRect(310, 210, 101, 22))
-        self.SexComboBox.setGeometry(QtCore.QRect(310, 160, 101, 22))
-        self.SexComboBox.setObjectName("SexComboBox")
-#         self.AddpushButton = QtWidgets.QPushButton(self.frame)
-#         self.AddpushButton.setGeometry(QtCore.QRect(320, 290, 93, 28))
-#         self.AddpushButton.setStyleSheet("background-color: #388E3C; /* Darker green */\n"
-# "color: white;\n"
-# "font-family: \"Cal Sans\", sans-serif;\n"
-# "font-weight: 700; /* Bold */\n"
-# "font-size: 16px;\n"
-# "border: none;\n"
-# "border-radius: 4px;\n"
-# "padding: 6px 12px;\n"
-# "")
-#         self.AddpushButton.setObjectName("AddpushButton")
-#         self.CancelpushButton = QtWidgets.QPushButton(self.frame)
-#         self.CancelpushButton.setGeometry(QtCore.QRect(220, 290, 93, 28))
-#         self.CancelpushButton.setStyleSheet("background: rgb(157, 157, 157);\n"
-# "color: white;\n"
-# "font-family: \'Cal Sans\', sans-serif;\n"
-# "font-weight: 500;\n"
-# "font-style: normal;\n"
-# "font-size: 12px;\n"
-# "border: 1px solid rgb(169, 169, 169);\n"
-# "")
-#         self.CancelpushButton.setObjectName("CancelpushButton")
-        self.label_21 = QtWidgets.QLabel(self.frame)
-        self.label_21.setGeometry(QtCore.QRect(20, 240, 111, 16))
-        self.label_21.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_21.setObjectName("label_21")
-        self.PhoneNumberLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.PhoneNumberLineEdit.setGeometry(QtCore.QRect(230, 260, 181, 21))
-        self.PhoneNumberLineEdit.setObjectName("PhoneNumberLineEdit")
-        self.label_12 = QtWidgets.QLabel(self.frame)
-        self.label_12.setGeometry(QtCore.QRect(230, 240, 111, 16))
-        self.label_12.setStyleSheet("background: none;\n"
-"    border: none;\n"
-"    color: #800000;\n"
-"    font-family: \'Cal Sans\', sans-serif;\n"
-"    font-weight: 700;\n"
-"    font-style: normal;\n"
-"    font-size: 14px;")
-        self.label_12.setObjectName("label_12")
-        self.EmailLineEdit = QtWidgets.QLineEdit(self.frame)
-        self.EmailLineEdit.setGeometry(QtCore.QRect(20, 260, 191, 21))
-        self.EmailLineEdit.setObjectName("EmailLineEdit")
+        def setupUi(self, Dialog):
 
-        self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+# =========================
+#        BASE FRAME
+# ==========
+                Dialog.setObjectName("Dialog")
+                Dialog.resize(675, 450)
+                self.mainFrame = QtWidgets.QFrame(Dialog)
+                self.mainFrame.setGeometry(QtCore.QRect(10, 10, 658, 431))
+                self.mainFrame.setStyleSheet(   "background-color: rgb(240, 240, 240);\n"
+                                                "border: 2px solid #800000;\n"
+                                                "border-radius: 6px;\n"
+                                                )
+                self.mainFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+                self.mainFrame.setFrameShadow(QtWidgets.QFrame.Raised)
+                self.mainFrame.setObjectName("mainFrame")
+                self.HeaderFrame = QtWidgets.QFrame(self.mainFrame)
+                self.HeaderFrame.setGeometry(QtCore.QRect(20, 10, 618, 61))
+                self.HeaderFrame.setStyleSheet( "background-color: #800000;  /* Maroon background */\n"
+                                                "border: 1px solid #660000;  /* Darker maroon border */\n"
+                                                "border-radius: 4px;\n"
+                                                "padding: 5px;\n"
+                                                "font-family: \'Times New Roman\', serif;  /* Formal font */\n"
+                                                "font-size: 14px;\n"
+                                                "color: white;"
+                                                )
+                self.HeaderFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+                self.HeaderFrame.setFrameShadow(QtWidgets.QFrame.Raised)
+                self.HeaderFrame.setObjectName("HeaderFrame")
 
-    def retranslateUi(self, Dialog):
-        _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.label_2.setText(_translate("Dialog", "Tenant Profile"))
-        self.label.setText(_translate("Dialog", "Tenant ID"))
-        self.label_3.setText(_translate("Dialog", "First Name"))
-        self.label_4.setText(_translate("Dialog", "Middle Name"))
-        self.label_9.setText(_translate("Dialog", "Last Name"))
-        # self.label_10.setText(_translate("Dialog", "Room No."))
-        self.label_11.setText(_translate("Dialog", "Sex"))
-        # self.AddpushButton.setText(_translate("Dialog", "Add"))
-        # self.CancelpushButton.setText(_translate("Dialog", "Cancel"))
-        self.label_21.setText(_translate("Dialog", "Email"))
-        self.label_12.setText(_translate("Dialog", "Phone Number"))
+                self.TenantInfoLabel = QtWidgets.QLabel(self.HeaderFrame)
+                self.TenantInfoLabel.setGeometry(QtCore.QRect(120, 10, 388, 41))
+                self.TenantInfoLabel.setStyleSheet(     "background-color: rgb(250, 255, 242);\n"
+                                                        "border: 1px solid #660000;\n"
+                                                        "border-radius: 4px;\n"
+                                                        "padding: 5px;\n"
+                                                        "font-family: \'Cal Sans\', sans-serif;\n"
+                                                        "font-weight: 700;\n"
+                                                        "font-style: normal;\n"
+                                                        "font-size: 20px;\n"
+                                                        "color: #800000;\n"
+                                                        "text-align: center;\n"
+                                                        "vertical-align: middle;\n"
+                                                        )
+                self.TenantInfoLabel.setObjectName("TenantInfoLabel")
+                self.TenantInfoLabel.setAlignment(Qt.AlignCenter)
+
+# ==========
+#        BASE FRAME
+# =========================
+
+
+
+# =========================
+#      TENANT INFO
+# ==========
+
+                self.InfoFrame = QtWidgets.QFrame(self.mainFrame)
+                self.InfoFrame.setGeometry(QtCore.QRect(20, 90, 618, 310))
+                self.InfoFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+                self.InfoFrame.setFrameShadow(QtWidgets.QFrame.Raised)
+                self.InfoFrame.setObjectName("InfoFrame")
+
+                self.gridFrame = QtWidgets.QGridLayout(self.InfoFrame)
+                self.gridFrame.setContentsMargins(5, 5, 5, 5)  
+                self.gridFrame.setHorizontalSpacing(4) 
+                self.gridFrame.setAlignment(QtCore.Qt.AlignCenter)
+                self.InfoFrame.setLayout(self.gridFrame)
+
+                # ===========
+                # Base info
+                self.NameLabel = QtWidgets.QLabel(self.InfoFrame)
+                self.NameLabel.setStyleSheet(   "background: none;\n"
+                                                "border: none;\n"
+                                                "color: #800000;\n"
+                                                "font-family: \'Cal Sans\', sans-serif;\n"
+                                                "font-weight: 700;\n"
+                                                "font-style: normal;\n"
+                                                "font-size: 14px;")
+                self.NameLabel.setObjectName("NameLabel")
+
+                self.NameLine = QtWidgets.QLineEdit(self.InfoFrame)
+                self.NameLine.setObjectName("NameLine")
+                self.NameLine.setFixedSize(450, 30)
+                self.NameLine.setReadOnly(True)
+
+                self.SexLabel = QtWidgets.QLabel(self.InfoFrame)
+                self.SexLabel.setStyleSheet(    "background: none;\n"
+                                                "border: none;\n"
+                                                "color: #800000;\n"
+                                                "font-family: \'Cal Sans\', sans-serif;\n"
+                                                "font-weight: 700;\n"
+                                                "font-style: normal;\n"
+                                                "font-size: 14px;")
+                self.SexLabel.setObjectName("SexLabel")
+
+                self.SexLine = QtWidgets.QLineEdit(self.InfoFrame)
+                self.SexLine.setObjectName("SexLine")
+                self.SexLine.setReadOnly(True)
+                # Base info
+                # ===========
+
+                # ===========
+                # Contact info
+                self.PhonNumLabel = QtWidgets.QLabel(self.InfoFrame)
+                self.PhonNumLabel.setStyleSheet("background: none;\n"
+                                                "border: none;\n"
+                                                "color: #800000;\n"
+                                                "font-family: \'Cal Sans\', sans-serif;\n"
+                                                "font-weight: 700;\n"
+                                                "font-style: normal;\n"
+                                                "font-size: 14px;")
+                self.PhonNumLabel.setObjectName("PhonNumLabel")
+
+                self.PhoneLine = QtWidgets.QLineEdit(self.InfoFrame)
+                self.PhoneLine.setObjectName("PhoneLine")
+                self.PhoneLine.setReadOnly(True)
+
+                self.EmailLabel = QtWidgets.QLabel(self.InfoFrame)
+                self.EmailLabel.setStyleSheet(  "background: none;\n"
+                                                "border: none;\n"
+                                                "color: #800000;\n"
+                                                "font-family: \'Cal Sans\', sans-serif;\n"
+                                                "font-weight: 700;\n"
+                                                "font-style: normal;\n"
+                                                "font-size: 14px;")
+                self.EmailLabel.setObjectName("EmailLabel")
+
+                self.EmailLine = QtWidgets.QLineEdit(self.InfoFrame)
+                self.EmailLine.setObjectName("EmailLine")
+                self.EmailLine.setReadOnly(True)
+
+                self.ECLabel = QtWidgets.QLabel(self.InfoFrame)
+                self.ECLabel.setStyleSheet(  "background: none;\n"
+                                                "border: none;\n"
+                                                "color: #800000;\n"
+                                                "font-family: \'Cal Sans\', sans-serif;\n"
+                                                "font-weight: 700;\n"
+                                                "font-style: normal;\n"
+                                                "font-size: 14px;")
+                self.ECLabel.setObjectName("ECLabel")
+
+                self.ECLine = QtWidgets.QLineEdit(self.InfoFrame)
+                self.ECLine.setObjectName("ECLine")
+                self.ECLine.setReadOnly(True)
+                # Contact info
+                # ===========
+
+                # ===========
+                # Rents info
+                self.RoomNumLabel = QtWidgets.QLabel(self.InfoFrame)
+                self.RoomNumLabel.setStyleSheet(     "background: none;\n"
+                                                        "border: none;\n"
+                                                        "color: #800000;\n"
+                                                        "font-family: \'Cal Sans\', sans-serif;\n"
+                                                        "font-weight: 700;\n"
+                                                        "font-style: normal;\n"
+                                                        "font-size: 14px;")
+                self.RoomNumLabel.setObjectName("RoomNumLabel")
+
+                self.RoomLine = QtWidgets.QLineEdit(self.InfoFrame)
+                self.RoomLine.setObjectName("RoomLine")
+                self.RoomLine.setReadOnly(True)
+                
+                self.MoveStatusLabel = QtWidgets.QLabel(self.InfoFrame)
+                self.MoveStatusLabel.setStyleSheet(     "background: none;\n"
+                                                        "border: none;\n"
+                                                        "color: #800000;\n"
+                                                        "font-family: \'Cal Sans\', sans-serif;\n"
+                                                        "font-weight: 700;\n"
+                                                        "font-style: normal;\n"
+                                                        "font-size: 14px;")
+                self.MoveStatusLabel.setObjectName("MoveStatusLabel")
+
+                self.MoveLine = QtWidgets.QLineEdit(self.InfoFrame)
+                self.MoveLine.setObjectName("MoveLine")
+                self.MoveLine.setReadOnly(True)
+                # Rents info
+                # ===========
+
+                # ===========
+                # Pays info
+                self.PaymStatusLabel = QtWidgets.QLabel(self.InfoFrame)
+                self.PaymStatusLabel.setStyleSheet(     "background: none;\n"
+                                                        "border: none;\n"
+                                                        "color: #800000;\n"
+                                                        "font-family: \'Cal Sans\', sans-serif;\n"
+                                                        "font-weight: 700;\n"
+                                                        "font-style: normal;\n"
+                                                        "font-size: 14px;")
+                self.PaymStatusLabel.setObjectName("PaymStatusLabel")
+
+                self.PayLine = QtWidgets.QLineEdit(self.InfoFrame)
+                self.PayLine.setObjectName("PayLine")
+                self.PayLine.setReadOnly(True)
+
+                self.PaidLabel = QtWidgets.QLabel(self.InfoFrame)
+                self.PaidLabel.setStyleSheet(     "background: none;\n"
+                                                        "border: none;\n"
+                                                        "color: #800000;\n"
+                                                        "font-family: \'Cal Sans\', sans-serif;\n"
+                                                        "font-weight: 700;\n"
+                                                        "font-style: normal;\n"
+                                                        "font-size: 14px;")
+                self.PaidLabel.setObjectName("PaidLabel")
+
+                self.PaidLine = QtWidgets.QLineEdit(self.InfoFrame)
+                self.PaidLine.setObjectName("PaidLine")
+                self.PaidLine.setReadOnly(True)
+
+                self.RemainingLabel = QtWidgets.QLabel(self.InfoFrame)
+                self.RemainingLabel.setStyleSheet(     "background: none;\n"
+                                                        "border: none;\n"
+                                                        "color: #800000;\n"
+                                                        "font-family: \'Cal Sans\', sans-serif;\n"
+                                                        "font-weight: 700;\n"
+                                                        "font-style: normal;\n"
+                                                        "font-size: 14px;")
+                self.RemainingLabel.setObjectName("RemainingLabel")
+
+                self.RemainLine = QtWidgets.QLineEdit(self.InfoFrame)
+                self.RemainLine.setObjectName("RemainLine")
+                self.RemainLine.setReadOnly(True)
+                # Pays info
+                # ===========
+
+                # =========
+                # Layout
+
+                self.gridFrame.addWidget(self.NameLabel,        0, 0)
+                self.gridFrame.addWidget(self.NameLine,         0, 1, 1, 4)
+
+                self.gridFrame.addWidget(self.SexLabel,         1, 0)
+                self.gridFrame.addWidget(self.SexLine,          1, 1)
+
+                self.gridFrame.addWidget(self.PhonNumLabel,     1, 2)
+                self.gridFrame.addWidget(self.PhoneLine,        1, 3)
+
+                self.gridFrame.addWidget(self.EmailLabel,       2, 0)
+                self.gridFrame.addWidget(self.EmailLine,        2, 1, 1, 2)
+
+                self.gridFrame.addWidget(self.ECLabel,          7, 0)
+                self.gridFrame.addWidget(self.ECLine,           7, 1)
+
+                self.gridFrame.addWidget(self.RoomNumLabel,     3, 2)
+                self.gridFrame.addWidget(self.RoomLine,         3, 3)
+
+                self.gridFrame.addWidget(self.MoveStatusLabel,  3, 0)
+                self.gridFrame.addWidget(self.MoveLine,         3, 1)
+
+                self.gridFrame.addWidget(self.PaymStatusLabel,  4, 0)
+                self.gridFrame.addWidget(self.PayLine,          4, 1)
+
+                self.gridFrame.addWidget(self.PaidLabel,        5, 2)
+                self.gridFrame.addWidget(self.PaidLine,         5, 3)
+
+                self.gridFrame.addWidget(self.RemainingLabel,   4, 2)
+                self.gridFrame.addWidget(self.RemainLine,       4, 3)
+
+                # Layout
+                # =========
+
+
+# ==========
+#      TENANT INFO
+# =========================
+
+                self.retranslateUi(Dialog)
+                QtCore.QMetaObject.connectSlotsByName(Dialog)   
+
+        def retranslateUi(self, Dialog):
+                _translate = QtCore.QCoreApplication.translate
+                Dialog.setWindowTitle(_translate(       "Dialog", "Dialog"))
+                self.TenantInfoLabel.setText(_translate("Dialog", "Tenant Profile"))
+                self.NameLabel.setText(_translate(      "Dialog", "Name: "))
+                self.SexLabel.setText(_translate(       "Dialog", "Sex: "))
+                self.PhonNumLabel.setText(_translate(   "Dialog", "Phone Number: "))
+                self.EmailLabel.setText(_translate(     "Dialog", "Email: "))
+                self.ECLabel.setText(_translate(        "Dialog", "Emergency Contact: "))
+                self.RoomNumLabel.setText(_translate(   "Dialog", "Room Number: "))
+                self.MoveStatusLabel.setText(_translate("Dialog", "Move Status: "))
+                self.PaymStatusLabel.setText(_translate("Dialog", "Payment Status: "))
+                self.PaidLabel.setText(_translate(      "Dialog", "Paid Amount: "))
+                self.RemainingLabel.setText(_translate( "Dialog", "Remaining Due: "))
+

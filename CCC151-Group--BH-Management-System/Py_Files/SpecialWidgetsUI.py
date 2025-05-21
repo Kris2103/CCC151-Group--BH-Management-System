@@ -1,11 +1,16 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import sys
+
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+res_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../res'))
+icon_path = os.path.join(res_folder, 'i-blue.png')
 
 from PyQt5.QtWidgets import QStyledItemDelegate, QStyle
 from PyQt5.QtGui import QPixmap, QPainter
 from PyQt5.QtCore import Qt, QRect, QObject, pyqtSignal
 
 from INFO.TenantInfoDialog import TenantInfoDialog
+
 
 class ClickablePageLabel(QtWidgets.QLabel):
     clicked = QtCore.pyqtSignal()
@@ -39,7 +44,7 @@ class IconClickEmitter(QObject):
 class CustomRowDelegate(QStyledItemDelegate):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.icon = QPixmap(r"C:/Users/joshu/Documents/2ND_YEAR_NOTES/CC151/SISTONE/CCC151-Group--BH-Management-System/CCC151-Group--BH-Management-System/res/i-blue.png")
+        self.icon = QPixmap(icon_path)
         self.emitter = IconClickEmitter()
 
     def paint(self, painter, option, index):

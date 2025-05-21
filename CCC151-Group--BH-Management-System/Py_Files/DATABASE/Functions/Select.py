@@ -276,8 +276,8 @@ CTE_PaymentStatus   = """ PaymentStatus AS (
                                 t.TenantID AS TenantID,
                                 CASE
                                     WHEN pa.PaidAmount IS NULL AND red.RemainingDue IS NULL THEN "No Payments"
-                                    WHEN COALESCE(pa.PaidAmount, 0) >= COALESCE(red.TotalDue, 0) THEN "Paid"
-                                    WHEN COALESCE(pa.PaidAmount, 0) < COALESCE(red.RemainingDue, 0) AND CURRENT_DATE() > rd.MoveOutDate THEN "Overdue"
+                                    WHEN COALESCE(red.RemainingDue, 0) <= 0 THEN "Paid"
+                                    WHEN COALESCE(red.RemainingDue, 0) > 0 AND CURRENT_DATE() > rd.MoveOutDate THEN "Overdue"
                                     WHEN COALESCE(pa.PaidAmount, 0) < (COALESCE(red.Price, 0) * TIMESTAMPDIFF(
                                                                                                                 MONTH, 
                                                                                                                 rd.MoveInDate, 

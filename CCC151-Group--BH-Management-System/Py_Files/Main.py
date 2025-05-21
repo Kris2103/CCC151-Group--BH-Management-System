@@ -116,7 +116,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def map_indextotable(self, index):
         table_mapping = {
-                    0: ("Tenant", self.TenantTable, "Tenant"),
+                    0: ("Tenant", self.TenantTable, None),
                     1: ("Room", self.RoomTable, "Room"),
                     2: ("Rents", self.RentTable, "Rents"),
                     3: ("Pays", self.PaymentTable, "Pays"),

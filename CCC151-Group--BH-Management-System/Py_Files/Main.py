@@ -1,6 +1,6 @@
 import sys
 import mysql.connector
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTableWidgetItem, QComboBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QAbstractItemView, QTableWidgetItem, QComboBox
 from PyQt5.QtWidgets import QMessageBox
 import SpecialWidgetsUI
 from ADD.AddTenantDialog import AddTenantDialog
@@ -15,6 +15,7 @@ from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from EDIT.editFunctions.editRentDialog import editRentDialog
 from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDialog
 from EDIT.editFunctions.editRoomDialog import editRoomDialog
+from DATABASE.Functions.Delete import Delete
 # from EDIT.editFunctions.editPaymentDialog import editPaymentDialog
 from DATABASE.DB import DatabaseConnector
 import math
@@ -28,6 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.selector = Select()
+        self.deleter = Delete()
         self.populator = Populate(self)
 
         self.button_base_style = """
@@ -129,6 +131,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if hasattr(self.populator, "full_data"): del self.populator.full_data
         
         self.table_name, self.widget, self.select_type = self.map_indextotable(index)
+        self.widget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.widget.setSelectionMode(QAbstractItemView.SingleSelection)
+        
+        self.widget.setSortingEnabled(False)
         self.populator.Populate_Table(self.table_name, self.widget, self.select_type)
 
         self.columns = self.populator.columns
@@ -137,7 +143,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.SearchField.addItem("Search All", None)
         for col in self.columns: 
             self.SearchField.addItem(str(col), col)
-        # Connect header click events for sorting
+
+        # Connect header click event to perform_sort
         self.widget.horizontalHeader().sectionClicked.connect(self.perform_sort)
 
 # =========================
@@ -200,18 +207,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if dialog.exec() == QDialog.accepted:
                 self.load_data(4)
                 
-    # still working on this
     def on_Delete_clicked(self):
-        current_widget_index = self.stackedWidget.currentIndex()  # Get the current tab (widget index)
-        table_name, table_widget, _ = self.map_indextotable(current_widget_index)  # Mapping index to table
+        current_widget_index = self.stackedWidget.currentIndex()
+        table_name, table_widget, _ = self.map_indextotable(current_widget_index)
 
-        # Get the selected row
         selected_row = table_widget.currentRow()
-        if selected_row < 0:  # If no row is selected
+        if selected_row < 0:
             QMessageBox.warning(self, "No Selection", "Please select a row to delete.", QMessageBox.Ok)
             return
 
-        # Confirm the deletion
         reply = QMessageBox.question(
             self,
             "Confirm Deletion",
@@ -220,32 +224,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
 
         if reply == QMessageBox.Yes:
-            primary_key_column = self.populator.primary_key  # Assuming `Populate` class has primary key info
+            primary_key_column = self.populator.primary_key
 
             if not primary_key_column:
                 QMessageBox.critical(self, "Error", "No primary key found for the table.", QMessageBox.Ok)
                 return
 
-            # Extract primary key value from the first column of the selected row
-            primary_key_value = table_widget.item(selected_row, 0).text()  # Assumes the primary key is in the first column
-
-            # Build the SQL delete query
-            delete_query = f"DELETE FROM {table_name} WHERE {primary_key_column} = %s"
+            primary_key_value = table_widget.item(selected_row, 0).text()
 
             try:
-                # Execute the delete query
-                self.selector.cursor.execute(delete_query, (primary_key_value,))
-                self.selector.connection.commit()  # Commit the changes to the DB
+                self.deleter.params = []  # Reset params list before each delete
+                self.deleter.DeleteQuery(table_name, primary_key_column, primary_key_value)
+                self.deleter.conn.commit()
                 QMessageBox.information(self, "Deleted", "Record deleted successfully.", QMessageBox.Ok)
-                self.load_data(current_widget_index)  # Reload data to reflect changes
+                self.load_data(current_widget_index)
             except Exception as e:
-                # Handle any exceptions that may occur during the deletion
                 QMessageBox.critical(self, "Delete Failed", f"An error occurred:\n{e}", QMessageBox.Ok)
 
 
 
-
-# ===========
+# ==========
 #    CRUDL BUTTONS FUNCS
 # =========================
         

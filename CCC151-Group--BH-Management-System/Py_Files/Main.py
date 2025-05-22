@@ -268,12 +268,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             roomNumberItem = rowData["RentedRoom"]
             moveInDateItem = rowData["MoveInDate"]
             moveOutDateItem = rowData["MoveOutDate"]
-            rentDurationItem = rowData["Rent Duration in Months"]
+            rentDurationItem = rowData["Duration (Months)"]
             moveStatusItem = rowData["Move Status"]
             
                     
             dialog = editRentDialog(self)
-            dialog.ui.RentingTenantIDComboBox.setCurrentText(rentingTenantItem)
+            dialog.ui.RentingTenantComboBox.setCurrentText(rentingTenantItem)
             dialog.ui.RoomNumberComboBox.setCurrentText(roomNumberItem)
             
             index = dialog.ui.MoveStatuscomboBox.findData(moveStatusItem)

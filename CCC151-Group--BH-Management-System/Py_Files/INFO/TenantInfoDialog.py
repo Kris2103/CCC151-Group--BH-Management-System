@@ -38,4 +38,4 @@ class TenantInfoDialog(QDialog):
         self.ui.PayLine.setText(f"{paystat}")
         self.ui.RemainLine.setText(f"{remdue}")
         self.ui.PaidLine.setText(f"{paidamt}")
-        self.ui.ECLine.setText(f"{ecpnum}" if ecpnum is not None else "None added")
+        self.ui.ECLine.setText(f"{ecpnum}" if ecpnum is not None else "None added") 

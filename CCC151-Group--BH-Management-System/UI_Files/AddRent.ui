@@ -274,23 +274,23 @@ border: 1px solid rgb(169, 169, 169);
      <string>Move-out Date</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="RentingTenantLineEdit">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>110</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="RoomNumberLineEdit">
+   <widget class="QComboBox" name="RoomNumberComboBox">
     <property name="geometry">
      <rect>
       <x>150</x>
       <y>110</y>
       <width>111</width>
-      <height>21</height>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="RentingTenantComboBox">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>111</width>
+      <height>22</height>
      </rect>
     </property>
    </widget>

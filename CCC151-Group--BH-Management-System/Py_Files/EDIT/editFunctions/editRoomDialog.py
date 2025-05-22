@@ -20,8 +20,31 @@ class editRoomDialog(QDialog):
         self.fillSexComboBox()
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
         self.ui.UpdatepushButton.clicked.connect(self.updateRoom)
+        self.ui.RoomNumberLineEdit.setEnabled(False)
 
-        
+    def setRoomData(self, roomNumber, price, tenantSex, maxOccupants):
+        self.ui.RoomNumberLineEdit.setText(str(roomNumber))
+        self.ui.PriceLineEdit.setText(str(price))
+        self.ui.TenantSexComboBox.setCurrentText(tenantSex)
+        self.ui.MaxNoOccupantsLineEdit.setText(str(maxOccupants))
+
+    def loadRoomData(self, roomNumber):
+        selector = Select()
+        selector.SelectQuery(
+            table="Room",
+            select_type=None,
+            spec_col=["Price", "TenantSex", "MaximumCapacity"],
+            tag="RoomNumber",
+            key=roomNumber
+        )
+
+        result = selector.retData()
+        if result and len(result) > 0:
+            price, tenantSex, maxOccupants = result[0]
+            self.setRoomData(roomNumber, price, tenantSex, maxOccupants)
+        else:
+            QMessageBox.warning(self, "Load Failed", f"No data found for Room Number: {roomNumber}", QMessageBox.Ok)
+
     def updateRoom(self):
         roomNumber = self.ui.RoomNumberLineEdit.text()
         

@@ -76,11 +76,8 @@ class AddPaymentDialog(QDialog):
     def handle_add_payment(self):
         room_number = self.ui.RoomNumberComboBox.currentText()
         tenant_id = self.ui.PayingTenantIDComboBox.currentText()
-        amount = self.ui.PaymentAmountLineEdit.text()
-
-        # Get the payment date in the correct format
-        payment_date_str = self.ui.dateEdit.text()
-        payment_date = QDate.fromString(payment_date_str, "yyyy-MM-dd")
+        amount = self.ui.PaymentAmountLineEdit.text()        
+        payment_date = self.ui.dateEdit.date()
 
         if not payment_date.isValid():
             QMessageBox.warning(self, "Input Error", "Invalid payment date.")

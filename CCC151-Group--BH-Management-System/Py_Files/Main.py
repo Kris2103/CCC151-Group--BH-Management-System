@@ -15,11 +15,11 @@ from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from EDIT.editFunctions.editRentDialog import editRentDialog
 from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDialog
 from EDIT.editFunctions.editRoomDialog import editRoomDialog
-# from EDIT.editFunctions.editPaymentDialog import editPaymentDialog
+from EDIT.editFunctions.editPaymentDialog import editPaymentDialog
 from DATABASE.DB import DatabaseConnector
 import math
 from DATABASE.Functions.Populate import Populate
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QDate
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -205,8 +205,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             self.TenantTable.clearSelection()
 
-
-            
             if dialog.exec() == QDialog.Accepted:
                 self.load_data(0)
 
@@ -248,10 +246,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if dialog.exec() == QDialog.accepted:
                 self.load_data(2)
 
-        # elif current_widget_index == 3:
-        #     dialog = editPaymentDialog(self)
-        #     if dialog.exec() == QDialog.accepted:
-        #         self.load_data(3)
+        elif current_widget_index == 3:
+            dialog = editPaymentDialog(self)
+
+            selectedItems = self.PaymentTable.selectedItems()
+            if not selectedItems:
+                QMessageBox.warning(self, "No Selection", "Please select a payment to edit.", QMessageBox.Ok)
+                return
+                
+            selectedRow = self.PaymentTable.currentRow()
+            columnCount = self.PaymentTable.columnCount()
+            
+            rowData = {
+                self.PaymentTable.horizontalHeaderItem(col).text(): self.PaymentTable.item(selectedRow, col).text()
+                for col in range(columnCount)
+            }
+            
+            PayIDItem = rowData["PayID"]
+            PayingTenantItem = rowData["PayingTenant"]
+            PaidRoomItem = rowData["PaidRoom"]
+            PaymentAmountItem = rowData["PaymentAmount"]
+            PaymentDateItem = QDate.fromString(rowData["PaymentDate"], "yyyy-MM-dd")
+            RemainingDueItem = rowData["RemainingDue"]
+
+            dialog = editPaymentDialog(self)
+            dialog.ui.PayingTenantIDComboBox.setCurrentText(PayingTenantItem)
+            dialog.ui.RoomNumberComboBox.setCurrentText(PaidRoomItem)
+            dialog.ui.PaymentAmountLineEdit.setText(PaymentAmountItem)
+            dialog.ui.dateEdit.setDate(PaymentDateItem)
+            dialog.ui.RemainingDue.setText(RemainingDueItem)
+            
+            dialog.PayID = PayIDItem
+            dialog.InitialAmount = float(PaymentAmountItem)
+            
+            self.PaymentTable.clearSelection()
+
+            if dialog.exec() == QDialog.accepted:
+                self.load_data(3)
 
         elif current_widget_index == 4:
             dialog = editEmergencyContactDialog(self)

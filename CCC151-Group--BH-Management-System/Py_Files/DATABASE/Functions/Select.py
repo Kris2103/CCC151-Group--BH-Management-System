@@ -209,7 +209,7 @@ class Select(Function):
                                                 LEFT JOIN EmergencyContact
                                                     ON EmergencyContact.EMTenantID = Tenant.TenantID 
                                             """
-                # pass
+
             case "Rents":
                 CTEs = [CTE_RentDuration]
                 self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
@@ -239,8 +239,64 @@ class Select(Function):
                                                     ON PaidAmount.TenantID = Pays.PayingTenant
                                             """ 
             case "Room":
-                pass
+                CTEs = [CTE_Occupants]
+                self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
+                self.columnquery +=         """, Occupants.Count AS `No. of Occupants` """                
+                self.aliascolumn[           "`No. of Occupants`"]                 = "Occupants.Count"
+                self.columns.append(        "No. of Occupants")
 
+                self.conditions +=          """ LEFT JOIN Occupants 
+                                                    ON Occupants.RoomNumber = Room.RoomNumber
+                                            """
+
+            case "LatestRent":
+                CTEs = [CTE_LatestRent]
+                self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
+                self.columnquery +=         """, LatestRent.RentID AS RentID """                
+                self.aliascolumn[           "RentID"]                 = "LatestRent.RentID"
+                self.columns.append(        "RentID")
+
+                self.conditions +=          """ LEFT JOIN LatestRent 
+                                                    ON LatestRent.TenantID = Rents.RentingTenant
+                                            """ 
+
+            case "LatestPay":
+                CTEs = [CTE_LatestPay]
+                self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
+                self.columnquery +=         """, LatestPay.PayID AS PayID """                
+                self.aliascolumn[           "PayID"]                 = "LatestPay.PayID"
+                self.columns.append(        "PayID")
+
+                self.conditions +=          """ LEFT JOIN LatestPay 
+                                                    ON LatestPay.TenantID = Pays.PayingTenant
+                                            """ 
+
+CTE_LatestRent     = """ LatestRent AS (
+                            SELECT 
+                                MAX(r.RentID) AS RentID,
+                                t.TenantID AS TenantID
+                            FROM Rents r
+                            LEFT JOIN Tenant t ON t.TenantID = r.RentingTenant
+                            GROUP BY t.TenantID
+                            )"""
+
+CTE_LatestPay       = """ LatestPay AS (
+                            SELECT 
+                                MAX(p.PayID) AS PayID,
+                                t.TenantID AS TenantID
+                            FROM Pays p
+                            LEFT JOIN Tenant t ON t.TenantID = p.PayingTenant
+                            GROUP BY t.TenantID
+                            )"""
+
+CTE_Occupants       = """ Occupants AS (                          
+                            SELECT 
+                                COUNT(t.TenantID) AS Count,
+                                r.RoomNumber AS RoomNumber
+                            FROM Room r
+                            LEFT JOIN Tenant t ON t.RoomNumber = r.RoomNumber
+                            GROUP BY r.RoomNumber
+                            )"""
 
 CTE_RentDuration    = """ RentDuration AS (
                             SELECT 

@@ -3,7 +3,6 @@ from .AddTenant import Ui_Dialog
 import re
 from DATABASE.Functions import Select, Insert, update, Populate
 from DATABASE.DB import DatabaseConnector
-#from .AddECEmbedDialog import AddECEmbedDialog
 from datetime import datetime
 
 class AddTenantDialog(QDialog):
@@ -21,10 +20,8 @@ class AddTenantDialog(QDialog):
         self.ui.AddpushButton.clicked.connect(self.handle_add_tenant)
 
         self.populate.populate_sex_combobox(self.ui.SexComboBox)
-        # self.populate.populate_room_combobox(self.ui.RoomNoComboBox)
 
         self.ui.SexComboBox.setCurrentIndex(-1)
-        # self.ui.RoomNoComboBox.setCurrentIndex(-1)
         
         # Set up tenant ID field
         self.ui.TenantIDLineEdit.setText(self.generate_tenant_id())
@@ -63,18 +60,6 @@ class AddTenantDialog(QDialog):
             # Fallback to a simple format if there's an error
             return f"{current_year}-0001"
 
-    # def show_ec_dialog(self):
-    #     # Open the embedded emergency contact dialog
-    #     self.ec_dialog = AddECEmbedDialog(self)
-    #     if self.ec_dialog.exec_() == QDialog.Accepted:  # Only proceed if dialog is accepted
-    #         ec_ui = self.ec_dialog.ui
-    #         self.ec_data = {
-    #             "first_name": ec_ui.FirstNameLineEdit.text(),
-    #             "last_name": ec_ui.LastNameLineEdit.text(),
-    #             "relationship": ec_ui.RelationshipLineEdit.text(),
-    #             "phone": ec_ui.PhoneNumberLineEdit.text()
-    #         }
-
     def handle_add_tenant(self):
         tenant_fname = self.ui.FirstNameLineEdit.text()
         tenant_mname = self.ui.MiddleNameLineEdit.text()
@@ -82,7 +67,6 @@ class AddTenantDialog(QDialog):
         tenant_email = self.ui.EmailLineEdit.text()
         tenant_phone = self.ui.PhoneNumberLineEdit.text()
         tenant_ID = self.ui.TenantIDLineEdit.text()
-        # tenant_room = self.ui.RoomNoComboBox.currentText()
         tenant_sex = self.ui.SexComboBox.currentText()
 
         email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
@@ -99,19 +83,6 @@ class AddTenantDialog(QDialog):
         if not re.match(phone_pattern, tenant_phone):
             QMessageBox.warning(self, "Invalid Phone Number", "Phone number must be 11 digits.")
             return
-
-        # if not self.ec_data:  # Check if emergency contact data is available
-        #     QMessageBox.warning(self, "Missing Emergency Contact Info", "Please add emergency contact info.")
-        #     return
-        
-        # ec_first_name = self.ec_data["first_name"]
-        # ec_last_name = self.ec_data["last_name"]
-        # ec_relationship = self.ec_data["relationship"]
-        # ec_phone = self.ec_data["phone"]
-
-        # if not re.match(phone_pattern, ec_phone):
-        #     QMessageBox.warning(self, "Invalid Emergency Contact Phone", "Emergency contact phone number must be 11 digits.")
-        #     return
         
         try:
                 
@@ -122,17 +93,11 @@ class AddTenantDialog(QDialog):
                         tenant_mname,
                         tenant_lname,
                         tenant_sex,
-                        tenant_phone,
-                        # int(tenant_room)
+                        tenant_phone
                     ]
             
             self.insert.InsertQuery("Tenant", newTen)
 
-            # self.update.updateTableData("Room", {"NoOfOccupants" : (current_occupants + 1), "TenantSex" : tenant_sex}, "RoomNumber", tenant_room)
-            
-            # self.insert.InsertQuery("EmergencyContact", new_emergency_contact)
-
-            # QMessageBox.information(self, "Success", f"Tenant added successfully!\nRoom {tenant_room} is now {current_occupants + 1}/{maximum_capacity}")
             self.accept()
             
         except Exception as err:

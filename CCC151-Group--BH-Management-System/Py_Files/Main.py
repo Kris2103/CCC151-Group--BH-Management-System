@@ -15,8 +15,7 @@ from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from EDIT.editFunctions.editRentDialog import editRentDialog
 from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDialog
 from EDIT.editFunctions.editRoomDialog import editRoomDialog
-from DATABASE.Functions.Delete import Delete
-# from EDIT.editFunctions.editPaymentDialog import editPaymentDialog
+from EDIT.editFunctions.editPaymentDialog import editPaymentDialog
 from DATABASE.DB import DatabaseConnector
 import math
 from DATABASE.Functions.Populate import Populate
@@ -219,7 +218,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             selectedItems = self.RoomTable.selectedItems()
             if not selectedItems:
-                QMessageBox.warning(self, "No Selection", "Please select a tenant to edit.", QMessageBox.Ok)
+                QMessageBox.warning(self, "No Selection", "Please select a room to edit.", QMessageBox.Ok)
                 return
             
             selectedRow = self.RoomTable.currentRow()
@@ -249,6 +248,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.load_data(1)
 
         elif current_widget_index == 2:
+            
+            selectedItems = self.RentTable.selectedItems()
+            if not selectedItems:
+                QMessageBox.warning(self, "No Selection", "Please select a rent to edit.", QMessageBox.Ok)
+                return
+            
+            selectedRow = self.RentTable.currentRow()
+            columnCount = self.RentTable.columnCount()
+            
+            rowData = {
+                self.RentTable.horizontalHeaderItem(col).text(): self.RentTable.item(selectedRow, col).text()
+                for col in range(columnCount)
+            }
+            
+            rentingTenantItem = rowData["RentingTenant"]
+            roomNumberIem = rowData["RentedRoom"]
+            moveStatusItem = rowData["MoveStatus"]
+            moveInDateItem = rowData["MoveInDate"]
+            moveOutDateItem = rowData["MoveOutDate"]
+            
+            
+            
             dialog = editRentDialog(self)
             if dialog.exec() == QDialog.accepted:
                 self.load_data(2)

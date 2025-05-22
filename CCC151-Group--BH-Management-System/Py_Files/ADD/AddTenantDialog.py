@@ -98,6 +98,7 @@ class AddTenantDialog(QDialog):
             
             self.insert.InsertQuery("Tenant", newTen)
 
+            QMessageBox.information(self, "Success", "Tenant added successfully!")
             self.accept()
             
         except Exception as err:

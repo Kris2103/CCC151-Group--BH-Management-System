@@ -134,6 +134,12 @@ class Ui_Dialog(object):
 "    font-style: normal;\n"
 "    font-size: 14px;")
         self.label_6.setObjectName("label_6")
+        self.RoomNumberComboBox = QtWidgets.QComboBox(self.frame)
+        self.RoomNumberComboBox.setGeometry(QtCore.QRect(150, 110, 111, 22))
+        self.RoomNumberComboBox.setObjectName("RoomNumberComboBox")
+        self.RentingTenantComboBox = QtWidgets.QComboBox(self.frame)
+        self.RentingTenantComboBox.setGeometry(QtCore.QRect(20, 110, 111, 22))
+        self.RentingTenantComboBox.setObjectName("RentingTenantComboBox")
         # self.RentingTenantLineEdit = QtWidgets.QLineEdit(self.frame)
         # self.RentingTenantLineEdit.setGeometry(QtCore.QRect(20, 110, 111, 21))
         # self.RentingTenantLineEdit.setObjectName("RentingTenantLineEdit")
@@ -152,7 +158,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "Rent"))
         self.label_2.setText(_translate("Dialog", "Rent"))
         self.AddpushButton.setText(_translate("Dialog", "Add"))
         self.CancelpushButton.setText(_translate("Dialog", "Cancel"))

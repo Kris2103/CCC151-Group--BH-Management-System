@@ -1,6 +1,6 @@
 import sys
 import mysql.connector
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTableWidgetItem, QComboBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QAbstractItemView, QTableWidgetItem, QComboBox
 from PyQt5.QtWidgets import QMessageBox
 import SpecialWidgetsUI
 from ADD.AddTenantDialog import AddTenantDialog
@@ -16,6 +16,7 @@ from EDIT.editFunctions.editRentDialog import editRentDialog
 from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDialog
 from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from EDIT.editFunctions.editPaymentDialog import editPaymentDialog
+from DATABASE.Functions.Delete import Delete
 from DATABASE.DB import DatabaseConnector
 import math
 from DATABASE.Functions.Populate import Populate
@@ -28,6 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.selector = Select()
+        self.deleter = Delete()
         self.populator = Populate(self)
 
         self.button_base_style = """
@@ -123,6 +125,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if hasattr(self.populator, "full_data"): del self.populator.full_data
         
         self.table_name, self.widget, self.select_type = self.map_indextotable(index)
+        self.widget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.widget.setSelectionMode(QAbstractItemView.SingleSelection)
+        
+        self.widget.setSortingEnabled(False)
         self.populator.Populate_Table(self.table_name, self.widget, self.select_type)
 
         self.columns = self.populator.columns
@@ -131,7 +137,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.SearchField.addItem("Search All", None)
         for col in self.columns: 
             self.SearchField.addItem(str(col), col)
-        # Connect header click events for sorting
+
+        # Connect header click event to perform_sort
         self.widget.horizontalHeader().sectionClicked.connect(self.perform_sort)
 
 # =========================
@@ -148,22 +155,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         elif current_widget_index == 1:
             dialog = AddRoomDialog(self)
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(1)
 
         elif current_widget_index == 2:
             dialog = AddRentDialog(self)
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(2)
 
         elif current_widget_index == 3:
             dialog = AddPaymentDialog(self)
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(3)
 
         elif current_widget_index == 4:
             dialog = AddEmergencyContactDialog(self)
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(4)
 
     def on_Edit_clicked(self):
@@ -212,7 +219,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             selectedItems = self.RoomTable.selectedItems()
             if not selectedItems:
-                QMessageBox.warning(self, "No Selection", "Please select a tenant to edit.", QMessageBox.Ok)
+                QMessageBox.warning(self, "No Selection", "Please select a room to edit.", QMessageBox.Ok)
                 return
             
             selectedRow = self.RoomTable.currentRow()
@@ -238,12 +245,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.RoomTable.clearSelection()
 
             
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(1)
 
         elif current_widget_index == 2:
+            
+            selectedItems = self.RentTable.selectedItems()
+            if not selectedItems:
+                QMessageBox.warning(self, "No Selection", "Please select a rent to edit.", QMessageBox.Ok)
+                return
+            
+            selectedRow = self.RentTable.currentRow()
+            columnCount = self.RentTable.columnCount()
+            
+            rowData = {
+                self.RentTable.horizontalHeaderItem(col).text(): self.RentTable.item(selectedRow, col).text()
+                for col in range(columnCount)
+            }
+            
+            rentingTenantItem = rowData["RentingTenant"]
+            roomNumberIem = rowData["RentedRoom"]
+            moveStatusItem = rowData["MoveStatus"]
+            moveInDateItem = rowData["MoveInDate"]
+            moveOutDateItem = rowData["MoveOutDate"]
+            
+            
+            
             dialog = editRentDialog(self)
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(2)
 
         elif current_widget_index == 3:
@@ -281,7 +310,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             self.PaymentTable.clearSelection()
 
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(3)
 
         elif current_widget_index == 4:
@@ -319,10 +348,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             self.EmergencyTable.clearSelection()
 
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(4)
                 
-    # still working on this
     def on_Delete_clicked(self):
         current_widget_index = self.stackedWidget.currentIndex()
         table_name, table_widget, _ = self.map_indextotable(current_widget_index)
@@ -334,24 +362,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         reply = QMessageBox.question(
             self,
-            "Confirm Delete",
-            "Are you sure you want to delete the selected record?",
+            "Confirm Deletion",
+            f"Are you sure you want to delete this {table_name.lower()}?",
             QMessageBox.Yes | QMessageBox.No
         )
 
         if reply == QMessageBox.Yes:
-            primary_key_column = self.populator.primary_key  # this assumes `Populate` has set this
+            primary_key_column = self.populator.primary_key
 
             if not primary_key_column:
                 QMessageBox.critical(self, "Error", "No primary key found for the table.", QMessageBox.Ok)
                 return
 
-            primary_key_value = table_widget.item(selected_row, 0).text()  # assumes PK is in the first column
-            delete_query = f"DELETE FROM {table_name} WHERE {primary_key_column} = %s"
+            primary_key_value = table_widget.item(selected_row, 0).text()
 
             try:
-                self.selector.cursor.execute(delete_query, (primary_key_value,))
-                self.selector.connection.commit()
+                self.deleter.params = []  # Reset params list before each delete
+                self.deleter.DeleteQuery(table_name, primary_key_column, primary_key_value)
+                self.deleter.conn.commit()
                 QMessageBox.information(self, "Deleted", "Record deleted successfully.", QMessageBox.Ok)
                 self.load_data(current_widget_index)
             except Exception as e:
@@ -359,7 +387,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
 
-# ===========
+# ==========
 #    CRUDL BUTTONS FUNCS
 # =========================
         

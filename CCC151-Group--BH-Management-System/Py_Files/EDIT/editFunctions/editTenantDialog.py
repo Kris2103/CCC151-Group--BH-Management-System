@@ -95,7 +95,10 @@ class editTenantDialog(QDialog):
         
         
         updater.updateTableData("Tenant", setParameters, "TenantID", tenantId)
-        inserter.InsertQuery("Rents", addRentParameters)
+        
+        if roomNo is not None:
+            inserter.InsertQuery("Rents", addRentParameters)
+            
         QMessageBox.information(self, "Update Done", "Update is successful", QMessageBox.Ok)
         self.accept()
 

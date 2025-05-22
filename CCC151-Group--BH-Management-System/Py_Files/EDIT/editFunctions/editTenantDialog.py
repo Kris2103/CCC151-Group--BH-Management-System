@@ -78,27 +78,31 @@ class editTenantDialog(QDialog):
             "RoomNumber": roomNo,
             "Sex": sex
         }
-        
+
         selector = Select()
         selector.SelectQuery("Room", select_type="Room", spec_col=["Occupants.Count", "Room.MaximumCapacity"], tag="RoomNumber", key=roomNo)
-        occupantsCount, maximumCapacity = selector.retData()[0] 
-        if occupantsCount > maximumCapacity:
+        occupantsCount, maximumCapacity = selector.retData()[0]
+        if occupantsCount >= maximumCapacity:
             QMessageBox.warning(self, "Overloading of Room", "Maximum Occupants reached", QMessageBox.Ok)
             return
-        
+
         addRentParameters = {
-            tenantId : "RentingTenant",
-            roomNo : "RentedRoom",
-            QDate.currentDate().toString("yyyy-MM-dd") : "MoveInDate",
-            QDate.currentDate().addMonths(1).toString("yyyy-MM-dd") : "MoveOutDate"
+            tenantId: "RentingTenant",
+            roomNo: "RentedRoom",
+            QDate.currentDate().toString("yyyy-MM-dd"): "MoveInDate",
+            QDate.currentDate().addMonths(1).toString("yyyy-MM-dd"): "MoveOutDate"
         }
-        
-        
+
+        # Perform update
         updater.updateTableData("Tenant", setParameters, "TenantID", tenantId)
-        
-        if roomNo is not None:
+
+        # Insert new rent record only if room has changed
+        if roomNo is not None and roomNo != self.previousRoomNumber:
+            print(f"Room changed from {self.previousRoomNumber} to {roomNo}, adding new rent record.")
             inserter.InsertQuery("Rents", addRentParameters)
-            
+        else:
+            print("No room change detected. Skipping rent insertion.")
+
         QMessageBox.information(self, "Update Done", "Update is successful", QMessageBox.Ok)
         self.accept()
 

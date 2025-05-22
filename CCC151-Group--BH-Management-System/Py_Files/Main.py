@@ -238,7 +238,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.RoomTable.clearSelection()
 
             
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(1)
 
         elif current_widget_index == 2:
@@ -256,16 +256,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for col in range(columnCount)
             }
             
+            rentIDItem = rowData["RentID"]
             rentingTenantItem = rowData["RentingTenant"]
-            roomNumberIem = rowData["RentedRoom"]
-            moveStatusItem = rowData["MoveStatus"]
+            roomNumberItem = rowData["RentedRoom"]
             moveInDateItem = rowData["MoveInDate"]
             moveOutDateItem = rowData["MoveOutDate"]
+            rentDurationItem = rowData["Rent Duration in Months"]
+            moveStatusItem = rowData["Move Status"]
             
-            
-            
+                    
             dialog = editRentDialog(self)
-            if dialog.exec() == QDialog.accepted:
+            dialog.ui.RentingTenantIDComboBox.setCurrentText(rentingTenantItem)
+            dialog.ui.RoomNumberComboBox.setCurrentText(roomNumberItem)
+            
+            index = dialog.ui.MoveStatuscomboBox.findData(moveStatusItem)
+            dialog.ui.MoveStatuscomboBox.setCurrentIndex(index)
+            dialog.ui.MoveInDateEdit.setDate(QDate.fromString(moveInDateItem, "yyyy-MM-dd"))
+            dialog.ui.MoveOutDateEdit.setDate(QDate.fromString(moveOutDateItem, "yyyy-MM-dd"))
+            
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(2)
 
         elif current_widget_index == 3:
@@ -303,7 +312,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             self.PaymentTable.clearSelection()
 
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(3)
 
         elif current_widget_index == 4:
@@ -341,7 +350,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             self.EmergencyTable.clearSelection()
 
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(4)
                 
     # still working on this

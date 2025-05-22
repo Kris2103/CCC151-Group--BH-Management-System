@@ -176,10 +176,12 @@ class Select(Function):
                                                 RentDuration.MoveStatus AS `Move Status`, 
                                                 PaymentStatus.PaymentStatus AS `Payment Status`, 
                                                 PaymentStatus.UnpaidMonths AS `Unpaid Months`,
-                                                RemainingDue.RemainingDue AS `Remaining Due` """
+                                                RemainingDue.RemainingDue AS `Remaining Due`,
+                                                PaidAmount.PaidAmount AS `Paid Amount`,
+                                                EmergencyContact.PhoneNumber AS `Emergency Contact` """
                 self.aliascolumn[           "`Rent Duration in Months`"]    = "RentDuration.Duration"
                 self.columns.append(        "Rent Duration in Months")
-                self.aliascolumn[           "`Move Status`"]    = "MoveStatus.MoveStatus"
+                self.aliascolumn[           "`Move Status`"]    = "RentDuration.MoveStatus"
                 self.columns.append(        "Move Status")
                 self.aliascolumn[           "`Payment Status`"]    = "PaymentStatus.PaymentStatus"
                 self.columns.append(        "Payment Status")
@@ -187,6 +189,10 @@ class Select(Function):
                 self.columns.append(        "Unpaid Months")
                 self.aliascolumn[           "`Remaining Due`"]    = "RemainingDue.RemainingDue"
                 self.columns.append(        "Remaining Due")
+                self.aliascolumn[           "`Paid Amount`"]    = "PaidAmount.PaidAmount"
+                self.columns.append(        "Paid Amount")
+                self.aliascolumn[           "`Emergency Contact`"]    = "EmergencyContact.PhoneNumber"
+                self.columns.append(        "Emergency Contact")
 
                 for col in self.columns:
                     print(col)
@@ -200,8 +206,10 @@ class Select(Function):
                                                     ON RemainingDue.TenantID = Tenant.TenantID
                                                 LEFT JOIN PaymentStatus
                                                     ON PaymentStatus.TenantID = Tenant.TenantID
+                                                LEFT JOIN EmergencyContact
+                                                    ON EmergencyContact.EMTenantID = Tenant.TenantID 
                                             """
-                # pass
+
             case "Rents":
                 CTEs = [CTE_RentDuration]
                 self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
@@ -231,8 +239,64 @@ class Select(Function):
                                                     ON PaidAmount.TenantID = Pays.PayingTenant
                                             """ 
             case "Room":
-                pass
+                CTEs = [CTE_Occupants]
+                self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
+                self.columnquery +=         """, Occupants.Count AS `No. of Occupants` """                
+                self.aliascolumn[           "`No. of Occupants`"]                 = "Occupants.Count"
+                self.columns.append(        "No. of Occupants")
 
+                self.conditions +=          """ LEFT JOIN Occupants 
+                                                    ON Occupants.RoomNumber = Room.RoomNumber
+                                            """
+
+            case "LatestRent":
+                CTEs = [CTE_LatestRent]
+                self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
+                self.columnquery +=         """, LatestRent.RentID AS RentID """                
+                self.aliascolumn[           "RentID"]                 = "LatestRent.RentID"
+                self.columns.append(        "RentID")
+
+                self.conditions +=          """ LEFT JOIN LatestRent 
+                                                    ON LatestRent.TenantID = Rents.RentingTenant
+                                            """ 
+
+            case "LatestPay":
+                CTEs = [CTE_LatestPay]
+                self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
+                self.columnquery +=         """, LatestPay.PayID AS PayID """                
+                self.aliascolumn[           "PayID"]                 = "LatestPay.PayID"
+                self.columns.append(        "PayID")
+
+                self.conditions +=          """ LEFT JOIN LatestPay 
+                                                    ON LatestPay.TenantID = Pays.PayingTenant
+                                            """ 
+
+CTE_LatestRent     = """ LatestRent AS (
+                            SELECT 
+                                MAX(r.RentID) AS RentID,
+                                t.TenantID AS TenantID
+                            FROM Rents r
+                            LEFT JOIN Tenant t ON t.TenantID = r.RentingTenant
+                            GROUP BY t.TenantID
+                            )"""
+
+CTE_LatestPay       = """ LatestPay AS (
+                            SELECT 
+                                MAX(p.PayID) AS PayID,
+                                t.TenantID AS TenantID
+                            FROM Pays p
+                            LEFT JOIN Tenant t ON t.TenantID = p.PayingTenant
+                            GROUP BY t.TenantID
+                            )"""
+
+CTE_Occupants       = """ Occupants AS (                          
+                            SELECT 
+                                COUNT(t.TenantID) AS Count,
+                                r.RoomNumber AS RoomNumber
+                            FROM Room r
+                            LEFT JOIN Tenant t ON t.RoomNumber = r.RoomNumber
+                            GROUP BY r.RoomNumber
+                            )"""
 
 CTE_RentDuration    = """ RentDuration AS (
                             SELECT 
@@ -276,8 +340,8 @@ CTE_PaymentStatus   = """ PaymentStatus AS (
                                 t.TenantID AS TenantID,
                                 CASE
                                     WHEN pa.PaidAmount IS NULL AND red.RemainingDue IS NULL THEN "No Payments"
-                                    WHEN COALESCE(pa.PaidAmount, 0) >= COALESCE(red.TotalDue, 0) THEN "Paid"
-                                    WHEN COALESCE(pa.PaidAmount, 0) < COALESCE(red.RemainingDue, 0) AND CURRENT_DATE() > rd.MoveOutDate THEN "Overdue"
+                                    WHEN COALESCE(red.RemainingDue, 0) <= 0 THEN "Paid"
+                                    WHEN COALESCE(red.RemainingDue, 0) > 0 AND CURRENT_DATE() > rd.MoveOutDate THEN "Overdue"
                                     WHEN COALESCE(pa.PaidAmount, 0) < (COALESCE(red.Price, 0) * TIMESTAMPDIFF(
                                                                                                                 MONTH, 
                                                                                                                 rd.MoveInDate, 

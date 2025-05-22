@@ -16,6 +16,7 @@ from EDIT.editFunctions.editRentDialog import editRentDialog
 from EDIT.editFunctions.editEmergencyContactDialog import editEmergencyContactDialog
 from EDIT.editFunctions.editRoomDialog import editRoomDialog
 from EDIT.editFunctions.editPaymentDialog import editPaymentDialog
+from DATABASE.Functions.Delete import Delete
 from DATABASE.DB import DatabaseConnector
 import math
 from DATABASE.Functions.Populate import Populate
@@ -154,22 +155,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         elif current_widget_index == 1:
             dialog = AddRoomDialog(self)
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(1)
 
         elif current_widget_index == 2:
             dialog = AddRentDialog(self)
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(2)
 
         elif current_widget_index == 3:
             dialog = AddPaymentDialog(self)
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(3)
 
         elif current_widget_index == 4:
             dialog = AddEmergencyContactDialog(self)
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(4)
 
     def on_Edit_clicked(self):
@@ -244,7 +245,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.RoomTable.clearSelection()
 
             
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(1)
 
         elif current_widget_index == 2:
@@ -271,7 +272,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             
             dialog = editRentDialog(self)
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(2)
 
         elif current_widget_index == 3:
@@ -309,7 +310,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             self.PaymentTable.clearSelection()
 
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(3)
 
         elif current_widget_index == 4:
@@ -347,7 +348,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             self.EmergencyTable.clearSelection()
 
-            if dialog.exec() == QDialog.accepted:
+            if dialog.exec() == QDialog.Accepted:
                 self.load_data(4)
                 
     def on_Delete_clicked(self):

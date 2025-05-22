@@ -13,7 +13,6 @@ class Populate:
         self.mw = main_window
         self.selector = Select.Select()
         self.inserter = Insert.Insert()
-        self.primary_key = None
     
     def Populate_Table(self, table_name, table_widget, select_type, current_page = 1, search_column = None, search_key = None, group = None, sort_column = None, sort_order = None):
         
@@ -29,28 +28,9 @@ class Populate:
 
         # Fetch ALL data with query, store for faster loading in page change...
         self.columns = self.selector.SelectQuery(table_name, select_type).retCols()
+        if not hasattr(self, "full_data"):
+            self.full_data = self.selector.SelectQuery(table_name, select_type, tag = search_column, key = search_key, sort_column = sort_column, sort_order = sort_order, group = group).retData()
 
-        # Set primary key
-        primary_keys = {
-            "Tenant": "TenantID",
-            "Room": "RoomNumber",
-            "Rents": "RentID",
-            "Pays": "PayID",
-            "EmergencyContact": "ContactID"
-        }
-        self.primary_key = primary_keys.get(table_name)
-        if self.primary_key is None and self.columns:
-            # fallback to first column as primary key if not set
-            self.primary_key = self.columns[0]
-
-        # Fetch full data for pagination and filtering
-        if not hasattr(self, "full_data") or self.table_name != table_name \
-           or self.search_key != search_key:
-            self.full_data = self.selector.SelectQuery(
-                table_name, select_type,
-                tag=search_column, key=search_key,
-                sort_column=sort_column, sort_order=sort_order,
-                group=group).retData()
         # Tradeoff: Takes up memory for faster loading(users want their current job done than more jobs done)
 
             # Configure pages information according to taste
@@ -142,9 +122,6 @@ class Populate:
         
         self.mw.jumpBox.activated.connect(lambda: self.jump())
 
-        infoIcon = SpecialWidgetsUI.CustomRowDelegate(self.table_widget)
-        self.table_widget.setItemDelegate(infoIcon)
-        infoIcon.emitter.iconClicked.connect(lambda: infoIcon.infoClicked(self.mw))
 
     def jump(self):
         page = self.mw.jumpBox.currentData()
@@ -218,11 +195,12 @@ class Populate:
 
         self.sex_combobox.addItems(["Male", "Female"])
 
-    # typo with self.move_combobox
     def populate_movestatus_combobox(self, move_combobox):
-        self.move_combobox = move_combobox
-        self.move_combobox.clear()
-        self.move_combobox.addItems(["Active", "Moved Out"])
+        self.move_combobow = move_combobox
+        self.move_combobow.clear()
+
+        self.move_combobow.addItems(["Active", "Moved Out"])
+
 
     def populate_tenant_id_combobox(self, tenant_combobox):
         try:    
@@ -248,9 +226,7 @@ class Populate:
         moveout = self.moveout_combobox.currentText()
         
         if movein and not moveout:
-            #self.tenantid_combobox.setCurrentText()
-            if hasattr(self, 'tenantid_combobox'):
-                self.tenantid_combobox.setCurrentText("")
+            self.tenantid_combobox.setCurrentText()
 
     def sync_tenant_id_from_room(self, roomnum_combobox, tenantid_combobox):
         self.roomnum_combobox = roomnum_combobox

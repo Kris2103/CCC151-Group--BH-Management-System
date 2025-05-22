@@ -50,9 +50,9 @@ class AddRentDialog(QDialog):
                                             key        = tenant_id, 
                                             limit      = 1).retData()[0][0]
         
-        room_columns = ["MaximumCapacity",  
-                        "NoOfOccupants",
-                        "TenantSex"]
+        room_columns = ["Room.MaximumCapacity",  
+                        "Occupants.Count",
+                        "Room.TenantSex"]
             
         room_data = self.select.SelectQuery(table      = "Room", 
                                             spec_col   = room_columns, 
@@ -107,7 +107,7 @@ class AddRentDialog(QDialog):
                         ]
             
             self.insert.InsertQuery("Rents", newRent)
-            self.updater.updateTableData("Room", {"NoOfOccupants" : current_occupants + 1, "TenantSex" : tenant_sex}, "RoomNumber", int(room_number))
+            self.updater.updateTableData("Room", {"TenantSex" : tenant_sex}, "RoomNumber", int(room_number))
             self.updater.updateTableData("Tenant", {"RoomNumber" : room_number}, "TenantID", tenant_id)
 
             # Repopulate UI elements after successful insertion

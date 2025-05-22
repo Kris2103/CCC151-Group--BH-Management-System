@@ -103,18 +103,19 @@ class editRentDialog(QDialog):
                 "RoomNumber" : None
             }
             
-            if self.previousRoomNumber:
-                self.select.SelectQuery(table="Room",
-                                        spec_col=["Room.NoOfOccupants"],
-                                        filters={"RoomNumber": self.previousRoomNumber},
-                                        limit=1)
+            # if self.previousRoomNumber:
+            #     self.select.SelectQuery(table="Room",
+            #                             spec_col=["Occupants.Count"],
+            #                             select_type = "Room", 
+            #                             filters={"RoomNumber": self.previousRoomNumber},
+            #                             limit=1)
                 
-                resultBuilder = self.select.retData()
+            #     resultBuilder = self.select.retData()
                 
-                if resultBuilder:
-                    currentOccupants = int(resultBuilder[0][0])
-                    updatedOccupants = max(0, currentOccupants - 1)
-                    self.updater.updateTableData("Room", {"NoOfOccupants": updatedOccupants}, "RoomNumber", self.previousRoomNumber)
+            #     if resultBuilder:
+            #         currentOccupants = int(resultBuilder[0][0])
+            #         updatedOccupants = max(0, currentOccupants - 1)
+            #         self.updater.updateTableData("Room", {"NoOfOccupants": updatedOccupants}, "RoomNumber", self.previousRoomNumber)
               
         self.updater.updateTableData("Rents", rentParameters, "RentingTenant", rentingTenant)
         self.updater.updateTableData("Tenant", tenantParameters, "TenantID", rentingTenant)
@@ -191,11 +192,11 @@ class editRentDialog(QDialog):
             print(f"Room changed by user from {self.previousRoomNumber} to {newValue}")
             self.roomChanged = True
             
-            self.select.SelectQuery(table="Room", select_type=None, spec_col=["Room.NoOfOccupants"], tag="RoomNumber", key=newValue)
+            self.select.SelectQuery(table="Room", select_type="Room", spec_col=["Occupants.Count"], tag="RoomNumber", key=newValue)
             
             #decrement previous room's occupant count
-            self.updater.updateTableData("Room", {"NoOfOccupants": 0}, "RoomNumber", self.previousRoomNumber)
+            # self.updater.updateTableData("Room", {"NoOfOccupants": 0}, "RoomNumber", self.previousRoomNumber)
             #increment new room's occupant count
-            self.updater.updateTableData("Room", {"NoOfOccupants": 1}, "RoomNumber", newValue)
+            # self.updater.updateTableData("Room", {"NoOfOccupants": 1}, "RoomNumber", newValue)
         else:
             self.roomChanged = False

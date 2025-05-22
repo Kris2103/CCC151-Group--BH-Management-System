@@ -10,6 +10,7 @@ from PyQt5.QtGui import QPixmap, QPainter
 from PyQt5.QtCore import Qt, QRect, QObject, pyqtSignal
 
 from INFO.TenantInfoDialog import TenantInfoDialog
+from INFO.RoomInfoDialog import RoomInfoDialog
 
 
 class ClickablePageLabel(QtWidgets.QLabel):
@@ -80,22 +81,6 @@ class CustomRowDelegate(QStyledItemDelegate):
             dialog = TenantInfoDialog(self.mw, self.row_id)
             dialog.exec()
 
-        # elif current_widget_index == 1:
-        #     dialog = AddRoomDialog(self)
-        #     if dialog.exec() == QDialog.accepted:
-        #         self.load_data(1)
-
-        # elif current_widget_index == 2:
-        #     dialog = AddRentDialog(self)
-        #     if dialog.exec() == QDialog.accepted:
-        #         self.load_data(2)
-
-        # elif current_widget_index == 3:
-        #     dialog = AddPaymentDialog(self)
-        #     if dialog.exec() == QDialog.accepted:
-        #         self.load_data(3)
-
-        # elif current_widget_index == 4:
-        #     dialog = AddEmergencyContactDialog(self)
-        #     if dialog.exec() == QDialog.accepted:
-        #         self.load_data(4)
+        elif current_widget_index == 1:
+            dialog = RoomInfoDialog(self.mw, self.row_id)
+            dialog.exec()

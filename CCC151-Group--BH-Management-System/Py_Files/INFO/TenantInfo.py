@@ -253,8 +253,8 @@ class Ui_Dialog(object):
                 self.gridFrame.addWidget(self.EmailLabel,       2, 0)
                 self.gridFrame.addWidget(self.EmailLine,        2, 1, 1, 2)
 
-                self.gridFrame.addWidget(self.ECLabel,          7, 0)
-                self.gridFrame.addWidget(self.ECLine,           7, 1)
+                self.gridFrame.addWidget(self.ECLabel,          6, 0)
+                self.gridFrame.addWidget(self.ECLine,           6, 1)
 
                 self.gridFrame.addWidget(self.RoomNumLabel,     3, 2)
                 self.gridFrame.addWidget(self.RoomLine,         3, 3)

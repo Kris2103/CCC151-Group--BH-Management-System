@@ -1,5 +1,4 @@
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QDialog, QMessageBox
 from ..EditTenant import Ui_Dialog
 from PyQt5.QtCore import Qt
 from DATABASE.Functions.update import update
@@ -7,12 +6,12 @@ from DATABASE.Functions.Select import Select
 from .editEmergencyContactDialog import editEmergencyContactDialog
 
 class editTenantDialog(QDialog):
-    
+
     sexOptions = {
-    "Male" : "Male",
-    "Female" : "Female"
+        "Male": "Male",
+        "Female": "Female"
     }
-            
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -23,26 +22,23 @@ class editTenantDialog(QDialog):
 
         self.ui.UpdatepushButton.clicked.connect(self.updateTenant)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
-        
-        self.ui.TenantIDLineEdit.setFocus()
 
+        self.ui.TenantIDLineEdit.editingFinished.connect(self.matchTenantIdToDetails)
+
+        self.ui.TenantIDLineEdit.setFocus()
+        self.previousRoomNumber = None
 
     def updateTenant(self):
-
         firstName = self.ui.FirstNameLineEdit.text()
         middleName = self.ui.MiddleNameLineEdit.text()
         lastName = self.ui.LastNameLineEdit.text()
         email = self.ui.EmailLineEdit.text()
         phoneNumber = self.ui.PhoneNumberLineEdit.text()
-        roomNo = self.ui.RoomNoComboBox.currentText()
-        if not roomNo:  
-            roomNo = None 
+        roomNoText = self.ui.RoomNoComboBox.currentText().strip()
+        roomNo = int(roomNoText) if roomNoText.isdigit() else None
         sex = self.ui.SexComboBox.currentData()
-        if not sex:
-            sex = None
-
         tenantId = self.ui.TenantIDLineEdit.text()
-        
+
         errors = []
 
         if not firstName:
@@ -64,62 +60,89 @@ class editTenantDialog(QDialog):
             errorMessage = "\n".join(errors)
             print("Validation Errors:\n" + errorMessage)
             QMessageBox.critical(self, "Validation Error", errorMessage, QMessageBox.Ok)
-        
-            return  # Skip further execution
+            return
 
         print(f"Updating tenant with ID: {tenantId}, Name: {firstName} {middleName} {lastName}")
-        
+
         updater = update()
-        
+
+        # Update tenant data
         setParameters = {
-            "FirstName" : firstName,
-            "MiddleName" : middleName,
-            "LastName" : lastName,
-            "Email" : email,
-            "PhoneNumber" : phoneNumber,
-            "RoomNumber" : roomNo,
-            "Sex" : sex
+            "FirstName": firstName,
+            "MiddleName": middleName,
+            "LastName": lastName,
+            "Email": email,
+            "PhoneNumber": phoneNumber,
+            "RoomNumber": roomNo,
+            "Sex": sex
         }
-        
+
         updater.updateTableData("Tenant", setParameters, "TenantID", tenantId)
         QMessageBox.information(self, "Update Done", "Update is successful", QMessageBox.Ok)
         self.accept()
-        
+
     def closeWindow(self):
         print("Closing the Edit Tenant Dialog")
-        self.reject() 
-        
+        self.reject()
+
     def fillSexComboBox(self):
         self.ui.SexComboBox.clear()
-        
-        for label, data, in self.sexOptions.items():
+        for label, data in self.sexOptions.items():
             self.ui.SexComboBox.addItem(label, data)
-            
         self.ui.SexComboBox.setCurrentIndex(-1)
-            
+
     def openEditEmergencyContact(self):
         emergencyContactDialog = editEmergencyContactDialog(self)
         result = emergencyContactDialog.exec_()
-        if result == QDialog.accepted:
+        if result == QDialog.Accepted:
             print("Now editing tenant's emergency contact")
-                    
+
     def fillRoomNoComboBox(self):
         selector = Select()
-    
-        selector.SelectQuery(table="Room", select_type=None, spec_col=["Room.RoomNumber"], tag=None, key=None)
+        selector.SelectQuery(
+            table="Room",
+            select_type=None,
+            spec_col=["Room.RoomNumber"],
+            tag=None,
+            key=None
+        )
         roomNumbers = selector.retData()
         self.ui.RoomNoComboBox.clear()
-        
+
         for room in roomNumbers:
             self.ui.RoomNoComboBox.addItem(str(room[0]))
+
         self.ui.RoomNoComboBox.setCurrentIndex(-1)
-        
+
     def matchTenantIdToDetails(self):
-        tenantId = self.ui.TenantIDLineEdit.text()
+        tenantId = self.ui.TenantIDLineEdit.text().strip()
         selector = Select()
-        
+
         if tenantId:
-            selector.SelectQuery(table="Tenant", select_type=None, spec_col=["Tenant.FirstName", "Tenant.MiddleName", "Tenant.LastName",
-                                                                              "Tenant.Email", "Tenant.PhoneNumber", "Tenant.RoomNumber"], tag="TenantID", key=tenantId)
+            selector.SelectQuery(
+                table="Tenant",
+                select_type=None,
+                spec_col=[
+                    "Tenant.FirstName", "Tenant.MiddleName", "Tenant.LastName",
+                    "Tenant.Email", "Tenant.PhoneNumber", "Tenant.RoomNumber", "Tenant.Sex"
+                ],
+                tag="TenantID",
+                key=tenantId
+            )
             resultBuilder = selector.retData()
             print(f"Query Result: {resultBuilder}")
+
+            if resultBuilder:
+                firstName, middleName, lastName, email, phone, roomNo, sex = resultBuilder[0]
+                self.previousRoomNumber = roomNo
+
+                self.ui.FirstNameLineEdit.setText(firstName)
+                self.ui.MiddleNameLineEdit.setText(middleName)
+                self.ui.LastNameLineEdit.setText(lastName)
+                self.ui.EmailLineEdit.setText(email)
+                self.ui.PhoneNumberLineEdit.setText(phone)
+                self.ui.RoomNoComboBox.setCurrentText(str(roomNo))
+
+                index = self.ui.SexComboBox.findData(sex)
+                if index != -1:
+                    self.ui.SexComboBox.setCurrentIndex(index)

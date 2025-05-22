@@ -286,6 +286,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         elif current_widget_index == 4:
             dialog = editEmergencyContactDialog(self)
+
+            selectedItems = self.EmergencyTable.selectedItems()
+            if not selectedItems:
+                QMessageBox.warning(self, "No Selection", "Please select a emergency contact to edit.", QMessageBox.Ok)
+                return
+                
+            selectedRow = self.EmergencyTable.currentRow()
+            columnCount = self.EmergencyTable.columnCount()
+            
+            rowData = {
+                self.EmergencyTable.horizontalHeaderItem(col).text(): self.EmergencyTable.item(selectedRow, col).text()
+                for col in range(columnCount)
+            }
+            
+            emcontactidITem = rowData["ContactID"]
+            emFirstNameItem = rowData["FirstName"]
+            emMiddleNameItem = rowData["MiddleName"]
+            emLastNameItem = rowData["LastName"]
+            emrelationshipItem = rowData["Relationship"]
+            emPhoneNumberItem = rowData["PhoneNumber"]
+            tenantIdItem = rowData["EMTenantID"]
+
+            dialog = editEmergencyContactDialog(self)
+            dialog.ui.ContactIDLineEdit.setText(emcontactidITem)
+            dialog.ui.FirstNameLineEdit.setText(emFirstNameItem)
+            dialog.ui.MibbleNameLineEdit.setText(emMiddleNameItem)
+            dialog.ui.LastNameLineEdit.setText(emLastNameItem)
+            dialog.ui.RelationshipLineEdit.setText(emrelationshipItem)
+            dialog.ui.PhoneNumberLineEdit.setText(emPhoneNumberItem)
+            dialog.ui.TenantEMIDComboBox.setCurrentText(tenantIdItem)
+            
+            self.EmergencyTable.clearSelection()
+
             if dialog.exec() == QDialog.accepted:
                 self.load_data(4)
                 

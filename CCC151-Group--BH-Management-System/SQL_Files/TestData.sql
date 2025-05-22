@@ -6,8 +6,7 @@ CREATE TABLE IF NOT EXISTS Room (
     Price           DECIMAL(7,2)  NOT NULL,
     TenantSex       VARCHAR(6) 
                     CHECK (TenantSex IN ('Male', 'Female', NULL)),
-    MaximumCapacity INTEGER       NOT NULL,
-    NoOfOccupants   INTEGER       NOT NULL 
+    MaximumCapacity INTEGER       NOT NULL
                     DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS  Tenant (

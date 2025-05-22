@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox
 from ..EditTenant import Ui_Dialog
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QDate
 from DATABASE.Functions.update import update
 from DATABASE.Functions.Select import Select
+from DATABASE.Functions.Insert import Insert
 from .editEmergencyContactDialog import editEmergencyContactDialog
 
 class editTenantDialog(QDialog):
@@ -65,6 +66,7 @@ class editTenantDialog(QDialog):
         print(f"Updating tenant with ID: {tenantId}, Name: {firstName} {middleName} {lastName}")
 
         updater = update()
+        inserter = Insert()
 
         # Update tenant data
         setParameters = {
@@ -76,8 +78,24 @@ class editTenantDialog(QDialog):
             "RoomNumber": roomNo,
             "Sex": sex
         }
-
+        
+        selector = Select()
+        selector.SelectQuery("Room", select_type="Room", spec_col=["Occupants.Count", "Room.MaximumCapacity"], tag="RoomNumber", key=roomNo)
+        occupantsCount, maximumCapacity = selector.retData()[0] 
+        if occupantsCount > maximumCapacity:
+            QMessageBox.warning(self, "Overloading of Room", "Maximum Occupants reached", QMessageBox.Ok)
+            return
+        
+        addRentParameters = {
+            tenantId : "RentingTenant",
+            roomNo : "RentedRoom",
+            QDate.currentDate().toString("yyyy-MM-dd") : "MoveInDate",
+            QDate.currentDate().addMonths(1).toString("yyyy-MM-dd") : "MoveOutDate"
+        }
+        
+        
         updater.updateTableData("Tenant", setParameters, "TenantID", tenantId)
+        inserter.InsertQuery("Rents", addRentParameters)
         QMessageBox.information(self, "Update Done", "Update is successful", QMessageBox.Ok)
         self.accept()
 

@@ -15,25 +15,34 @@ class RoomInfoDialog(QDialog):
         self.extractInfo()
 
     def extractInfo(self):
-        room_info = ["Room.RoomNumber"]
-        selected_tenant = {"RoomNumber" : self.row_id}
-        print("Extraction executing")
-        # try:
-        #     fname, mname, lname, sex, pnum, email, movestat, roomn, paystat, remdue, paidamt, ecpnum = self.select.SelectQuery( table = "Tenant",
-        #                                                                                                                 select_type = "Tenant",
-        #                                                                                                                 spec_col = tenant_info,
-        #                                                                                                                 filters = selected_tenant).retData()[0]
-        # except Exception as e:
-        #     print(f"Some exception {e} in extracting information")
+        room_info = ["Room.RoomNumber", "Room.Price", "Occupants.Count", "Room.MaximumCapacity"]
+        selected_room = {"RoomNumber" : self.row_id}
 
-        # print("Extraction complete")
-        # self.ui.NameLine.setText(f"{lname}, {fname} {mname}" if mname is not None else f"{lname}, {fname}")
-        # self.ui.SexLine.setText(f"{sex}")
-        # self.ui.PhoneLine.setText(f"{pnum}")
-        # self.ui.EmailLine.setText(f"{email}")
-        # self.ui.MoveLine.setText(f"{movestat}" if movestat is not None else "No Rental Contracts")
-        # self.ui.RoomLine.setText(f"{roomn}")
-        # self.ui.PayLine.setText(f"{paystat}")
-        # self.ui.RemainLine.setText(f"{remdue}")
-        # self.ui.PaidLine.setText(f"{paidamt}")
-        # self.ui.ECLine.setText(f"{ecpnum}" if ecpnum is not None else "None added")
+        print("Extraction executing")
+        try:
+            roomnum, roomprc, roomocc, roomcap = self.select.SelectQuery(   table = "Room",
+                                                                            select_type = "Room",
+                                                                            spec_col = room_info,
+                                                                            filters = selected_room).retData()[0]
+            totalremdue = self.select.SelectQuery(  table = "Tenant",
+                                                    select_type = "Tenant",
+                                                    spec_col = ["SUM(RemainingDue.RemainingDue)"],
+                                                    filters =  selected_room).retData()[0][0]
+            if totalremdue != 0 and totalremdue is not None:
+                paymstat = "Pending Payments" 
+            elif totalremdue is None:
+                paymstat = "No Payments"
+            else:
+                paymstat = "Paid"
+
+        except Exception as e:
+                print(f"Some exception {e} in extracting information")
+
+        print("Extraction complete")
+        self.ui.RoomIDLine.setText(f"{roomnum}")
+        self.ui.RoomPriceLine.setText(f"{roomprc}")
+        self.ui.OccupantsLine.setText(f"{roomocc}")
+        self.ui.CapacityLine.setText(f"{roomcap}")
+        self.ui.ContractsLine.setText(f"{roomocc}")
+        self.ui.RemainLine.setText(f"{totalremdue}")
+        self.ui.PayLine.setText(f"{paymstat}")

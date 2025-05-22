@@ -213,9 +213,9 @@ class Select(Function):
             case "Rents":
                 CTEs = [CTE_RentDuration]
                 self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
-                self.columnquery        +=  """, RentDuration.Duration AS `Rent Duration in Months`, RentDuration.MoveStatus AS `Move Status`"""
-                self.aliascolumn[           "`Rent Duration in Months`"]    = "RentDuration.Duration"
-                self.columns.append(        "Rent Duration in Months")
+                self.columnquery        +=  """, RentDuration.Duration AS `Duration (Months)`, RentDuration.MoveStatus AS `Move Status`"""
+                self.aliascolumn[           "`Duration (Months)`"]    = "RentDuration.Duration"
+                self.columns.append(        "Duration (Months)")
                 self.aliascolumn[           "`Move Status`"]    = "MoveStatus.MoveStatus"
                 self.columns.append(        "Move Status")
 
@@ -225,7 +225,7 @@ class Select(Function):
                                                     ON RentDuration.TenantID = Tenant.TenantID
                                             """
             case "Pays":
-                CTEs = [CTE_RentDuration, CTE_PaidAmount, CTE_RemainingDue]
+                CTEs = [ CTE_Occupants, CTE_RentDuration, CTE_PaidAmount, CTE_RemainingDue, CTE_PaymentStatus]
                 self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
                 self.columnquery +=         """, RemainingDue.RemainingDue AS RemainingDue """                
                 self.aliascolumn[           "RemainingDue"]                 = "RemainingDue.RemainingDue"
@@ -237,6 +237,10 @@ class Select(Function):
                                                     ON RentDuration.TenantID = Pays.PayingTenant
                                                 LEFT JOIN PaidAmount
                                                     ON PaidAmount.TenantID = Pays.PayingTenant
+                                                LEFT JOIN Occupants 
+                                                    ON Occupants.RoomNumber = Pays.PaidRoom
+                                                LEFT JOIN PaymentStatus
+                                                    ON PaymentStatus.TenantID = Pays.PayingTenant
                                             """ 
             case "Room":
                 CTEs = [CTE_Occupants]
@@ -324,6 +328,17 @@ CTE_PaidAmount      = """ PaidAmount AS (
                             GROUP BY p.PayingTenant
                             ) """
 
+# CTE_PaidperMonth    = """ PaidperMonth AS (
+#                             SELECT 
+#                                 p.PayingTenant AS TenantID, 
+#                                 SUM(p.PaymentAmount) AS PaidAmount,
+#                                 MAX(p.PaymentDate) AS LastPaymentDate
+#                             FROM Pays p
+#                             LEFT JOIN Rents r ON r.RentingTenant = p.PayingTenant
+#                                             AND p.PaymentDate BETWEEN r.MoveInDate AND r.MoveOutDate
+#                             GROUP BY p.PayingTenant
+#                             ) """
+
 CTE_RemainingDue    = """ RemainingDue AS (
                             SELECT 
                                 rd.TenantID AS TenantID,
@@ -334,6 +349,18 @@ CTE_RemainingDue    = """ RemainingDue AS (
                             LEFT JOIN PaidAmount pa ON rd.TenantID = pa.TenantID
                             LEFT JOIN Room r ON r.RoomNumber = rd.RoomNumber
                             ) """
+
+# CTE_RemainingDue    = """ RemainingDue AS (
+#                             SELECT 
+#                                 rd.TenantID AS TenantID,
+#                                 r.Price as Price,
+#                                 COALESCE(r.Price, 0) * COALESCE(rd.Duration, 0) AS TotalDue,
+#                                 ((COALESCE(r.Price, 0) * COALESCE(rd.Duration, 0)) - COALESCE(pa.PaidAmount, 0) / COALESCE(o.Count, 0)) AS RemainingDue
+#                             FROM RentDuration rd
+#                             LEFT JOIN PaidAmount pa ON rd.TenantID = pa.TenantID
+#                             LEFT JOIN Room r ON r.RoomNumber = rd.RoomNumber
+#                             LEFT JOIN Occupants o ON r.RoomNumber = o.RoomNumber
+#                             ) """
 
 CTE_PaymentStatus   = """ PaymentStatus AS (
                             SELECT 

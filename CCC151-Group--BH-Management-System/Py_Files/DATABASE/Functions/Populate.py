@@ -45,10 +45,20 @@ class Populate:
         self.page_data          = self.full_data[start_index:end_index]
 
         # refresh table widget(data is not refreshed)
+
+        if not hasattr(self, "sortHeaders") :
+            print("sortHeaders")
+            self.sortHeaders = SpecialWidgetsUI.SortHeaders(Qt.Horizontal, table_widget)
+
         table_widget.clear()
         table_widget.setRowCount(len(self.page_data))
         table_widget.setColumnCount(len(self.columns))
-        table_widget.setHorizontalHeaderLabels(self.columns)
+        if table_widget.columnCount() != len(self.columns):
+            table_widget.setColumnCount(len(self.columns))
+            table_widget.setHorizontalHeaderLabels(self.columns)
+
+        table_widget.setHorizontalHeader(self.sortHeaders)
+        # table_widget.setHorizontalHeaderLabels(self.columns)
         table_widget.verticalHeader().setVisible(False)
 
         # Load the data in TO EDIT: ignore first column (built-in id of widget)
@@ -57,10 +67,7 @@ class Populate:
                 item = QTableWidgetItem(str(cell))
                 item.setTextAlignment(Qt.AlignCenter)
                 table_widget.setItem(row_idx, col_idx, item)
-
-        # Add an additional row for more Info buttons
-
-
+                
         self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -122,10 +129,9 @@ class Populate:
         
         self.mw.jumpBox.activated.connect(lambda: self.jump())
 
-        infoIcon = SpecialWidgetsUI.CustomRowDelegate(self.table_widget)
+        infoIcon = SpecialWidgetsUI.RowInfo(self.table_widget)
         self.table_widget.setItemDelegate(infoIcon)
         infoIcon.emitter.iconClicked.connect(lambda: infoIcon.infoClicked(self.mw))
-
 
     def jump(self):
         page = self.mw.jumpBox.currentData()

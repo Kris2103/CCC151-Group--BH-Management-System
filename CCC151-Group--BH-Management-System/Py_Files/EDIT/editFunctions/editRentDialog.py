@@ -178,7 +178,6 @@ class editRentDialog(QDialog):
         self.ui.RoomNumberComboBox.clear()
         self.select.SelectQuery(table="Room", select_type=None, spec_col=["Room.RoomNumber"])
         resultBuilder = self.select.retDict()
-        #print(f"Query Result: {resultBuilder}")
 
         for row in resultBuilder:
             roomNumber = next(iter(row.values()))
@@ -229,10 +228,6 @@ class editRentDialog(QDialog):
             
             self.select.SelectQuery(table="Room", select_type="Room", spec_col=["Occupants.Count"], tag="RoomNumber", key=newValue)
             
-            #decrement previous room's occupant count
-            # self.updater.updateTableData("Room", {"NoOfOccupants": 0}, "RoomNumber", self.previousRoomNumber)
-            #increment new room's occupant count
-            # self.updater.updateTableData("Room", {"NoOfOccupants": 1}, "RoomNumber", newValue)
         else:
             self.roomChanged = False
             

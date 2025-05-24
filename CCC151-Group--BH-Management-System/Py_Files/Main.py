@@ -262,12 +262,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for col in range(columnCount)
             }
             
-            rentIDItem = rowData["RentID"]
             rentingTenantItem = rowData["RentingTenant"]
             roomNumberItem = rowData["RentedRoom"]
             moveInDateItem = rowData["MoveInDate"]
             moveOutDateItem = rowData["MoveOutDate"]
-            rentDurationItem = rowData["Duration (Months)"]
             moveStatusItem = rowData["Move Status"]
             
                     

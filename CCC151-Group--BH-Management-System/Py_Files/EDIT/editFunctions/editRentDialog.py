@@ -42,11 +42,11 @@ class editRentDialog(QDialog):
         self.ui.UpdatepushButton.clicked.connect(self.updateRent)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
 
-        #self.ui.RentingTenantIDComboBox.currentTextChanged.connect(self.checkMoveinOrMoveOut)
+        #self.ui.RentingTenantComboBox.currentTextChanged.connect(self.checkMoveinOrMoveOut)
         self.ui.RoomNumberComboBox.currentTextChanged.connect(self.onRoomNumberChanged)
         self.ui.MoveStatuscomboBox.currentTextChanged.connect(self.checkMoveinOrMoveOut)
-        # self.ui.RoomNoComboBox.currentTextChanged.connect(lambda: self.populate.sync_tenant_id_from_room(self.ui.RoomNoComboBox, self.ui.RentingTenantIDComboBox))
-        # self.ui.RentingTenantIDComboBox.currentTextChanged.connect(lambda: self.populate.sync_room_from_tenant_id(self.ui.RoomNoComboBox, self.ui.RentingTenantIDComboBox))
+        # self.ui.RoomNoComboBox.currentTextChanged.connect(lambda: self.populate.sync_tenant_id_from_room(self.ui.RoomNoComboBox, self.ui.RentingTenantComboBox))
+        # self.ui.RentingTenantComboBox.currentTextChanged.connect(lambda: self.populate.sync_room_from_tenant_id(self.ui.RoomNoComboBox, self.ui.RentingTenantComboBox))
 
         self.matchTenantIDToDetails()
 
@@ -54,10 +54,17 @@ class editRentDialog(QDialog):
         moveInDateData = self.ui.MoveInDateEdit.date().toString("yyyy-MM-dd")
         moveOutDateData = self.ui.MoveOutDateEdit.date().toString("yyyy-MM-dd")
         roomNumber = self.ui.RoomNumberComboBox.currentText()
-        
+        rentingTenant = self.ui.RentingTenantComboBox.currentText()
+
         try:
-            self.select.SelectQuery("Room", select_type="Room", spec_col=["Occupants.Count", "Room.MaximumCapacity"], tag="RoomNumber", key=roomNumber)
-            occupantsCount, maximumCapacity = self.select.retData()[0]
+            self.select.SelectQuery("Room", select_type="Room", spec_col=["Occupants.Count", "Room.MaximumCapacity", "Room.TenantSex"], tag="RoomNumber", key=roomNumber)
+            occupantsCount, maximumCapacity, room_tsex = self.select.retData()[0]
+
+            tenant_sex = self.select.SelectQuery(table     = "Tenant", 
+                                                spec_col   = ["Sex"], 
+                                                tag        = "TenantID", 
+                                                key        = rentingTenant, 
+                                                limit      = 1).retData()[0][0]
         except Exception as e:
             print(f"Error updating rent details: {e}")
             QMessageBox.critical(self, "Update Error", "Failed to update rent details.", QMessageBox.Ok)
@@ -78,7 +85,6 @@ class editRentDialog(QDialog):
         moveInDateObj = datetime.strptime(moveInDate, "%Y-%m-%d")
         moveOutDateObj = datetime.strptime(moveOutDate, "%Y-%m-%d")
 
-        rentingTenant = self.ui.RentingTenantIDComboBox.currentText()
         status = str(self.ui.MoveStatuscomboBox.currentData())
 
         errors = []
@@ -117,28 +123,20 @@ class editRentDialog(QDialog):
             tenantParameters = {
                 "RoomNumber" : roomNumber
             }
+            if room_tsex != tenant_sex and room_tsex != None:
+                QMessageBox.warning(self, "Sex invalid", f"Room {roomNumber} only accepts {room_tsex} tenants.")
+                return
+            elif room_tsex is None:
+                self.updater.updateTableData("Room", {"TenantSex" : tenant_sex}, "RoomNumber", int(roomNumber))
+
         
         if status == "Moved Out":
             tenantParameters = {
                 "RoomNumber" : None
             }
-            
-            # if self.previousRoomNumber:
-            #     self.select.SelectQuery(table="Room",
-            #                             spec_col=["Occupants.Count"],
-            #                             select_type = "Room", 
-            #                             filters={"RoomNumber": self.previousRoomNumber},
-            #                             limit=1)
-                
-            #     resultBuilder = self.select.retData()
-                
-            #     if resultBuilder:
-            #         currentOccupants = int(resultBuilder[0][0])
-            #         updatedOccupants = max(0, currentOccupants - 1)
-            #         self.updater.updateTableData("Room", {"NoOfOccupants": updatedOccupants}, "RoomNumber", self.previousRoomNumber)
-        
+            if occupantsCount - 1 == 0:
+                self.updater.updateTableData("Room", {"TenantSex" : None}, "RoomNumber", int(roomNumber))
 
-        
         try:
             self.updater.updateTableData("Rents", rentParameters, "RentingTenant", rentingTenant)
         except Exception as e:
@@ -165,16 +163,16 @@ class editRentDialog(QDialog):
         self.ui.MoveStatuscomboBox.setCurrentIndex(-1)
 
     def fillRentingTenantID(self):
-        self.ui.RentingTenantIDComboBox.clear()
+        self.ui.RentingTenantComboBox.clear()
         self.select.SelectQuery(table="Tenant", select_type=None, spec_col=["Tenant.TenantID"])
         resultBuilder = self.select.retDict()
         print(f"Query Result: {resultBuilder}")
 
         for row in resultBuilder:
             tenantID = next(iter(row.values()))
-            self.ui.RentingTenantIDComboBox.addItem(str(tenantID))
+            self.ui.RentingTenantComboBox.addItem(str(tenantID))
         
-        self.ui.RentingTenantIDComboBox.setCurrentIndex(-1)
+        self.ui.RentingTenantComboBox.setCurrentIndex(-1)
 
     def fillRoomNumber(self):
         self.ui.RoomNumberComboBox.clear()
@@ -189,7 +187,7 @@ class editRentDialog(QDialog):
         self.ui.RoomNumberComboBox.setCurrentIndex(-1)
 
     def matchTenantIDToDetails(self):
-        tenantID = self.ui.RentingTenantIDComboBox.currentText()
+        tenantID = self.ui.RentingTenantComboBox.currentText()
 
         if tenantID:
             self.select.SelectQuery(

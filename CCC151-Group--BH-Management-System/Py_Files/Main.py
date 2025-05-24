@@ -268,7 +268,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             roomNumberItem = rowData["RentedRoom"]
             moveInDateItem = rowData["MoveInDate"]
             moveOutDateItem = rowData["MoveOutDate"]
-            rentDurationItem = rowData["Rent Duration in Months"]
+            rentDurationItem = rowData["Duration (Months)"]
             moveStatusItem = rowData["Move Status"]
             
                     

@@ -123,8 +123,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def load_data(self, index):
         
         if hasattr(self.populator, "full_data"): del self.populator.full_data
-        if hasattr(self.populator, "sortHeaders"): 
-            del self.populator.sortHeaders
         
         self.table_name, self.widget, self.select_type = self.map_indextotable(index)
         self.widget.setSelectionBehavior(QAbstractItemView.SelectRows)

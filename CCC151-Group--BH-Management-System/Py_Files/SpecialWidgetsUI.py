@@ -7,7 +7,7 @@ infoicon_path = os.path.join(res_folder, 'i-blue.png')
 sort_ASC_path = os.path.join(res_folder, 'sort_ASC.png')
 sort_DESC_path = os.path.join(res_folder, 'sort_DESC.png')
 
-from PyQt5.QtWidgets import QStyledItemDelegate, QStyle, QHeaderView, QStyleOptionHeader
+from PyQt5.QtWidgets import QStyledItemDelegate, QStyle, QHeaderView, QStyleOptionHeader, QAbstractItemView
 from PyQt5.QtGui import QPixmap, QPainter, QIcon
 from PyQt5.QtCore import Qt, QRect, QObject, pyqtSignal
 
@@ -43,6 +43,18 @@ class PaginationTable(QtWidgets.QTableWidget):
                 color: #ffffff;             /* Text color when selected */
             }
         """)
+        self.sortHeaders = SortHeaders(Qt.Horizontal, self)
+        self.setHorizontalHeader(self.sortHeaders)
+
+        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.verticalHeader().setVisible(False)
+
+    def updateHeaders(self, columns):
+        self.setColumnCount(len(columns))
+        self.setHorizontalHeaderLabels(columns)
+        self.sortHeaders.repaint()
 
 class IconClickEmitter(QObject):
     iconClicked = pyqtSignal(int)
@@ -125,13 +137,13 @@ class SortHeaders(QHeaderView):
         option.rect = rect
         option.section = logicalIndex
         option.text = self.model().headerData(logicalIndex, self.orientation(), Qt.DisplayRole)
-        option.textAlignment = Qt.AlignLeft
+        option.textAlignment = Qt.AlignCenter
         option.state |= QStyle.State_Enabled
 
         self.style().drawControl(QStyle.CE_Header, option, painter)
 
         icon = QIcon(self.icon_asc if self.sort_states.get(logicalIndex, True) else self.icon_desc)
         option.icon = icon
-        option.iconAlignment = Qt.AlignRight
+        option.iconAlignment = Qt.AlignRight | Qt.AlignVCenter
 
         self.style().drawControl(QStyle.CE_Header, option, painter)

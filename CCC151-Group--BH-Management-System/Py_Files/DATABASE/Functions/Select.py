@@ -85,8 +85,9 @@ class Select(Function):
         self.aliascolumn        = {} 
 
         if not spec_col: 
-            self.columnquery    = ", ".join([f"{table}.{col}" for col in self.columns])
-        
+            self.columnquery    = ", ".join([f"{table}.{col}" for col in self.columns if col != "Email"])
+            self.columns = [col for col in self.columns if col != "Email"]
+
         self.Conditions(select_type) # Special joins, CTEs, Aliases
 
         if spec_col:

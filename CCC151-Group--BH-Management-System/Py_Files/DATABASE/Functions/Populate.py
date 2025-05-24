@@ -46,20 +46,9 @@ class Populate:
 
         # refresh table widget(data is not refreshed)
 
-        if not hasattr(self, "sortHeaders") :
-            print("sortHeaders")
-            self.sortHeaders = SpecialWidgetsUI.SortHeaders(Qt.Horizontal, table_widget)
-
         table_widget.clear()
         table_widget.setRowCount(len(self.page_data))
-        table_widget.setColumnCount(len(self.columns))
-        if table_widget.columnCount() != len(self.columns):
-            table_widget.setColumnCount(len(self.columns))
-            table_widget.setHorizontalHeaderLabels(self.columns)
-
-        table_widget.setHorizontalHeader(self.sortHeaders)
-        # table_widget.setHorizontalHeaderLabels(self.columns)
-        table_widget.verticalHeader().setVisible(False)
+        table_widget.updateHeaders(self.columns)
 
         # Load the data in TO EDIT: ignore first column (built-in id of widget)
         for row_idx, row_data in enumerate(self.page_data):
@@ -67,10 +56,6 @@ class Populate:
                 item = QTableWidgetItem(str(cell))
                 item.setTextAlignment(Qt.AlignCenter)
                 table_widget.setItem(row_idx, col_idx, item)
-                
-        self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # array of pointers to the created buttons. I say buttons but they're actually modified labels my dudes
         while self.mw.paginationButtonsGrid.count():

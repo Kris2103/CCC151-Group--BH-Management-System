@@ -85,8 +85,9 @@ class Select(Function):
         self.aliascolumn        = {} 
 
         if not spec_col: 
-            self.columnquery    = ", ".join([f"{table}.{col}" for col in self.columns])
-        
+            self.columnquery    = ", ".join([f"{table}.{col}" for col in self.columns if col != "Email"])
+            self.columns = [col for col in self.columns if col != "Email"]
+
         self.Conditions(select_type) # Special joins, CTEs, Aliases
 
         if spec_col:
@@ -158,8 +159,6 @@ class Select(Function):
         return self.columns
     
     def retAll(self):
-        # for row in self.rows: print(row)
-        # for col in self.columns: print(col)
         return self.rows, self.columns
     
     def retDict(self):
@@ -213,10 +212,8 @@ class Select(Function):
             case "Rents":
                 CTEs = [CTE_RentDuration]
                 self.basequery = "WITH " + ", ".join(CTEs) + self.basequery
-                self.columnquery        +=  """, RentDuration.Duration AS `Duration (Months)`, RentDuration.MoveStatus AS `Move Status`"""
-                self.aliascolumn[           "`Duration (Months)`"]    = "RentDuration.Duration"
-                self.columns.append(        "Duration (Months)")
-                self.aliascolumn[           "`Move Status`"]    = "MoveStatus.MoveStatus"
+                self.columnquery        +=  """, RentDuration.MoveStatus AS `Move Status`"""
+                self.aliascolumn[           "`Move Status`"]    = "RentDuration.MoveStatus"
                 self.columns.append(        "Move Status")
 
                 self.conditions +=          """ LEFT JOIN Tenant

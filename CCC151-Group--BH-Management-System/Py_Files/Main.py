@@ -128,7 +128,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.widget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.widget.setSelectionMode(QAbstractItemView.SingleSelection)
         
-        self.widget.setSortingEnabled(False)
         self.populator.Populate_Table(self.table_name, self.widget, self.select_type)
 
         self.columns = self.populator.columns
@@ -263,12 +262,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for col in range(columnCount)
             }
             
-            rentIDItem = rowData["RentID"]
             rentingTenantItem = rowData["RentingTenant"]
             roomNumberItem = rowData["RentedRoom"]
             moveInDateItem = rowData["MoveInDate"]
             moveOutDateItem = rowData["MoveOutDate"]
-            rentDurationItem = rowData["Duration (Months)"]
             moveStatusItem = rowData["Move Status"]
             
                     

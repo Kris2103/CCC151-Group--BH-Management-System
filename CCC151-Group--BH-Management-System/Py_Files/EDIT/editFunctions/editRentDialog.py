@@ -15,9 +15,9 @@ class editRentDialog(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+
         self.ui.MoveInDateEdit.setCalendarPopup(True)
         self.ui.MoveOutDateEdit.setCalendarPopup(True)
         self.ui.MoveInDateEdit.setDate(QDate.currentDate())
@@ -32,6 +32,17 @@ class editRentDialog(QDialog):
         self.roomChanged = False
         self.previousRoomNumber = None
 
+        # Load combo boxes
+        self.fillRentStatusComboBox()
+        self.fillRentingTenantID()
+        self.fillRoomNumber()
+
+        # Signals
+        self.ui.UpdatepushButton.clicked.connect(self.updateRent)
+        self.ui.CancelpushButton.clicked.connect(self.closeWindow)
+        self.ui.RentingTenantComboBox.currentTextChanged.connect(self.matchTenantIDToDetails)
+        self.ui.RoomNumberComboBox.currentTextChanged.connect(self.onRoomNumberChanged)
+
         try:
             self.fillRentStatusComboBox()
             self.fillRentingTenantID()
@@ -43,7 +54,7 @@ class editRentDialog(QDialog):
         self.ui.UpdatepushButton.clicked.connect(self.updateRent)
         self.ui.CancelpushButton.clicked.connect(self.closeWindow)
 
-        self.ui.RentingTenantIDComboBox.currentTextChanged.connect(self.matchTenantIDToDetails)
+        self.ui.RentingTenantComboBox.currentTextChanged.connect(self.matchTenantIDToDetails)
         self.ui.RoomNumberComboBox.currentTextChanged.connect(self.onRoomNumberChanged)
 
         # self.ui.RoomNoComboBox.currentTextChanged.connect(lambda: self.populate.sync_tenant_id_from_room(self.ui.RoomNoComboBox, self.ui.RentingTenantIDComboBox))
@@ -57,21 +68,15 @@ class editRentDialog(QDialog):
 
         try:
             moveInDate = datetime.strptime(moveInDateData, "%Y-%m-%d").strftime("%Y-%m-%d")
-        except ValueError:
-            QMessageBox.critical(self, "Validation Error", "Move-in date is not in a valid format.", QMessageBox.Ok)
-            return
-
-        roomNumber = self.ui.RoomNumberComboBox.currentText()
-
-        try:
             moveOutDate = datetime.strptime(moveOutDateData, "%Y-%m-%d").strftime("%Y-%m-%d")
         except ValueError:
-            QMessageBox.critical(self, "Validation Error", "Move-out date is not in a valid format.", QMessageBox.Ok)
+            QMessageBox.critical(self, "Validation Error", "One of the dates is not in a valid format.", QMessageBox.Ok)
             return
 
         moveInDateObj = datetime.strptime(moveInDate, "%Y-%m-%d")
         moveOutDateObj = datetime.strptime(moveOutDate, "%Y-%m-%d")
 
+        roomNumber = self.ui.RoomNumberComboBox.currentText()
         rentingTenant = self.ui.RentingTenantIDComboBox.currentText()
         status = str(self.ui.MoveStatuscomboBox.currentData())
 
@@ -103,15 +108,48 @@ class editRentDialog(QDialog):
             "MoveOutDate": moveOutDate,
             "RentedRoom": roomNumber
         }
-        if status == "Active":
-            tenantParameters = {
-                "RoomNumber" : roomNumber
-            }
-        
+
+        tenantParameters = {"RoomNumber": roomNumber if status == "Active" else None}
+
+    # === Occupant Count Handling ===
         if status == "Moved Out":
-            tenantParameters = {
-                "RoomNumber" : None
-            }
+            if self.previousRoomNumber:
+                # Decrease occupants of the previous room
+                self.select.SelectQuery(table="Room", spec_col=["NoOfOccupants"], tag="RoomNumber", key=self.previousRoomNumber)
+                prev_result = self.select.retData()
+                if prev_result:
+                    current_occupants = int(prev_result[0][0])
+                    updated_occupants = max(0, current_occupants - 1)
+                    self.updater.updateTableData("Room", {"NoOfOccupants": updated_occupants}, "RoomNumber", self.previousRoomNumber)
+
+        elif status == "Active" and self.roomChanged:
+            if self.previousRoomNumber:
+                # Decrease occupants in old room
+                self.select.SelectQuery(table="Room", spec_col=["NoOfOccupants"], tag="RoomNumber", key=self.previousRoomNumber)
+                prev_result = self.select.retData()
+                if prev_result:
+                    current_occupants = int(prev_result[0][0])
+                    updated_occupants = max(0, current_occupants - 1)
+                    self.updater.updateTableData("Room", {"NoOfOccupants": updated_occupants}, "RoomNumber", self.previousRoomNumber)
+
+            if roomNumber:
+                # Increase occupants in new room
+                self.select.SelectQuery(table="Room", spec_col=["NoOfOccupants"], tag="RoomNumber", key=roomNumber)
+                new_result = self.select.retData()
+                if new_result:
+                    current_occupants = int(new_result[0][0])
+                    updated_occupants = current_occupants + 1
+                    self.updater.updateTableData("Room", {"NoOfOccupants": updated_occupants}, "RoomNumber", roomNumber)
+
+        # if status == "Active":
+        #     tenantParameters = {
+        #         "RoomNumber" : roomNumber
+        #     }
+        
+        # if status == "Moved Out":
+        #     tenantParameters = {
+        #         "RoomNumber" : None
+        #     }
             
             # if self.previousRoomNumber:
             #     self.select.SelectQuery(table="Room",
@@ -167,7 +205,7 @@ class editRentDialog(QDialog):
         if tenantID:
             self.select.SelectQuery(
                 table="Rents",
-                select_type="Rents",
+                select_type=None,
                 spec_col=["Rents.RentedRoom", "Rents.MoveInDate", "Rents.MoveOutDate", "RentDuration.MoveStatus"],
                 tag="RentingTenant",
                 key=tenantID

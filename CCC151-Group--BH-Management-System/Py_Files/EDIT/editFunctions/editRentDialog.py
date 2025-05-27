@@ -16,9 +16,9 @@ class editRentDialog(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+
         self.ui.MoveInDateEdit.setCalendarPopup(True)
         self.ui.MoveOutDateEdit.setCalendarPopup(True)
         self.ui.MoveInDateEdit.setDate(QDate.currentDate())
@@ -79,7 +79,7 @@ class editRentDialog(QDialog):
         try:
             moveOutDate = datetime.strptime(moveOutDateData, "%Y-%m-%d").strftime("%Y-%m-%d")
         except ValueError:
-            QMessageBox.critical(self, "Validation Error", "Move-out date is not in a valid format.", QMessageBox.Ok)
+            QMessageBox.critical(self, "Validation Error", "One of the dates is not in a valid format.", QMessageBox.Ok)
             return
 
         moveInDateObj = datetime.strptime(moveInDate, "%Y-%m-%d")
@@ -191,7 +191,7 @@ class editRentDialog(QDialog):
         if tenantID:
             self.select.SelectQuery(
                 table="Rents",
-                select_type="Rents",
+                select_type=None,
                 spec_col=["Rents.RentedRoom", "Rents.MoveInDate", "Rents.MoveOutDate", "RentDuration.MoveStatus"],
                 tag="RentingTenant",
                 key=tenantID

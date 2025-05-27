@@ -4,6 +4,7 @@ from .AddEmergencyContact import Ui_Dialog
 from DATABASE.Functions import Select, Insert, Populate
 from DATABASE.DB import DatabaseConnector
 import re
+from datetime import datetime
 
 class AddEmergencyContactDialog(QDialog):
     def __init__(self, parent=None):
@@ -22,6 +23,35 @@ class AddEmergencyContactDialog(QDialog):
         self.populate.populate_tenant_id_combobox(self.ui.TenantEMIDComboBox)
 
         self.ui.TenantEMIDComboBox.setCurrentIndex(-1)
+
+        contact_id = self.generate_contact_id()
+        self.ui.ContactIDLineEdit.setText(contact_id)
+        self.ui.ContactIDLineEdit.setReadOnly(True)
+
+    def generate_contact_id(self):
+        current_year = datetime.now().year
+
+        try:
+            result = self.select.SelectQuery(
+                "EmergencyContact",
+                spec_col=["MAX(ContactID)"],
+                tag="ContactID",
+                key=f"{current_year}-%",
+                limit=1
+            ).retData()
+
+            if result and result[0][0]:
+                last_id = result[0][0]
+                last_num = int(last_id.split('-')[1])
+                new_num = last_num + 1
+            else:
+                new_num = 1
+
+            return f"{current_year}-{new_num:04d}"
+
+        except Exception as err:
+            print(f"Error generating contact ID: {err}")
+            return f"{current_year}-0001"
 
     def handle_add_EC(self):
         ecFirst_name = self.ui.FirstNameLineEdit.text()

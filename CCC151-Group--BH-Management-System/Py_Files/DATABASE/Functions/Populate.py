@@ -231,10 +231,13 @@ class Populate:
         if room == "" or not room or tenant != "": # room combobox has no entry, or tenant combobox has already been filled, do not autosync
             return
         
-        result = self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"], tag = "RoomNumber", key = room, limit = 1).retData()
+        result = self.selector.SelectQuery("Tenant", None, ["Tenant.TenantID"], tag = "RoomNumber", key = room).retData()
         if result:
             tenant_id = str(result[0][0])
+            self.tenantid_combobox.clear()
+            self.tenantid_combobox.addItems(str(row[0]) for row in result)
             self.tenantid_combobox.setCurrentText(tenant_id)
+            
 
     def sync_room_from_tenant_id(self, roomnum_combobox, tenantid_combobox):
         self.roomnum_combobox = roomnum_combobox
@@ -247,9 +250,9 @@ class Populate:
         result = self.selector.SelectQuery("Tenant", None, ["Tenant.RoomNumber"], tag = "TenantID", key = tenant_id, limit = 1).retData()
         if result:
             room_number = str(result[0][0])
-            index = self.roomnum_combobox.findText(room_number)
-            if index != -1:
-                self.roomnum_combobox.setCurrentIndex(index)
+            self.roomnum_combobox.clear()
+            self.room_combobox.addItems(str(row[0]) for row in result)
+            self.roomnum_combobox.setCurrentText(room_number)
 
 # ===========
 #    COMBOBOXES POPULATE   

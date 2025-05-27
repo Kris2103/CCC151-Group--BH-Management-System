@@ -1,3 +1,5 @@
+
+
 CREATE DATABASE IF NOT EXISTS SISTORE2TEST;
 USE SISTORE2TEST;
 
@@ -23,7 +25,7 @@ CREATE TABLE IF NOT EXISTS Tenant (
 		ON DELETE SET NULL,
         
     CONSTRAINT tenant_fullname 		UNIQUE (FirstName, LastName),
-    CONSTRAINT tenant_contact 		UNIQUE (Email, LastName)
+    CONSTRAINT tenant_contact 		UNIQUE (Email, PhoneNumber)
 );
 
 CREATE TABLE IF NOT EXISTS Rents (
@@ -37,11 +39,6 @@ CREATE TABLE IF NOT EXISTS Rents (
     
     CONSTRAINT StartDateLimit 		CHECK (MoveOutDate IS NULL OR MoveInDate <= MoveOutDate)
 
--- 	   UNCOMMENT IF BRING BACK FOREIGN KEY DEPENDENCY
---     FOREIGN KEY (RentingTenant)	REFERENCES Tenant(TenantID) 
--- 		ON DELETE SET NULL,
---     FOREIGN KEY (RentedRoom) 	REFERENCES Room(RoomNumber) 
--- 		ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Pays (
@@ -54,11 +51,6 @@ CREATE TABLE IF NOT EXISTS Pays (
     PaymentAmount 	DECIMAL(9,2) 	NOT NULL,
     PaymentDate 	DATE 			
     
--- 	   UNCOMMENT IF BRING BACK FOREIGN KEY DEPENDENCY
---     FOREIGN KEY (PayingTenant)	REFERENCES Tenant(TenantID) 
--- 		ON DELETE SET NULL,
---     FOREIGN KEY (PaidRoom) 	REFERENCES Room(RoomNumber) 
--- 		ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS EmergencyContact (
     ContactID 		VARCHAR(9) 		NOT NULL
@@ -186,96 +178,3 @@ CREATE TABLE IF NOT EXISTS EmergencyContact (
 -- ('EC2025009', 'Charles', 'Neil', 'Thomas', 'Brother', '9259876551', '2025-4329'),
 -- ('EC2025010', 'Barbara', 'June', 'Taylor', 'Grandmother', '9269876552', '2025-4330');
 
-WITH RentDuration AS (
-	SELECT 	RentingTenant 					AS TenantID, 
-			TIMESTAMPDIFF(	MONTH, 
-							MoveInDate, 
-                            MoveOutDate) 	AS Duration,
-			RentedRoom						AS RoomNumber
-	FROM Rents),
-    
-PaidAmount AS (
-	SELECT 	PayingTenant 					AS TenantID, 
-			SUM(PaymentAmount) 				AS PaidAmount
-    FROM Pays
-    GROUP BY PayingTenant)
-
-SELECT 	p.*, 
-		rd.Duration 								AS RentDuration, 
-        r.Price 									AS RoomPrice, 
-        pa.PaidAmount 								AS TotalPaidAmount, 
-        ((r.Price * rd.Duration) - pa.PaidAmount) 	AS RemainingDue 
-FROM Pays p
-LEFT JOIN Tenant t
-	ON t.TenantID = p.PayingTenant
-LEFT JOIN Room r
-	ON r.RoomNumber = p.PaidRoom
-LEFT JOIN RentDuration rd 
-	ON rd.TenantID = t.TenantID
-LEFT JOIN PaidAmount pa
-	ON pa.TenantID = t.TenantID;
-
-
-
-
-
-
-
-
-WITH RentDuration AS (
-	SELECT 	r.RentingTenant 					AS TenantID, 
-			TIMESTAMPDIFF(	MONTH, 
-							MoveInDate, 
-                            MoveOutDate) 	AS Duration,
-			r.MoveInDate						AS MoveInDate,
-			r.MoveOutDate						AS MoveOutDate,
-			r.RentedRoom						AS RoomNumber
-	FROM Rents r),
-    
-MoveStatus AS (
-	SELECT
-    CASE
-            WHEN rd.MoveOutDate IS NOT NULL AND rd.MoveOutDate <= CURRENT_DATE() THEN "Moved Out"
-            WHEN rd.MoveOutDate IS NULL THEN "Active"  
-			WHEN rd.MoveOutDate > CURRENT_DATE() THEN "Active"
-        END AS MoveStatus,
-        rd.TenantID AS TenantID
-	FROM RentDuration rd
-),
-    
-PaidAmount AS (
-	SELECT 	p.PayingTenant 					AS TenantID, 
-			SUM(p.PaymentAmount) 				AS PaidAmount
-    FROM Pays p
-    GROUP BY p.PayingTenant),
-
-RemainingDue AS (
-	SELECT ((r.Price * rd.Duration) - pa.PaidAmount) 	AS RemainingDue, 
-			pa.TenantID 								AS TenantID
-	FROM PaidAmount pa		
-    LEFT JOIN RentDuration rd
-		ON pa.TenantID = rd.TenantID
-	LEFT JOIN Room r
-		ON r.RoomNumber = rd.RoomNumber
-),
-PaymentStatus AS (
-	SELECT CASE
-            WHEN pa.PaidAmount < red.RemainingDue AND CURRENT_DATE() < rd.MoveOutDate THEN "Pending"
-            WHEN pa.PaidAmount < red.RemainingDue AND CURRENT_DATE() > rd.MoveOutDate THEN "Overdue"
-            WHEN pa.PaidAmount >= red.RemainingDue THEN "Paid"
-        END AS PaymentStatus,
-        pa.TenantID AS TenantID
-	FROM PaidAmount pa
-    LEFT JOIN RemainingDue red
-		ON pa.TenantID = red.TenantID
-	LEFT JOIN RentDuration rd
-		ON pa.TenantID = rd.TenantID
-)
-SELECT Tenant.*, MoveStatus.MoveStatus, PaymentStatus.PaymentStatus, EmergencyContact.PhoneNumber
-FROM Tenant 
-LEFT JOIN EmergencyContact 
-ON Tenant.TenantID = EmergencyContact.EMTenantID
-LEFT JOIN MoveStatus
-ON Tenant.TenantID = MoveStatus.TenantID
-LEFT JOIN PaymentStatus
-ON Tenant.TenantID = PaymentStatus.TenantID

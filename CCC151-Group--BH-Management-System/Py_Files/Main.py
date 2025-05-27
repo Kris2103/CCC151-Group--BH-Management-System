@@ -58,7 +58,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.DeletepushButton.clicked.connect(self.on_Delete_clicked)
 
         self.RefreshpushButton.clicked.connect(lambda: self.load_data(self.index))
-        self.SearchpushButton.clicked.connect(lambda: self.perform_search())
+        self.SearchpushButton.clicked.connect(lambda: self.performsearchnsort())
 
         self.switch_tab(0)
 
@@ -88,26 +88,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_data(index)
 
 # =========================
-#    SEARCH N SORT FUNCS
+#    FILTER FUNCS
 # ==========
 
-    def perform_search(self):
+    def performsearchnsort(self, column_index = None):
+        # Reset table data
         if hasattr(self.populator, "full_data"): del self.populator.full_data
-        search_key = str(self.SearchLineEdit.text())
-        search_column = self.SearchField.currentData()
-        self.populator.Populate_Table(table_name = self.table_name, table_widget = self.widget, select_type = self.select_type, search_column = search_column, search_key = search_key)
-
-    def perform_sort(self, column_index):
-        # Get the current table widget
-        table = self.widget
         
-        # Get the current sort order
-        current_order = table.horizontalHeader().sortIndicatorOrder()
-        table.sortItems(column_index, Qt.AscendingOrder if current_order == Qt.DescendingOrder else Qt.DescendingOrder)
-        table.horizontalHeader().setSortIndicator(column_index, current_order)
+        table = self.widget
 
+        # search stuff
+        search_key = str(self.SearchLineEdit.text()) if str(self.SearchLineEdit.text()) != "" else None
+        search_column = self.SearchField.currentData() if self.SearchField.currentData() != "" else None
+
+        # sort stuff
+        sort_dict = table.get_sort_states()
+        sort_order = "ASC" if sort_dict.get(column_index, True) else "DESC"
+
+        if column_index is None:
+            column_index = getattr(self, "last_sort_column_index", 0)
+        else:
+            self.last_sort_column_index = column_index 
+
+        current_state = sort_dict.get(column_index)
+        if current_state is None:
+            current_state = getattr(self, "last_sort_order", True)
+        else:
+            self.last_sort_order = current_state 
+
+        sort_order = "ASC" if current_state else "DESC"
+        
+        header_item = table.horizontalHeaderItem(column_index)
+        header_text = header_item.text()
+
+        self.populator.Populate_Table(table_name = self.table_name, 
+                                      table_widget = self.widget, 
+                                      select_type = self.select_type, 
+                                      search_column = search_column, 
+                                      search_key = search_key,
+                                      sort_column = header_text,
+                                      sort_order = sort_order)
 # ===========
-#    SEARCH N SORT FUNCS
+#    FILTER FUNCS
 # =========================
 
     def map_indextotable(self, index):
@@ -138,7 +160,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.SearchField.addItem(str(col), col)
 
         # Connect header click event to perform_sort
-        self.widget.horizontalHeader().sectionClicked.connect(self.perform_sort)
+        self.widget.horizontalHeader().sectionClicked.connect(self.performsearchnsort)
 
 # =========================
 #    CRUDL BUTTONS FUNCS

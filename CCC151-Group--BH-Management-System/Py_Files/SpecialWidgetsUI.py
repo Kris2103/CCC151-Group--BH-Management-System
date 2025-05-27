@@ -8,7 +8,7 @@ sort_ASC_path = os.path.join(res_folder, 'sort_ASC.png')
 sort_DESC_path = os.path.join(res_folder, 'sort_DESC.png')
 
 from PyQt5.QtWidgets import QStyledItemDelegate, QStyle, QHeaderView, QStyleOptionHeader, QAbstractItemView
-from PyQt5.QtGui import QPixmap, QPainter, QIcon
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt, QRect, QObject, pyqtSignal
 
 from INFO.TenantInfoDialog import TenantInfoDialog
@@ -17,6 +17,9 @@ from INFO.RentInfoDialog import RentInfoDialog
 from INFO.PayInfoDialog import PayInfoDialog
 from INFO.EMInfoDialog import EMInfoDialog
 
+from DATABASE.Functions import Populate
+
+populator = Populate.Populate()
 
 class ClickablePageLabel(QtWidgets.QLabel):
     clicked = QtCore.pyqtSignal()
@@ -55,6 +58,9 @@ class PaginationTable(QtWidgets.QTableWidget):
         self.setColumnCount(len(columns))
         self.setHorizontalHeaderLabels(columns)
         self.sortHeaders.repaint()
+
+    def get_sort_states(self):
+        return self.sortHeaders.sort_states
 
 class IconClickEmitter(QObject):
     iconClicked = pyqtSignal(int)
@@ -125,10 +131,16 @@ class SortHeaders(QHeaderView):
 
     def mousePressEvent(self, event):
         index = self.logicalIndexAt(event.pos())
+
+        for key in list(self.sort_states.keys()):
+            if key != index:
+                self.sort_states[key] = True
+        
         self.sort_states[index] = not self.sort_states.get(index, True)
         self.emitter.iconClicked.emit(index)
         self.viewport().update() 
         # print("clicked header")
+        # self.perform_sort(index)
         super().mousePressEvent(event)
 
     def paintSection(self, painter, rect, logicalIndex):
@@ -147,3 +159,4 @@ class SortHeaders(QHeaderView):
         option.iconAlignment = Qt.AlignRight | Qt.AlignVCenter
 
         self.style().drawControl(QStyle.CE_Header, option, painter)
+

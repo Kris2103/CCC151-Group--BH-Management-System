@@ -157,6 +157,20 @@ class Ui_Dialog(object):
                 self.PayTenNumLine = QtWidgets.QLineEdit(self.InfoFrame)
                 self.PayTenNumLine.setObjectName("PayTenNumLine")
                 self.PayTenNumLine.setReadOnly(True)
+
+                self.PayTenIDLabel = QtWidgets.QLabel(self.InfoFrame)
+                self.PayTenIDLabel.setStyleSheet(    "background: none;\n"
+                                                "border: none;\n"
+                                                "color: #800000;\n"
+                                                "font-family: \'Cal Sans\', sans-serif;\n"
+                                                "font-weight: 700;\n"
+                                                "font-style: normal;\n"
+                                                "font-size: 14px;")
+                self.PayTenIDLabel.setObjectName("PayTenIDLabel")
+
+                self.PayTenIDLine = QtWidgets.QLineEdit(self.InfoFrame)
+                self.PayTenIDLine.setObjectName("PayTenIDLine")
+                self.PayTenIDLine.setReadOnly(True)
                 # Contact info
                 # ===========
 
@@ -310,7 +324,9 @@ class Ui_Dialog(object):
                 self.gridFrame.addWidget(self.PayTenNameLine,  8, 1, 1, 5)
 
                 self.gridFrame.addWidget(self.PayTenNumLabel,  9, 0)
-                self.gridFrame.addWidget(self.PayTenNumLine,   9, 1, 1, 5)
+                self.gridFrame.addWidget(self.PayTenNumLine,   9, 1, 1, 2)
+                self.gridFrame.addWidget(self.PayTenIDLabel,   9, 3)
+                self.gridFrame.addWidget(self.PayTenIDLine,    9, 4, 1, 2)
 
                 # Layout
                 # =========

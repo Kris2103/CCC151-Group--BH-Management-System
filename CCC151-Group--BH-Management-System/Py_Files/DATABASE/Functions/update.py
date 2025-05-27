@@ -42,21 +42,21 @@ class update:
         print("SQL Query:", QUERY)
         print("Values:", values)
 
-        try:
-            resultSetPointer = self._threadLocal.connection.cursor()
-            resultSetPointer.execute(QUERY, values)
-            self._threadLocal.connection.commit()
-            affectedRows = resultSetPointer.rowcount
+        # try:
+        resultSetPointer = self._threadLocal.connection.cursor()
+        resultSetPointer.execute(QUERY, values)
+        self._threadLocal.connection.commit()
+        affectedRows = resultSetPointer.rowcount
 
-            if affectedRows > 0:
-                print(f"{affectedRows} row(s) updated successfully in table '{table}'.")
-            else:
-                print(f"No rows were updated for table '{table}'.")
-                self._threadLocal.connection.rollback()
-
-        except Exception as exception:
-            print(f"Error updating table '{table}' : {exception}")
+        if affectedRows > 0:
+            print(f"{affectedRows} row(s) updated successfully in table '{table}'.")
+        else:
+            print(f"No rows were updated for table '{table}'.")
             self._threadLocal.connection.rollback()
+
+        # except Exception as exception:
+        #     print(f"Error updating table '{table}' : {exception}")
+        #     self._threadLocal.connection.rollback()
 
         # finally:
         #     resultSetPointer.close()

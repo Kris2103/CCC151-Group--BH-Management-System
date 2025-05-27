@@ -4,7 +4,7 @@ import re
 from DATABASE.Functions import Select, Insert, update, Populate
 from DATABASE.DB import DatabaseConnector
 from datetime import datetime
-from mysql.connector import IntegrityError
+from mysql.connector.errors import IntegrityError
 
 class AddTenantDialog(QDialog):
     def __init__(self, parent=None):
@@ -74,15 +74,15 @@ class AddTenantDialog(QDialog):
         phone_pattern = r"^09\d{9}$"
 
         if not all([tenant_ID, tenant_fname, tenant_lname, tenant_email, tenant_phone, tenant_sex]):
-            QMessageBox.warning(self, "Missing Input", "Please fill in all required fields.")
+            QMessageBox.warning(self, "Missing Input", "Please fill in all required fields.", QMessageBox.Ok)
             return
         
         if not re.match(email_pattern, tenant_email):
-            QMessageBox.warning(self, "Invalid Email", "Please enter a valid email address.")
+            QMessageBox.warning(self, "Invalid Email", "Please enter a valid email address.", QMessageBox.Ok)
             return
 
         if not re.match(phone_pattern, tenant_phone):
-            QMessageBox.warning(self, "Invalid Phone Number", "Phone number must be 11 digits.")
+            QMessageBox.warning(self, "Invalid Phone Number", "Phone number must be 11 digits.", QMessageBox.Ok)
             return
         
         try:
@@ -105,10 +105,10 @@ class AddTenantDialog(QDialog):
         except IntegrityError as ie:
             error_msg = str(ie)
             if "tenant_fullname" in error_msg:
-                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of name {tenant_lname}, {tenant_fname} already exists.")
+                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of name {tenant_lname}, {tenant_fname} already exists.", QMessageBox.Ok)
                 return
             elif "tenant_contact" in error_msg:
-                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of contacts {tenant_email}, and {tenant_phone} already exists.")
+                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of contacts {tenant_email}, and {tenant_phone} already exists.", QMessageBox.Ok)
                 return
         except Exception as err:
             print(f"Error occurred while adding tenant: {err}")

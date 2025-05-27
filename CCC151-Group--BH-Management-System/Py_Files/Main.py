@@ -21,6 +21,7 @@ from DATABASE.DB import DatabaseConnector
 import math
 from DATABASE.Functions.Populate import Populate
 from PyQt5.QtCore import Qt, QDate
+from mysql.connector.errors import IntegrityError
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -407,11 +408,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 self.deleter.params = []  # Reset params list before each delete
                 self.deleter.DeleteQuery(table_name, primary_key_column, primary_key_value)
-                self.deleter.conn.commit()
+                
                 QMessageBox.information(self, "Deleted", "Record deleted successfully.", QMessageBox.Ok)
-                self.load_data(current_widget_index)
+                self.load_data(current_widget_index)            
+            except IntegrityError as ie:
+                error_msg = str(ie)
+                if "fk_tenantToRoom" in error_msg:
+                    QMessageBox.warning(self, "Delete Failed", f"There are tenants currently under an active contract with this room. \nPlease move them out first before deleting", QMessageBox.Ok)
             except Exception as e:
                 QMessageBox.critical(self, "Delete Failed", f"An error occurred:\n{e}", QMessageBox.Ok)
+            
+            
 
 
 

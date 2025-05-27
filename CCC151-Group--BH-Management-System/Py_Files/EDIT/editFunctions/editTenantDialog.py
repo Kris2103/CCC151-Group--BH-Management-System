@@ -5,7 +5,7 @@ from DATABASE.Functions.update import update
 from DATABASE.Functions.Select import Select
 from DATABASE.Functions.Insert import Insert
 from .editEmergencyContactDialog import editEmergencyContactDialog
-from mysql.connector import IntegrityError
+from mysql.connector.errors import IntegrityError
 
 class editTenantDialog(QDialog):
 
@@ -22,7 +22,7 @@ class editTenantDialog(QDialog):
         
         self.ui.TenantIDLineEdit.setReadOnly(True)
         self.ui.RoomNoComboBox.setEnabled(False)
-        self.ui.RoomNoComboBox.setVisible(False)
+        self.ui.RoomNoComboBox.setVisible(True)
         self.ui.label_10.setVisible(False)
         self.fillSexComboBox()
         self.fillRoomNoComboBox()
@@ -104,12 +104,10 @@ class editTenantDialog(QDialog):
             updater.updateTableData("Tenant", setParameters, "TenantID", tenantId)
         except IntegrityError as ie:
             error_msg = str(ie)
-            if "tenant_fullname" in error_msg:
-                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of name {lastName}, {firstName} already exists.")
-                return
+            if "tenant_fullname" in error_msg:  
+                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of name {lastName}, {firstName} already exists.", QMessageBox.Ok)
             elif "tenant_contact" in error_msg:
-                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of contacts {email}, and {phoneNumber} already exists.")
-                return
+                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of contacts {email}, and {phoneNumber} already exists.", QMessageBox.Ok)
         # Insert new rent record only if room has changed
         if roomNo is not None and roomNo != self.previousRoomNumber:
             print(f"Room changed from {self.previousRoomNumber} to {roomNo}, adding new rent record.")

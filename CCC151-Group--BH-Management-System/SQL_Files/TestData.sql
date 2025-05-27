@@ -3,7 +3,7 @@ USE SISTORE3TEST;
 
 CREATE TABLE IF NOT EXISTS Room (
     RoomNumber      INTEGER       PRIMARY KEY,
-    Price           DECIMAL(7,2)  NOT NULL,
+    Price           DECIMAL(9,2)  NOT NULL,
     TenantSex       VARCHAR(6) 
                     CHECK (TenantSex IN ('Male', 'Female', NULL)),
     MaximumCapacity INTEGER       NOT NULL
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS  Tenant (
     CONSTRAINT tenant_fullname 
       UNIQUE (FirstName, LastName),
     CONSTRAINT tenant_contact 
-      UNIQUE (Email, LastName)
+      UNIQUE (Email, PhoneNumber)
 );
 
 CREATE TABLE IF NOT EXISTS  Rents (
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS  Pays (
                     AUTO_INCREMENT,	
   PayingTenant      VARCHAR(9)    NOT NULL,		
 	PaidRoom          INTEGER       NOT NULL,
-	PaymentAmount     DECIMAL(7,2)  NOT NULL,		
+	PaymentAmount     DECIMAL(9,2)  NOT NULL,		
 	PaymentDate       DATE          NOT NULL			
 );
 

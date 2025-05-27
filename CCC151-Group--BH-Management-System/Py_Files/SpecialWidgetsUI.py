@@ -3,15 +3,23 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 res_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../res'))
-icon_path = os.path.join(res_folder, 'i-blue.png')
+infoicon_path = os.path.join(res_folder, 'i-blue.png')
+sort_ASC_path = os.path.join(res_folder, 'sort_ASC.png')
+sort_DESC_path = os.path.join(res_folder, 'sort_DESC.png')
 
-from PyQt5.QtWidgets import QStyledItemDelegate, QStyle
-from PyQt5.QtGui import QPixmap, QPainter
+from PyQt5.QtWidgets import QStyledItemDelegate, QStyle, QHeaderView, QStyleOptionHeader, QAbstractItemView
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt, QRect, QObject, pyqtSignal
 
 from INFO.TenantInfoDialog import TenantInfoDialog
 from INFO.RoomInfoDialog import RoomInfoDialog
+from INFO.RentInfoDialog import RentInfoDialog
+from INFO.PayInfoDialog import PayInfoDialog
+from INFO.EMInfoDialog import EMInfoDialog
 
+from DATABASE.Functions import Populate
+
+populator = Populate.Populate()
 
 class ClickablePageLabel(QtWidgets.QLabel):
     clicked = QtCore.pyqtSignal()
@@ -38,14 +46,29 @@ class PaginationTable(QtWidgets.QTableWidget):
                 color: #ffffff;             /* Text color when selected */
             }
         """)
+        self.sortHeaders = SortHeaders(Qt.Horizontal, self)
+        self.setHorizontalHeader(self.sortHeaders)
+
+        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.verticalHeader().setVisible(False)
+
+    def updateHeaders(self, columns):
+        self.setColumnCount(len(columns))
+        self.setHorizontalHeaderLabels(columns)
+        self.sortHeaders.repaint()
+
+    def get_sort_states(self):
+        return self.sortHeaders.sort_states
 
 class IconClickEmitter(QObject):
     iconClicked = pyqtSignal(int)
 
-class CustomRowDelegate(QStyledItemDelegate):
+class RowInfo(QStyledItemDelegate):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.icon = QPixmap(icon_path)
+        self.icon = QPixmap(infoicon_path)
         self.emitter = IconClickEmitter()
 
     def paint(self, painter, option, index):
@@ -84,3 +107,56 @@ class CustomRowDelegate(QStyledItemDelegate):
         elif current_widget_index == 1:
             dialog = RoomInfoDialog(self.mw, self.row_id)
             dialog.exec()
+
+        elif current_widget_index == 2:
+            dialog = RentInfoDialog(self.mw, self.row_id)
+            dialog.exec()
+
+        elif current_widget_index == 3:
+            dialog = PayInfoDialog(self.mw, self.row_id)
+            dialog.exec()
+
+        elif current_widget_index == 4:
+            dialog = EMInfoDialog(self.mw, self.row_id)
+            dialog.exec()
+
+class SortHeaders(QHeaderView):
+    def __init__(self, orientation, parent=None):
+        super().__init__(orientation, parent)
+        self.setSectionsClickable(True)
+        self.emitter = IconClickEmitter()
+        self.sort_states = {}  # Track state per column (True=ASC, False=DESC)
+        self.icon_asc = QPixmap(sort_ASC_path)
+        self.icon_desc = QPixmap(sort_DESC_path)
+
+    def mousePressEvent(self, event):
+        index = self.logicalIndexAt(event.pos())
+
+        for key in list(self.sort_states.keys()):
+            if key != index:
+                self.sort_states[key] = True
+        
+        self.sort_states[index] = not self.sort_states.get(index, True)
+        self.emitter.iconClicked.emit(index)
+        self.viewport().update() 
+        # print("clicked header")
+        # self.perform_sort(index)
+        super().mousePressEvent(event)
+
+    def paintSection(self, painter, rect, logicalIndex):
+        option = QStyleOptionHeader()
+        self.initStyleOption(option)
+        option.rect = rect
+        option.section = logicalIndex
+        option.text = self.model().headerData(logicalIndex, self.orientation(), Qt.DisplayRole)
+        option.textAlignment = Qt.AlignCenter
+        option.state |= QStyle.State_Enabled
+
+        self.style().drawControl(QStyle.CE_Header, option, painter)
+
+        icon = QIcon(self.icon_asc if self.sort_states.get(logicalIndex, True) else self.icon_desc)
+        option.icon = icon
+        option.iconAlignment = Qt.AlignRight | Qt.AlignVCenter
+
+        self.style().drawControl(QStyle.CE_Header, option, painter)
+

@@ -4,6 +4,7 @@ import re
 from DATABASE.Functions import Select, Insert, update, Populate
 from DATABASE.DB import DatabaseConnector
 from datetime import datetime
+from mysql.connector import IntegrityError
 
 class AddTenantDialog(QDialog):
     def __init__(self, parent=None):
@@ -101,6 +102,14 @@ class AddTenantDialog(QDialog):
             QMessageBox.information(self, "Success", "Tenant added successfully!")
             self.accept()
             
+        except IntegrityError as ie:
+            error_msg = str(ie)
+            if "tenant_fullname" in error_msg:
+                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of name {tenant_lname}, {tenant_fname} already exists.")
+                return
+            elif "tenant_contact" in error_msg:
+                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of contacts {tenant_email}, and {tenant_phone} already exists.")
+                return
         except Exception as err:
             print(f"Error occurred while adding tenant: {err}")
             QMessageBox.critical(self, "Database Error", f"Failed to add tenant:\n{err}")

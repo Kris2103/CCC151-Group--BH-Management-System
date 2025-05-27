@@ -5,6 +5,7 @@ from DATABASE.Functions.update import update
 from DATABASE.Functions.Select import Select
 from DATABASE.Functions.Insert import Insert
 from .editEmergencyContactDialog import editEmergencyContactDialog
+from mysql.connector import IntegrityError
 
 class editTenantDialog(QDialog):
 
@@ -78,24 +79,39 @@ class editTenantDialog(QDialog):
             "RoomNumber": roomNo,
             "Sex": sex
         }
-        
+
         selector = Select()
         selector.SelectQuery("Room", select_type="Room", spec_col=["Occupants.Count", "Room.MaximumCapacity"], tag="RoomNumber", key=roomNo)
-        occupantsCount, maximumCapacity = selector.retData()[0] 
-        if occupantsCount > maximumCapacity:
+        occupantsCount, maximumCapacity = selector.retData()[0]
+        if occupantsCount >= maximumCapacity:
             QMessageBox.warning(self, "Overloading of Room", "Maximum Occupants reached", QMessageBox.Ok)
             return
-        
+
         addRentParameters = {
-            tenantId : "RentingTenant",
-            roomNo : "RentedRoom",
-            QDate.currentDate().toString("yyyy-MM-dd") : "MoveInDate",
-            QDate.currentDate().addMonths(1).toString("yyyy-MM-dd") : "MoveOutDate"
+            tenantId: "RentingTenant",
+            roomNo: "RentedRoom",
+            QDate.currentDate().toString("yyyy-MM-dd"): "MoveInDate",
+            QDate.currentDate().addMonths(1).toString("yyyy-MM-dd"): "MoveOutDate"
         }
-        
-        
-        updater.updateTableData("Tenant", setParameters, "TenantID", tenantId)
-        inserter.InsertQuery("Rents", addRentParameters)
+
+        # Perform update
+        try:
+            updater.updateTableData("Tenant", setParameters, "TenantID", tenantId)
+        except IntegrityError as ie:
+            error_msg = str(ie)
+            if "tenant_fullname" in error_msg:
+                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of name {lastName}, {firstName} already exists.")
+                return
+            elif "tenant_contact" in error_msg:
+                QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of contacts {email}, and {phoneNumber} already exists.")
+                return
+        # Insert new rent record only if room has changed
+        if roomNo is not None and roomNo != self.previousRoomNumber:
+            print(f"Room changed from {self.previousRoomNumber} to {roomNo}, adding new rent record.")
+            inserter.InsertQuery("Rents", addRentParameters)
+        else:
+            print("No room change detected. Skipping rent insertion.")
+
         QMessageBox.information(self, "Update Done", "Update is successful", QMessageBox.Ok)
         self.accept()
 

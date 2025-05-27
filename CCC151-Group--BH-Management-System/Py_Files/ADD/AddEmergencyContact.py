@@ -117,6 +117,7 @@ class Ui_Dialog(object):
         self.PhoneNumberLineEdit = QtWidgets.QLineEdit(self.frame)
         self.PhoneNumberLineEdit.setGeometry(QtCore.QRect(220, 260, 191, 21))
         self.PhoneNumberLineEdit.setObjectName("PhoneNumberLineEdit")
+        self.PhoneNumberLineEdit.setPlaceholderText("09XXXXXXXXX")
         self.label_12 = QtWidgets.QLabel(self.frame)
         self.label_12.setGeometry(QtCore.QRect(220, 240, 111, 16))
         self.label_12.setStyleSheet("background: none;\n"

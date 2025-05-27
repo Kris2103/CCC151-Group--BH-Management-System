@@ -45,7 +45,6 @@ class Populate:
         self.page_data          = self.full_data[start_index:end_index]
 
         # refresh table widget(data is not refreshed)
-
         table_widget.clear()
         table_widget.setRowCount(len(self.page_data))
         table_widget.updateHeaders(self.columns)

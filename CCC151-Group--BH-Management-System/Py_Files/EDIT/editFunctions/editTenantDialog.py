@@ -99,7 +99,7 @@ class editTenantDialog(QDialog):
             updater.updateTableData("Tenant", setParameters, "TenantID", tenantId)
         except IntegrityError as ie:
             error_msg = str(ie)
-            if "tenant_fullname" in error_msg:
+            if "tenant_fullname" in error_msg:  
                 QMessageBox.warning(self, "Tenant Duplicate", f"Tenant of name {lastName}, {firstName} already exists.")
                 return
             elif "tenant_contact" in error_msg:

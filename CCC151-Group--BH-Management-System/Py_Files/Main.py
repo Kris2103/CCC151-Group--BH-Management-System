@@ -88,33 +88,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_data(index)
 
 # =========================
-#    SEARCH N SORT FUNCS
+#    FILTER FUNCS
 # ==========
-
-    # def perform_search(self):
-    #     if hasattr(self.populator, "full_data"): del self.populator.full_data
-    #     search_key = str(self.SearchLineEdit.text())
-    #     search_column = self.SearchField.currentData()
-    #     self.populator.Populate_Table(table_name = self.table_name,
-    #                                   table_widget = self.widget, 
-    #                                   select_type = self.select_type, 
-    #                                   search_column = search_column, 
-    #                                   search_key = search_key)
-
-    # def perform_sort(self, column_index):
-    #     if hasattr(self.populator, "full_data"): del self.populator.full_data
-    #     table = self.widget
-    #     sort_dict = table.get_sort_states()
-    #     sort_order = "ASC" if sort_dict[column_index] else "DESC"
-        
-    #     header_item = table.horizontalHeaderItem(column_index)
-    #     header_text = header_item.text()
-
-    #     self.populator.Populate_Table(table_name = self.table_name, 
-    #                                   table_widget = self.widget, 
-    #                                   select_type = self.select_type, 
-    #                                   sort_column = header_text, 
-    #                                   sort_order = sort_order)
 
     def performsearchnsort(self, column_index = None):
         # Reset table data
@@ -153,12 +128,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                       search_key = search_key,
                                       sort_column = header_text,
                                       sort_order = sort_order)
-        
-
-        
-
 # ===========
-#    SEARCH N SORT FUNCS
+#    FILTER FUNCS
 # =========================
 
     def map_indextotable(self, index):

@@ -36,8 +36,7 @@ CREATE TABLE IF NOT EXISTS  Rents (
     RentingTenant   VARCHAR(9)    NOT NULL,
     RentedRoom      INTEGER       NOT NULL,
     MoveInDate      DATE          NOT NULL,
-    MoveOutDate     DATE 
-                    DEFAULT NULL,
+    MoveOutDate     DATE          NOT NULL,
     CONSTRAINT StartDateLimit 
       CHECK (MoveOutDate IS NULL OR MoveInDate <= MoveOutDate)
 );

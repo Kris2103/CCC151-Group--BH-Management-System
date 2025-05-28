@@ -18,7 +18,7 @@ INSERT INTO Tenant (TenantID, Email, FirstName, MiddleName, LastName, Sex, Phone
 ('2023-0003', 'carla@gmail.com', 'Carla', 'M.', 'Lopez', 'Female', '09192234569', 102),
 ('2023-0004', 'daniel@gmail.com', 'Daniel', NULL, 'Cruz', 'Male', '09173334567', 101),
 ('2023-0005', 'ellen@gmail.com', 'Ellen', 'Joy', 'Flores', 'Female', '09184444567', NULL),
-('2023-0006', 'frank@gmail.com', 'Frank', NULL, 'Torres', 'Male', '09195555567', 103),
+('2023-0006', 'frank@gmail.com', 'Frank', NULL, 'Torres', 'Male', '09195555567', NULL),
 ('2023-0007', 'gina@gmail.com', 'Gina', 'S.', 'Navarro', 'Female', '09176666667', NULL),
 ('2023-0008', 'henry@gmail.com', 'Henry', NULL, 'Dela Cruz', 'Male', '09187777767', 106),
 ('2023-0009', 'irene@gmail.com', 'Irene', 'L.', 'Bautista', 'Female', '09198888867', 107),
@@ -102,3 +102,57 @@ INSERT INTO EmergencyContact (ContactID, FirstName, MiddleName, LastName, Relati
 ('2023-1018', 'Rachel', NULL, 'Domingo', 'Mother', '09180000018', '2023-0018'),
 ('2023-1019', 'Steven', 'L.', 'Vergara', 'Brother', '09180000019', '2023-0019'),
 ('2023-1020', 'Tina', NULL, 'Diaz', 'Mother', '09180000020', '2023-0020');
+
+
+-- Additional filler data with null
+
+INSERT INTO Tenant (TenantID, Email, FirstName, MiddleName, LastName, Sex, PhoneNumber, RoomNumber) VALUES
+('2023-0021', 'ursula@gmail.com', 'Ursula', 'Mae', 'Jimenez', 'Female', '09201111121', NULL),
+('2023-0022', 'victor@gmail.com', 'Victor', NULL, 'Tan', 'Male', '09202222222', NULL),
+('2023-0023', 'wendy@gmail.com', 'Wendy', 'T.', 'Cabrera', 'Female', '09203333323', NULL),
+('2023-0024', 'xander@gmail.com', 'Xander', NULL, 'Lim', 'Male', '09204444424', NULL),
+('2023-0025', 'yara@gmail.com', 'Yara', 'N.', 'Castro', 'Female', '09205555525', NULL),
+('2023-0026', 'zack@gmail.com', 'Zack', NULL, 'Silva', 'Male', '09206666626', NULL),
+('2023-0027', 'abby@gmail.com', 'Abby', 'R.', 'Ortega', 'Female', '09207777727', NULL),
+('2023-0028', 'ben@gmail.com', 'Ben', NULL, 'Fernandez', 'Male', '09208888828', NULL),
+('2023-0029', 'cathy@gmail.com', 'Cathy', 'J.', 'Chua', 'Female', '09209999929', NULL),
+('2023-0030', 'dave@gmail.com', 'Dave', NULL, 'Aquino', 'Male', '09300000030', NULL),
+('2023-0031', 'ellaine@gmail.com', 'Ellaine', 'P.', 'Reyes', 'Female', '09301111131', NULL),
+('2023-0032', 'fred@gmail.com', 'Fred', NULL, 'Salvador', 'Male', '09302222232', NULL),
+('2023-0033', 'giselle@gmail.com', 'Giselle', 'F.', 'Romero', 'Female', '09303333333', NULL),
+('2023-0034', 'hugo@gmail.com', 'Hugo', NULL, 'Gatchalian', 'Male', '09304444434', NULL),
+('2023-0035', 'ivy@gmail.com', 'Ivy', 'K.', 'Sy', 'Female', '09305555535', NULL),
+('2023-0036', 'jose@gmail.com', 'Jose', NULL, 'Tan', 'Male', '09306666636', NULL),
+('2023-0037', 'karla@gmail.com', 'Karla', 'L.', 'Bermudez', 'Female', '09307777737', NULL),
+('2023-0038', 'luke@gmail.com', 'Luke', NULL, 'Agustin', 'Male', '09308888838', NULL),
+('2023-0039', 'mia@gmail.com', 'Mia', 'V.', 'Lagman', 'Female', '09309999939', NULL),
+('2023-0040', 'nate@gmail.com', 'Nate', NULL, 'Quinto', 'Male', '09400000040', NULL);
+
+INSERT INTO Room (RoomNumber, Price, TenantSex, MaximumCapacity) VALUES
+(201, 5050.00, NULL, 2),
+(202, 5150.00, NULL, 1),
+(203, 5250.00, NULL, 3),
+(204, 5350.00, NULL, 2),
+(205, 5450.00, NULL, 4),
+(206, 5550.00, NULL, 1),
+(207, 5650.00, NULL, 2),
+(208, 5750.00, NULL, 3),
+(209, 5850.00, NULL, 2),
+(210, 5950.00, NULL, 1);
+ 
+ INSERT INTO EmergencyContact (ContactID, FirstName, MiddleName, LastName, Relationship, PhoneNumber, EMTenantID) VALUES
+('2023-1021', 'Uma', 'P.', 'Jimenez', 'Mother', '09410000021', '2023-0021'),
+('2023-1022', 'Vera', NULL, 'Tan', 'Sister', '09410000022', '2023-0022'),
+('2023-1023', 'Wally', 'G.', 'Cabrera', 'Father', '09410000023', '2023-0023'),
+('2023-1024', 'Xena', NULL, 'Lim', 'Mother', '09410000024', '2023-0024'),
+('2023-1025', 'Yosef', 'T.', 'Castro', 'Brother', '09410000025', '2023-0025'),
+('2023-1026', 'Zara', NULL, 'Silva', 'Aunt', '09410000026', '2023-0026'),
+('2023-1027', 'Andrew', 'R.', 'Ortega', 'Uncle', '09410000027', '2023-0027'),
+('2023-1028', 'Bea', NULL, 'Fernandez', 'Mother', '09410000028', '2023-0028'),
+('2023-1029', 'Carlos', 'J.', 'Chua', 'Father', '09410000029', '2023-0029'),
+('2023-1030', 'Diane', NULL, 'Aquino', 'Sister', '09410000030', '2023-0030'),
+('2023-1031', 'Edwin', 'P.', 'Reyes', 'Uncle', '09410000031', '2023-0031'),
+('2023-1032', 'Faith', NULL, 'Salvador', 'Aunt', '09410000032', '2023-0032'),
+('2023-1033', 'Greg', 'F.', 'Romero', 'Father', '09410000033', '2023-0033'),
+('2023-1034', 'Hannah', NULL, 'Gatchalian', 'Mother', '09410000034', '2023-0034'),
+('2023-1035', 'Ian', 'K.', 'Sy', 'Brother', '09410000035', '2023-0035');

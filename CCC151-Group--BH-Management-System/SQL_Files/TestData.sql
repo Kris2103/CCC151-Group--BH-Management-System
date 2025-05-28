@@ -59,13 +59,13 @@ CREATE TABLE IF NOT EXISTS  EmergencyContact (
     PhoneNumber     VARCHAR(100)  NOT NULL,
     EMTenantID      VARCHAR(9)    NOT NULL,
 
-    CONSTRAINT fk_emToTenant
-      FOREIGN KEY (EMTenantID) REFERENCES Tenant(TenantID)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
+    
+    FOREIGN KEY (EMTenantID) REFERENCES Tenant(TenantID)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
 );
 
-INSERT INTO Room (RoomNumber, Price, MaximumCapacity) VALUES
+-- INSERT INTO Room (RoomNumber, Price, MaximumCapacity) VALUES
 
 -- -- Male
 -- (301, 2000.00, 'Male', 2),

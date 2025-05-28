@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS Room (
     RoomNumber      INTEGER       PRIMARY KEY,
     Price           DECIMAL(9,2)  NOT NULL,
     TenantSex       VARCHAR(6) 
-                    CHECK (TenantSex IN ('Male', 'Female', NULL)),
+                    CHECK (TenantSex IN ('Male', 'Female') OR TenantSex IS NULL),
     MaximumCapacity INTEGER       NOT NULL
                     DEFAULT 0
 );

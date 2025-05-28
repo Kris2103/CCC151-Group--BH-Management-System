@@ -32,7 +32,7 @@ class Delete(Function):
 
         # try:
         self.cursor.execute(query, self.params)
-        self.cursor.commit()
+        self.conn.commit()
         # return self.cursor.fetchall()
         
         # except Exception as exception:

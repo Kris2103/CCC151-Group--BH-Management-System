@@ -32,7 +32,8 @@ class Delete(Function):
 
         # try:
         self.cursor.execute(query, self.params)
-        return self.cursor.fetchall()
+        self.cursor.commit()
+        # return self.cursor.fetchall()
         
         # except Exception as exception:
         #     print(f"Error deleting selection '{key}' from '{table}' : {exception}")

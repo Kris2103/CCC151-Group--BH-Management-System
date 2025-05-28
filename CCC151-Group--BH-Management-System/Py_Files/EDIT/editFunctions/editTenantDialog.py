@@ -23,7 +23,7 @@ class editTenantDialog(QDialog):
         self.ui.TenantIDLineEdit.setReadOnly(True)
         self.ui.RoomNoComboBox.setEnabled(False)
         self.ui.RoomNoComboBox.setVisible(True)
-        self.ui.label_10.setVisible(False)
+        self.ui.label_10.setVisible(True)
         self.fillSexComboBox()
         self.fillRoomNoComboBox()
 
